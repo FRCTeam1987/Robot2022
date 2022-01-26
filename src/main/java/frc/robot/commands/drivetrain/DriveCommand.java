@@ -41,7 +41,7 @@ public class DriveCommand extends CommandBase {
                         translationXPercent * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
                         translationYPercent * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
                         rotationPercent * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-                        drivetrain.getRotation()
+                        drivetrain.getAdjustedHeading()
                 )
         );
     }
