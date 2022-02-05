@@ -17,8 +17,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.lib.pathplannerlib.PathPlannerTrajectory;
-import frc.robot.lib.pathplannerlib.PathPlannerTrajectory.PathPlannerState;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
