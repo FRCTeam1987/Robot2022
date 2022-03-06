@@ -6,6 +6,7 @@ package frc.robot.commands.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -30,13 +31,18 @@ public class EjectOneBallBottom extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
+      new ConditionalCommand(
+        new InstantCommand(() -> m_storage.runForIntake()).andThen(new WaitCommand(0.25)),
+        new InstantCommand(),
+        () -> m_storage.getBallCount() == 1
+      ),
       new InstantCommand(() -> {
         m_collector.deploy();
         m_collector.runRollerOut();
         m_storage.runForOutput();
       }, m_collector),
       new WaitForBallShoot(m_storage, false, 1),
-      new WaitCommand(0.25),
+      new WaitCommand(0.125),
       new StopStorage(m_storage),
       new StowCollector(m_collector)
       // new SetShooterRpm(m_shooter, () -> 0)

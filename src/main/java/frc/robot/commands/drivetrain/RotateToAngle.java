@@ -21,18 +21,21 @@ public class RotateToAngle extends PIDCommand {
   public RotateToAngle(final DrivetrainSubsystem drivetrainSubsystem, final DoubleSupplier angleSupplier) {
     super(
         // The controller that the command will use
-        new PIDController(4, 0, 0),
+        new PIDController(4.0, 0.5, 0),
         // This should return the measurement
         () -> drivetrainSubsystem.getAdjustedHeading().getRadians(),
         // This should return the setpoint (can also be a constant)
-        () -> angleSupplier.getAsDouble(),
+          () -> angleSupplier.getAsDouble(),
         // This uses the output
         output -> {
           drivetrainSubsystem.drive(ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, output, drivetrainSubsystem.getAdjustedHeading()));
+          System.out.println("The Heading is: " + drivetrainSubsystem.getAdjustedHeading().getDegrees());
         });
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(drivetrainSubsystem);
     // Configure additional PID options by calling `getController` here.
     getController().setTolerance(0.05, 0.25);
+    getController().enableContinuousInput(-Math.PI, Math.PI);
   }
 
   // Returns true when the command should end.
