@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ChangeLimeLightStream;
@@ -21,6 +22,8 @@ import frc.robot.commands.drivetrain.DriveCommand;
 import frc.robot.commands.drivetrain.RotateToAngle;
 import frc.robot.commands.drivetrain.RotateToLimelightAngle;
 import frc.robot.commands.drivetrain.SwerveCharacterizationFF;
+import frc.robot.commands.oi.SetRumble;
+import frc.robot.commands.oi.SetRumble.RumbleValue;
 import frc.robot.commands.shooter.EjectOneBallBottom;
 import frc.robot.commands.shooter.EjectOneBallTop;
 import frc.robot.commands.shooter.SetHoodPosition;
@@ -39,7 +42,9 @@ import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.StorageSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -108,14 +113,25 @@ public class RobotContainer {
       .whenReleased(new StowCollector(m_collector)
         .andThen(new StopStorage(m_storage)));
     new Button(controller::getLeftBumper)
-      .whileHeld(new Shoot(
-        m_shooter,
-        m_storage,
-        m_drivetrain,
-        m_limelight,
-        () -> m_limelight.getYAxis() < -5 ? 3075 : 2500,
-        () -> m_limelight.getYAxis() < -5 ? 70 : 35
-      ));
+      .whileHeld(new ConditionalCommand(
+        new Shoot(
+          m_shooter,
+          m_storage,
+          m_drivetrain,
+          m_limelight,
+          () -> m_limelight.getYAxis() < -5 ? 3075 : 2500,
+          () -> m_limelight.getYAxis() < -5 ? 70 : 35
+        ),
+        // new SetRumble(controller, RumbleValue.On).withTimeout(0.5).andThen(new SetRumble(controller, RumbleValue.Off)),
+        new ParallelCommandGroup(
+          new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 1)), 
+          new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 1))),
+        () -> m_limelight.canSeeTarget())
+      ).whenReleased(
+        new ParallelCommandGroup(
+          new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 0)), 
+          new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 0))
+        ));
 
     new Button(coController::getYButton)
       .whenPressed(new EjectOneBallTop(m_storage, m_shooter));
@@ -155,6 +171,14 @@ public class RobotContainer {
     SmartDashboard.putData("Reset Ball Count", new ZeroBallCount(m_storage));
     SmartDashboard.putData("Rotate-45", new RotateToAngle(m_drivetrain, () -> Rotation2d.fromDegrees(45).getRadians()));
     SmartDashboard.putData("Rotate-LL", new RotateToLimelightAngle(m_drivetrain, m_limelight));
+    SmartDashboard.putData("Rumble Controller", new ParallelCommandGroup(
+        new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 1)), 
+        new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 1))
+      ).andThen(new WaitCommand(0.5))
+      .andThen(new ParallelCommandGroup(
+        new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 0)), 
+        new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 0))))
+    );
   }
 
   private static double deadband(double value, double deadband) {
