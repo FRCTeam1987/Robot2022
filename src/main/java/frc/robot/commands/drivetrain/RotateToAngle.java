@@ -7,6 +7,7 @@ package frc.robot.commands.drivetrain;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -34,7 +35,7 @@ public class RotateToAngle extends PIDCommand {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrainSubsystem);
     // Configure additional PID options by calling `getController` here.
-    getController().setTolerance(0.05, 0.25);
+    getController().setTolerance(Rotation2d.fromDegrees(2).getRadians(), 0.25);
     getController().enableContinuousInput(-Math.PI, Math.PI);
   }
 

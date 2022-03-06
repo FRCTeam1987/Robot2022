@@ -35,6 +35,7 @@ public class LimeLight extends SubsystemBase {
       });
       setPipelineCommand.runsWhenDisabled();
       tab.add("Set Pipeline", setPipelineCommand);
+      setPipeline(pipelineSelector.getDouble(Constants.LimeLight.pipeline));
     }
 
 

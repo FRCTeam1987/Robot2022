@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -18,6 +19,7 @@ import frc.robot.commands.collector.DeployCollector;
 import frc.robot.commands.collector.StowCollector;
 import frc.robot.commands.drivetrain.DriveCommand;
 import frc.robot.commands.drivetrain.RotateToAngle;
+import frc.robot.commands.drivetrain.RotateToLimelightAngle;
 import frc.robot.commands.drivetrain.SwerveCharacterizationFF;
 import frc.robot.commands.shooter.EjectOneBallBottom;
 import frc.robot.commands.shooter.EjectOneBallTop;
@@ -30,8 +32,10 @@ import frc.robot.commands.storage.RunStorageOut;
 import frc.robot.commands.storage.SetBallCount;
 import frc.robot.commands.storage.StopStorage;
 import frc.robot.commands.storage.ZeroBallCount;
+import frc.robot.lib.Limelight;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.StorageSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -54,6 +58,7 @@ public class RobotContainer {
   private final CollectorSubsystem m_collector = new CollectorSubsystem();
   private final StorageSubsystem m_storage = new StorageSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+  private final LimeLight m_limelight = new LimeLight();
 
   private final XboxController controller = new XboxController(0);
   private final XboxController coController = new XboxController(1);
@@ -103,7 +108,14 @@ public class RobotContainer {
       .whenReleased(new StowCollector(m_collector)
         .andThen(new StopStorage(m_storage)));
     new Button(controller::getLeftBumper)
-      .whileHeld(new Shoot(m_shooter, m_storage));
+      .whileHeld(new Shoot(
+        m_shooter,
+        m_storage,
+        m_drivetrain,
+        m_limelight,
+        () -> m_limelight.getYAxis() < -5 ? 3075 : 2500,
+        () -> m_limelight.getYAxis() < -5 ? 70 : 35
+      ));
 
     new Button(coController::getYButton)
       .whenPressed(new EjectOneBallTop(m_storage, m_shooter));
@@ -119,7 +131,7 @@ public class RobotContainer {
 
   private void configureShuffleboard() {
     m_autoChooser.setDefaultOption("Do Nothing", new InstantCommand());
-    m_autoChooser.addOption("5 Ball Auto", new FiveBallAuto(m_drivetrain, m_collector, m_storage, m_shooter));
+    m_autoChooser.addOption("5 Ball Auto", new FiveBallAuto(m_drivetrain, m_collector, m_storage, m_shooter, m_limelight));
     m_autoChooser.addOption("Swerve Char - Forwards", new SwerveCharacterizationFF(m_drivetrain, true, false));
     m_autoChooser.addOption("Swerve Char - Reverse", new SwerveCharacterizationFF(m_drivetrain, false, false));
     m_autoChooser.addOption("Swerve Char - Rotate", new SwerveCharacterizationFF(m_drivetrain, true, true));
@@ -139,9 +151,10 @@ public class RobotContainer {
     SmartDashboard.putData("LL-Standard", new ChangeLimeLightStream(StreamType.standard));
     SmartDashboard.putData("LL-PipMain", new ChangeLimeLightStream(StreamType.pipMain));
     SmartDashboard.putData("LL-PipSecondary", new ChangeLimeLightStream(StreamType.pipSecondary));
-    SmartDashboard.putData("shoot", new Shoot(m_shooter, m_storage));
+    SmartDashboard.putData("shoot", new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight));
     SmartDashboard.putData("Reset Ball Count", new ZeroBallCount(m_storage));
-    SmartDashboard.putData("Rotate-45", new RotateToAngle(m_drivetrain, () -> 45));
+    SmartDashboard.putData("Rotate-45", new RotateToAngle(m_drivetrain, () -> Rotation2d.fromDegrees(45).getRadians()));
+    SmartDashboard.putData("Rotate-LL", new RotateToLimelightAngle(m_drivetrain, m_limelight));
   }
 
   private static double deadband(double value, double deadband) {

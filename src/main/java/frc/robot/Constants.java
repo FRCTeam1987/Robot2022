@@ -141,7 +141,7 @@ public final class Constants {
   }
 
   public static class LimeLight {
-    public final static double pipeline = 9;
+    public final static double pipeline = 8;
     public final static double tyConfigLowThreshold = 3.25;
   }
 
@@ -149,14 +149,14 @@ public final class Constants {
 
       public static class TreeMapValues{
         public static class Close {
-            public final static double ty1 = 10; //TODO insert correect ty values.
-            public final static double ty2 = 15; //TODO insert correect ty values.
+            public final static double ty1 = 0.5; //TODO insert correect ty values.
+            public final static double ty2 = -15.65; //TODO insert correect ty values.
 
-            public final static double rpm1 = 1000; //TODO insert correect rpm values.
-            public final static double rpm2 = 2500; //TODO insert correect rpm values.
+            public final static double rpm1 = 2500; //TODO insert correect rpm values.
+            public final static double rpm2 = 3075; //TODO insert correect rpm values.
 
-            public final static double hood1 = 10; //TODO insert correect hood Heights mm values.
-            public final static double hood2 = 20; //TODO insert correect hood Heights mm values.
+            public final static double hood1 = 35; //TODO insert correect hood Heights mm values.
+            public final static double hood2 = 70; //TODO insert correect hood Heights mm values.
         }
     }
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kDistanceToShooter = new InterpolatingTreeMap<>();

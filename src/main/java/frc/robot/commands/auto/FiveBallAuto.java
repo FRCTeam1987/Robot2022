@@ -11,6 +11,7 @@ import frc.robot.commands.CollectBalls;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.StorageSubsystem;
 
@@ -19,11 +20,11 @@ import frc.robot.subsystems.StorageSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class FiveBallAuto extends SequentialCommandGroup {
   /** Creates a new FiveBallAuto. */
-  public FiveBallAuto(final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem) {
+  public FiveBallAuto(final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight limelight) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ThreeBallAuto(drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem),
+      new ThreeBallAuto(drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, limelight),
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(false, "5BallAutoPart3B"),
         new SequentialCommandGroup(
@@ -32,7 +33,7 @@ public class FiveBallAuto extends SequentialCommandGroup {
         )
       ),
       drivetrainSubsystem.followPathCommand(false, "5BallAutoPart4B"),
-      new Shoot(shooterSubsystem, storageSubsystem, () -> 2500, () -> 35).withTimeout(3)
+      new Shoot(shooterSubsystem, storageSubsystem, drivetrainSubsystem, limelight, () -> 2500, () -> 35).withTimeout(3)
     );
   }
 }

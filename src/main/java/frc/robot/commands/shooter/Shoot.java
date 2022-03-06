@@ -14,10 +14,14 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.commands.drivetrain.RotateToLimelightAngle;
 import frc.robot.commands.storage.FeedShooter;
 import frc.robot.commands.storage.FeedShooterWithRPM;
 import frc.robot.commands.storage.StopStorage;
 import frc.robot.commands.storage.WaitForBallShoot;
+import frc.robot.lib.Limelight;
+import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.StorageSubsystem;
 
@@ -28,14 +32,19 @@ public class Shoot extends SequentialCommandGroup {
 
   private final ShooterSubsystem m_shooter;
   private final StorageSubsystem m_storage;
+  private final DrivetrainSubsystem m_drivetrain;
+  private final LimeLight m_limelight;
 
   /** Creates a new ShooterCommandGroup. */
-  public Shoot(final ShooterSubsystem shooter, final StorageSubsystem storage, final DoubleSupplier rpmSupplier, final DoubleSupplier hoodSupplier) {
+  public Shoot(final ShooterSubsystem shooter, final StorageSubsystem storage, final DrivetrainSubsystem drivetrain, final LimeLight limelight, final DoubleSupplier rpmSupplier, final DoubleSupplier hoodSupplier) {
     m_shooter = shooter;
     m_storage = storage;
+    m_drivetrain = drivetrain;
+    m_limelight = limelight;
     
     addCommands(
       // new ParallelCommandGroup(
+      new RotateToLimelightAngle(m_drivetrain, limelight),
       new SetShooterRpm(m_shooter, rpmSupplier),
       new SetHoodPosition(m_shooter, hoodSupplier),
       // ),
@@ -51,10 +60,12 @@ public class Shoot extends SequentialCommandGroup {
     );
   }
 
-  public Shoot(final ShooterSubsystem shooter, final StorageSubsystem storage) {
+  public Shoot(final ShooterSubsystem shooter, final StorageSubsystem storage, final DrivetrainSubsystem drivetrain, final LimeLight limelight) {
     this(
       shooter,
       storage,
+      drivetrain,
+      limelight,
       () -> SmartDashboard.getNumber("RPM-Set", 0.0),
       () -> SmartDashboard.getNumber("Hood-Pos", 0.0)
     );
