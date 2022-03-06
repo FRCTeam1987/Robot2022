@@ -4,54 +4,193 @@
 
 package frc.robot;
 
+import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
+
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.util.Units;
+import frc.robot.lib.InterpolatingDouble;
+import frc.robot.lib.InterpolatingTreeMap;
 
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants
+ * should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <p>
+ * It is advised to statically import this class (or one of its inner classes)
+ * wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final double FALCON_ENCODER_RESOLUTION = 2048.0;
+  public static final double FALCON_MAX_RPM = 6380.0;
+  public static final int DRIVER_CONTROLLER_PORT = 0;
+
+  public static final double DRIVETRAIN_PX_CONTROLLER = 0.3; // TODO tune this
+  public static final double DRIVETRAIN_PY_CONTROLLER = DRIVETRAIN_PX_CONTROLLER;
+  public static final double DRIVETRAIN_PTHETA_CONTROLLER = 6; // TODO tune this
+
+  public static final String CANIVORE_CAN_BUS = "canfd";
+
+  public static class Collector {
+    public static final double COMMAND_DEPLOY_DURATION = 0.25;
+    public static final double COMMAND_STOW_DURATION = 0.1;
+    public static final int MOTOR_PDH_ID = 13;
+    public static final int MOTOR_CAN_ID = 9;
+    public static final double RUN_IN_SPEED = -1;
+    public static final double RUN_OUT_SPEED = 0.5;
+    public static final int SOLENOID_FORWARD_ID = 0;
+    public static final int SOLENOID_REVERSE_ID = 1;
+  }
+
+  public static class Drivetrain {
+    /**
+     * The maximum voltage that will be delivered to the drive motors.
+     * <p>
+     * This can be reduced to cap the robot's maximum speed. Typically, this is
+     * useful during initial testing of the robot.
+     */
+    public static final double MAX_VOLTAGE = 12.0;
     /**
      * The left-to-right distance between the drivetrain wheels
      *
      * Should be measured from center to center.
      */
-    public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(17.5);
+    public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(20.75);
     /**
      * The front-to-back distance between the drivetrain wheels.
      *
      * Should be measured from center to center.
      */
-    public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(17.5);
+    public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(20.75);
+    // FIXME Measure the drivetrain's maximum velocity or calculate the theoretical.
+    // The formula for calculating the theoretical maximum velocity is:
+    // <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> *
+    // pi
+    // By default this value is setup for a Mk3 standard module using Falcon500s to
+    // drive.
+    // An example of this constant for a Mk4 L2 module with NEOs to drive is:
+    // 5880.0 / 60.0 / SdsModuleConfigurations.MK4_L2.getDriveReduction() *
+    // SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI
+    /**
+     * The maximum velocity of the robot in meters per second.
+     * <p>
+     * This is a measure of how fast the robot should be able to drive in a straight
+     * line.
+     */
+    public static final double MAX_VELOCITY_METERS_PER_SECOND = FALCON_MAX_RPM / 60.0 *
+        SdsModuleConfigurations.MK4I_L2.getDriveReduction() *
+        SdsModuleConfigurations.MK4I_L2.getWheelDiameter() * Math.PI;
+    /**
+     * The maximum angular velocity of the robot in radians per second.
+     * <p>
+     * This is a measure of how fast the robot can rotate in place.
+     */
+    // Here we calculate the theoretical maximum angular velocity. You can also
+    // replace this with a measured amount.
+    public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
+        Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
+    public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND_SQUARED = MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+        / 3.0;
+
+    public static class TranslationGains {
+      public static final double kP = 2.2956;
+      public static final double kI = 0;
+      public static final double kD = 0;
+      public static final double kA = 0.12872;
+      public static final double kV = 2.3014;
+      public static final double kS = 0.55493;
+    }
+    public static final SimpleMotorFeedforward TRANSLATION_FEED_FORWARD = new SimpleMotorFeedforward(
+      TranslationGains.kS,
+      TranslationGains.kV,
+      TranslationGains.kA
+    );
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 4;
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 3;
-    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 11;
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(102.39);
+    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 2;
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(230.273);
 
-    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 2;
-    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 1;
-    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 12;
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(61.69);
+    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 6;
+    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 5;
+    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 3;
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(51.416);
 
-    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 6;
-    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 5;
-    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 10;
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(2.64);
+    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 2;
+    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 1;
+    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 1;
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(347.168);
 
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 8;
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 7;
-    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 9;
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(309.28);
+    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 4;
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(192.656);
+  }
 
-    public static final double FALCON_MAX_RPM = 6380.0;
-    public static final int DRIVER_CONTROLLER_PORT = 0;
+  public static class Shooter {
+    public static final int LINEAR_ACTUATOR_LEFT_ID = 0;
+    public static final int LINEAR_ACTUATOR_RIGHT_ID = 1;
+    public static final int MOTOR_LEADER_PDH_ID = 4;
+    public static final int MOTOR_LEADER_CAN_ID = 12;
+    public static final int MOTOR_FOLLOWER_PDH_ID = 14;
+    public static final int MOTOR_FOLLOWER_CAN_ID = 10;
+  }
 
-    public static final double DRIVETRAIN_PX_CONTROLLER = 0.25;  // TODO tune this
-    public static final double DRIVETRAIN_PY_CONTROLLER = DRIVETRAIN_PX_CONTROLLER;
-    public static final double DRIVETRAIN_PTHETA_CONTROLLER = 5;  // TODO tune this
+  public static class LimeLight {
+    public final static double pipeline = 9;
+    public final static double tyConfigLowThreshold = 3.25;
+  }
+
+    public static final class Targeting {
+
+      public static class TreeMapValues{
+        public static class Close {
+            public final static double ty1 = 10; //TODO insert correect ty values.
+            public final static double ty2 = 15; //TODO insert correect ty values.
+
+            public final static double rpm1 = 1000; //TODO insert correect rpm values.
+            public final static double rpm2 = 2500; //TODO insert correect rpm values.
+
+            public final static double hood1 = 10; //TODO insert correect hood Heights mm values.
+            public final static double hood2 = 20; //TODO insert correect hood Heights mm values.
+        }
+    }
+    public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kDistanceToShooter = new InterpolatingTreeMap<>();
+    static {
+      kDistanceToShooter.put(new InterpolatingDouble(2.95), new InterpolatingDouble(3550.0));  // hood config far
+      kDistanceToShooter.put(new InterpolatingDouble(3.05), new InterpolatingDouble(3525.0));  // hood config far
+  }
+    
+    }
+
+  public static class Storage {
+    public static final double DEBOUNCE_DURATION_BOTTOM = 0.075;
+    public static final double DEBOUNCE_DURATION_TOP = 0.04;
+    public static final int DIGITAL_INPUT_BOTTOM_ID = 0;
+    public static final int DIGITAL_INPUT_TOP_ID = 1;
+    public static final int INITIAL_BALL_COUNT = 1;
+    public static final int MAX_BALL_COUNT = 2;
+    public static final int MOTOR_BOTTOM_CAN_ID = 8;
+    public static final int MOTOR_TOP_CAN_ID = 9;
+    public static final double RUN_IN_SPEED_BOTTOM = 0.75;
+    public static final double RUN_IN_SPEED_TOP = -0.95;
+    public static final double RUN_OUT_SPEED_BOTTOM = -0.95;
+    public static final int SENSOR_BOTTOM = 9;
+    public static final int SENSOR_TOP = 8;
+
+  
+  }
+
+  public static class Climber {
+    public static final int LEFT_CLIMBER_MOTOR = 13;
+    public static final int RIGHT_CLIMBER_MOTOR = 14;
+  }
+
+  
 }
+
+
