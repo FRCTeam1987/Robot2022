@@ -28,6 +28,10 @@ public class Util {
     }
 
     public static double ticksToDistance(final double ticks, final double ticksPerRevolution, final double circumference) {
-        return ticks / ticksPerRevolution * circumference;
+        return ticksToDistance(ticks, ticksPerRevolution, circumference, 1.0);
+    }
+    
+    public static double ticksToDistance(final double ticks, final double ticksPerRevolution, final double circumference, final double postEncoderGearing) {
+        return ticks / (ticksPerRevolution * postEncoderGearing) * circumference;
     }
 }

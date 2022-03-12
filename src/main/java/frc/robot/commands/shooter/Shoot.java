@@ -7,6 +7,8 @@ package frc.robot.commands.shooter;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drivetrain.RotateToLimelightAngle;
@@ -36,6 +38,11 @@ public class Shoot extends SequentialCommandGroup {
     m_limelight = limelight;
     
     addCommands(
+      new ConditionalCommand(
+        new InstantCommand(() -> m_storage.runForIntake(), m_storage),
+        new InstantCommand(),
+        () -> m_storage.getBallCount() < 2
+      ),
       new RotateToLimelightAngle(m_drivetrain, m_limelight),
       new SetShooterRpm(m_shooter, rpmSupplier),
       new SetHoodPosition(m_shooter, hoodSupplier),

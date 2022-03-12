@@ -16,6 +16,15 @@ import frc.robot.commands.ChangeLimeLightStream;
 import frc.robot.commands.CollectBalls;
 import frc.robot.commands.ChangeLimeLightStream.StreamType;
 import frc.robot.commands.auto.FiveBallAuto;
+import frc.robot.commands.climber.ClimberExtend;
+import frc.robot.commands.climber.ClimberLock;
+import frc.robot.commands.climber.ClimberPivotDown;
+import frc.robot.commands.climber.ClimberPivotUp;
+import frc.robot.commands.climber.ClimberPullIn;
+import frc.robot.commands.climber.ClimberPullUp;
+import frc.robot.commands.climber.ClimberShift;
+import frc.robot.commands.climber.ClimberToHome;
+import frc.robot.commands.climber.ClimberUnlock;
 import frc.robot.commands.collector.DeployCollector;
 import frc.robot.commands.collector.StowCollector;
 import frc.robot.commands.drivetrain.DriveCommand;
@@ -36,6 +45,7 @@ import frc.robot.commands.storage.SetBallCount;
 import frc.robot.commands.storage.StopStorage;
 import frc.robot.commands.storage.ZeroBallCount;
 import frc.robot.lib.Limelight;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimeLight;
@@ -64,6 +74,7 @@ public class RobotContainer {
   private final StorageSubsystem m_storage = new StorageSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final LimeLight m_limelight = new LimeLight();
+  // private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 
   private final XboxController controller = new XboxController(0);
   private final XboxController coController = new XboxController(1);
@@ -113,14 +124,15 @@ public class RobotContainer {
       .whenReleased(new StowCollector(m_collector)
         .andThen(new StopStorage(m_storage)));
     new Button(controller::getLeftBumper)
-      .whileHeld(new ConditionalCommand(
+      .whileHeld(  
+        new ConditionalCommand(
         new Shoot(
           m_shooter,
           m_storage,
           m_drivetrain,
           m_limelight,
-          () -> m_limelight.getYAxis() < -5 ? 3075 : 2500,
-          () -> m_limelight.getYAxis() < -5 ? 70 : 35
+          () -> m_shooter.getRPMFromLimelight(),//m_limelight.getYAxis() < -5 ? 3075 : 2500,
+          () -> m_limelight.getYAxis() > -7.5 ? 50 : 65
         ),
         // new SetRumble(controller, RumbleValue.On).withTimeout(0.5).andThen(new SetRumble(controller, RumbleValue.Off)),
         new ParallelCommandGroup(
@@ -132,6 +144,23 @@ public class RobotContainer {
           new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 0)), 
           new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 0))
         ));
+
+    // new POVButton(controller, 180)
+    //   .whenPressed(new InstantCommand(() -> {
+    //     m_climberSubsystem.climberRightRetract();
+    //     m_climberSubsystem.climberLeftRetract();
+    //   }, m_climberSubsystem))
+    //   .whenReleased(new InstantCommand(() -> m_climberSubsystem.climberStop(), m_climberSubsystem));
+
+    // new POVButton(controller, 0)
+    //   .whenPressed(new InstantCommand(() -> {
+    //     m_climberSubsystem.climberRightExtend();
+    //     m_climberSubsystem.climberLeftExtend();
+    //   }, m_climberSubsystem))
+    //   .whenReleased(new InstantCommand(() -> m_climberSubsystem.climberStop(), m_climberSubsystem));
+
+
+//      new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight));
 
     new Button(coController::getYButton)
       .whenPressed(new EjectOneBallTop(m_storage, m_shooter));
@@ -153,8 +182,6 @@ public class RobotContainer {
     m_autoChooser.addOption("Swerve Char - Rotate", new SwerveCharacterizationFF(m_drivetrain, true, true));
     SmartDashboard.putData(m_autoChooser);
 
-    SmartDashboard.putData("Collect 1 Balls", new CollectBalls(m_collector, m_storage, 1));
-    SmartDashboard.putData("Collect 2 Balls", new CollectBalls(m_collector, m_storage, 2));
     SmartDashboard.putData("Collector-Deploy", new DeployCollector(m_collector));
     SmartDashboard.putData("Collector-Stow", new StowCollector(m_collector));
     SmartDashboard.putData("Feed Shooter", new FeedShooter(m_storage));
@@ -171,14 +198,15 @@ public class RobotContainer {
     SmartDashboard.putData("Reset Ball Count", new ZeroBallCount(m_storage));
     SmartDashboard.putData("Rotate-45", new RotateToAngle(m_drivetrain, () -> Rotation2d.fromDegrees(45).getRadians()));
     SmartDashboard.putData("Rotate-LL", new RotateToLimelightAngle(m_drivetrain, m_limelight));
-    SmartDashboard.putData("Rumble Controller", new ParallelCommandGroup(
-        new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 1)), 
-        new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 1))
-      ).andThen(new WaitCommand(0.5))
-      .andThen(new ParallelCommandGroup(
-        new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 0)), 
-        new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 0))))
-    );
+    // SmartDashboard.putData("Climber Extend", new ClimberExtend(m_climberSubsystem));
+    // SmartDashboard.putData("Climber Pull-Up", new ClimberPullUp(m_climberSubsystem));
+    // SmartDashboard.putData("Climber Shift", new ClimberShift(m_climberSubsystem));
+    // SmartDashboard.putData("Climber Pull-In", new ClimberPullIn(m_climberSubsystem));
+    // SmartDashboard.putData("Lock Climber", new ClimberLock(m_climberSubsystem));
+    // SmartDashboard.putData("Unlock Climber", new ClimberUnlock(m_climberSubsystem));
+    // SmartDashboard.putData("Pivot Down", new ClimberPivotDown(m_climberSubsystem));
+    // SmartDashboard.putData("Pivot Up", new ClimberPivotUp(m_climberSubsystem));
+    // SmartDashboard.putData("Climber to Home", new ClimberToHome(m_climberSubsystem));
   }
 
   private static double deadband(double value, double deadband) {

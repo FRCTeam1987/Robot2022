@@ -30,7 +30,7 @@ public class CollectBalls extends SequentialCommandGroup {
       new DeployCollector(m_collector),
       new RunStorageIn(m_storage),
       new WaitUntilBallsStored(m_storage, desiredBallCount),
-      new WaitCommand(0.125)
+      new WaitCommand(0.2)
     );
   }
 

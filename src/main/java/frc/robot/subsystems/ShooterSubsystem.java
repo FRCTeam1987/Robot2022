@@ -22,8 +22,8 @@ import frc.robot.lib.LinearServo;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-  private final LinearServo m_linearServoLeft = new LinearServo(LINEAR_ACTUATOR_LEFT_ID, 100, 32);
-  private final LinearServo m_linearServoRight = new LinearServo(LINEAR_ACTUATOR_RIGHT_ID, 100, 32);
+  private final LinearServo m_linearServoLeft = new LinearServo(LINEAR_ACTUATOR_LEFT_ID, 100, 25);
+  private final LinearServo m_linearServoRight = new LinearServo(LINEAR_ACTUATOR_RIGHT_ID, 100, 25);
   private final WPI_TalonFX m_motorRight = new WPI_TalonFX(MOTOR_LEADER_CAN_ID, Constants.CANIVORE_CAN_BUS);
   private final WPI_TalonFX m_motorLeft = new WPI_TalonFX(MOTOR_FOLLOWER_CAN_ID, Constants.CANIVORE_CAN_BUS);
 
@@ -54,6 +54,8 @@ public class ShooterSubsystem extends SubsystemBase {
     m_motorLeft.config_kI(0, 0.0);
     m_motorLeft.config_kD(0, 0.0); //d =  dampening for the oscillation
   
+    setHoodPosition(50);
+
     SmartDashboard.putNumber("Hood-Pos", 35);
     SmartDashboard.putNumber("RPM-Set", 2500);
 
@@ -114,7 +116,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // System.out.println("hood position " + getHoodPosition());
-    SmartDashboard.putNumber("RPM-Actual", getRPM());
-    SmartDashboard.putNumber("rpm-error", getRpmSetpointError());
+    // SmartDashboard.putNumber("RPM-Actual", getRPM());
+    // SmartDashboard.putNumber("rpm-error", getRpmSetpointError());
   }
 }

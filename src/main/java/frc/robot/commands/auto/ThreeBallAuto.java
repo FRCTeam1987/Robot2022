@@ -4,6 +4,7 @@
 
 package frc.robot.commands.auto;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -31,15 +32,30 @@ public class ThreeBallAuto extends SequentialCommandGroup {
         drivetrainSubsystem.followPathCommand(true, "3BallAutoPart1"),
         new CollectBalls(collectorSubsystem, storageSubsystem, 2) //FIXME ensure it does not hit the wall and then uncomment me.
       ),
-      new Shoot(shooterSubsystem, storageSubsystem, drivetrainSubsystem, limelight, () -> 2600, () -> 35).withTimeout(3),
+      new Shoot(
+        shooterSubsystem,
+        storageSubsystem,
+        drivetrainSubsystem,
+        limelight,
+        () -> shooterSubsystem.getRPMFromLimelight(),//m_limelight.getYAxis() < -5 ? 3075 : 2500,
+        () -> limelight.getYAxis() > -7.5 ? 50 : 65
+      ),
       new ParallelCommandGroup(
-        drivetrainSubsystem.followPathCommand(false, "3BallAutoPart2B"),
+        drivetrainSubsystem.followPathCommand(false, "3BallAutoPart2"),
         new SequentialCommandGroup(
           new WaitCommand(0.25), 
           new CollectBalls(collectorSubsystem, storageSubsystem, 1)
         )
       ),
-      new Shoot(shooterSubsystem, storageSubsystem, drivetrainSubsystem, limelight, () -> 2600, () -> 35).withTimeout(3)
+      // new InstantCommand(() -> storageSubsystem.runForIntake(), storageSubsystem),
+      new Shoot(
+        shooterSubsystem,
+        storageSubsystem,
+        drivetrainSubsystem,
+        limelight,
+        () -> shooterSubsystem.getRPMFromLimelight(),//m_limelight.getYAxis() < -5 ? 3075 : 2500,
+        () -> limelight.getYAxis() > -7.5 ? 50 : 65
+      )
     );
   }
 }

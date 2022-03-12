@@ -26,14 +26,21 @@ public class FiveBallAuto extends SequentialCommandGroup {
     addCommands(
       new ThreeBallAuto(drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, limelight),
       new ParallelCommandGroup(
-        drivetrainSubsystem.followPathCommand(false, "5BallAutoPart3B"),
+        drivetrainSubsystem.followPathCommand(false, "5BallAutoPart3"),
         new SequentialCommandGroup(
           new WaitCommand(0.75), 
           new CollectBalls(collectorSubsystem, storageSubsystem, 2)
         )
       ),
-      drivetrainSubsystem.followPathCommand(false, "5BallAutoPart4B"),
-      new Shoot(shooterSubsystem, storageSubsystem, drivetrainSubsystem, limelight, () -> 2500, () -> 35).withTimeout(3)
+      drivetrainSubsystem.followPathCommand(false, "5BallAutoPart4"),
+      new Shoot(
+        shooterSubsystem,
+        storageSubsystem,
+        drivetrainSubsystem,
+        limelight,
+        () -> shooterSubsystem.getRPMFromLimelight(),//m_limelight.getYAxis() < -5 ? 3075 : 2500,
+        () -> limelight.getYAxis() > -7.5 ? 50 : 65
+      )
     );
   }
 }

@@ -23,6 +23,7 @@ public class LinearServo extends Servo {
     setBounds(2.0, 1.8, 1.5, 1.2, 1.0);
     m_length = length;
     m_speed = speed;
+    curPos = 50;  // TODO add initial position parameter overload
   }
 
   /**

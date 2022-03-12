@@ -149,7 +149,7 @@ public final class Constants {
 
       public static class TreeMapValues{
         public static class Close {
-            public final static double ty1 = 0.5; //TODO insert correect ty values.
+            public final static double ty1 = 14.39; //TODO insert correect ty values.
             public final static double ty2 = -15.65; //TODO insert correect ty values.
 
             public final static double rpm1 = 2500; //TODO insert correect rpm values.
@@ -161,8 +161,25 @@ public final class Constants {
     }
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kDistanceToShooter = new InterpolatingTreeMap<>();
     static {
-      kDistanceToShooter.put(new InterpolatingDouble(2.95), new InterpolatingDouble(3550.0));  // hood config far
-      kDistanceToShooter.put(new InterpolatingDouble(3.05), new InterpolatingDouble(3525.0));  // hood config far
+      // kDistanceToShooter.put(new InterpolatingDouble(14.39), new InterpolatingDouble(2150.0));  // hood config far
+      // kDistanceToShooter.put(new InterpolatingDouble(8.05), new InterpolatingDouble(2400.0));  // hood config far
+      // kDistanceToShooter.put(new InterpolatingDouble(3.22), new InterpolatingDouble(2900.0));  // hood config far
+      // kDistanceToShooter.put(new InterpolatingDouble(0.5), new InterpolatingDouble(2500.0));  // hood config far
+      // kDistanceToShooter.put(new InterpolatingDouble(-1.45), new InterpolatingDouble(2000.0));  // hood config far
+      // kDistanceToShooter.put(new InterpolatingDouble(-8.6), new InterpolatingDouble(3270.0));  // hood config far
+      kDistanceToShooter.put(new InterpolatingDouble(2.75), new InterpolatingDouble(2300.0));
+      kDistanceToShooter.put(new InterpolatingDouble(0.3), new InterpolatingDouble(2400.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-1.5), new InterpolatingDouble(2450.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-2.88), new InterpolatingDouble(2500.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-4.17), new InterpolatingDouble(2550.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-5.51), new InterpolatingDouble(2600.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-7.03), new InterpolatingDouble(2675.0));
+      // above hood: 50
+      // below hood: 65
+      kDistanceToShooter.put(new InterpolatingDouble(-8.0), new InterpolatingDouble(2600.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-8.45), new InterpolatingDouble(2650.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-9.35), new InterpolatingDouble(2700.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-11.81), new InterpolatingDouble(2800.0));
   }
     
     }
@@ -188,6 +205,11 @@ public final class Constants {
   public static class Climber {
     public static final int LEFT_CLIMBER_MOTOR = 13;
     public static final int RIGHT_CLIMBER_MOTOR = 14;
+    public static final int CLIMBER_PANCAKE_ONE = 4;
+    public static final int CLIMBER_PANCAKE_TWO = 5;
+    public static final int CLIMBER_PISTON_ONE = 2;
+    public static final int CLIMBER_PISTON_TWO = 3;
+
   }
 
   

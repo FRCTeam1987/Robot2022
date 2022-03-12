@@ -51,7 +51,11 @@ public class SetShooterRpm extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    m_isAtRpm = m_rpmDebouncer.calculate(Util.isWithinTolerance(m_shooter.getRPM(), m_rpmSupplier.getAsDouble(), 50));
+    final double desiredRpm = m_rpmSupplier.getAsDouble();
+    if (desiredRpm == 0.0) {
+      return true;
+    }
+    m_isAtRpm = m_rpmDebouncer.calculate(Util.isWithinTolerance(m_shooter.getRPM(), desiredRpm, 50));
     return m_isAtRpm;
   }
 }
