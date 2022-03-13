@@ -9,8 +9,10 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants;
 import frc.robot.commands.drivetrain.RotateToLimelightAngle;
 import frc.robot.commands.storage.FeedShooterWithRPM;
 import frc.robot.commands.storage.StopStorage;
@@ -38,10 +40,13 @@ public class Shoot extends SequentialCommandGroup {
     m_limelight = limelight;
     
     addCommands(
-      new ConditionalCommand(
-        new InstantCommand(() -> m_storage.runForIntake(), m_storage),
-        new InstantCommand(),
-        () -> m_storage.getBallCount() < 2
+      new ParallelCommandGroup(
+        new ConditionalCommand(
+          new InstantCommand(() -> m_storage.runForIntake(), m_storage),
+          new InstantCommand(),
+          () -> m_storage.getBallCount() == 1
+        ),
+        new InstantCommand(() -> m_shooter.setRPM(Constants.Shooter.PRE_SHOOT_RPM), m_shooter)
       ),
       new RotateToLimelightAngle(m_drivetrain, m_limelight),
       new SetShooterRpm(m_shooter, rpmSupplier),

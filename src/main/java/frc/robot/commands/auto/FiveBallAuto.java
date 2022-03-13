@@ -4,6 +4,7 @@
 
 package frc.robot.commands.auto;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -20,16 +21,16 @@ import frc.robot.subsystems.StorageSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class FiveBallAuto extends SequentialCommandGroup {
   /** Creates a new FiveBallAuto. */
-  public FiveBallAuto(final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight limelight) {
+  public FiveBallAuto(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight limelight) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ThreeBallAuto(drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, limelight),
+      new ThreeBallAuto(controller, drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, limelight),
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(false, "5BallAutoPart3"),
         new SequentialCommandGroup(
           new WaitCommand(0.75), 
-          new CollectBalls(collectorSubsystem, storageSubsystem, 2)
+          new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2)
         )
       ),
       drivetrainSubsystem.followPathCommand(false, "5BallAutoPart4"),

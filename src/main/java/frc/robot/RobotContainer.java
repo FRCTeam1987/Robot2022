@@ -119,7 +119,7 @@ public class RobotContainer {
     new Button(controller::getBackButtonPressed)
       .whenPressed(new InstantCommand(() -> { m_drivetrain.zeroGyroscope(); }));
     new Button(controller::getRightBumperPressed)
-      .whenPressed(new CollectBalls(m_collector, m_storage, 2));
+      .whenPressed(new CollectBalls(controller, m_collector, m_storage, 2));
     new Button(controller::getRightBumperReleased)
       .whenReleased(new StowCollector(m_collector)
         .andThen(new StopStorage(m_storage)));
@@ -176,7 +176,7 @@ public class RobotContainer {
 
   private void configureShuffleboard() {
     m_autoChooser.setDefaultOption("Do Nothing", new InstantCommand());
-    m_autoChooser.addOption("5 Ball Auto", new FiveBallAuto(m_drivetrain, m_collector, m_storage, m_shooter, m_limelight));
+    m_autoChooser.addOption("5 Ball Auto", new FiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight));
     m_autoChooser.addOption("Swerve Char - Forwards", new SwerveCharacterizationFF(m_drivetrain, true, false));
     m_autoChooser.addOption("Swerve Char - Reverse", new SwerveCharacterizationFF(m_drivetrain, false, false));
     m_autoChooser.addOption("Swerve Char - Rotate", new SwerveCharacterizationFF(m_drivetrain, true, true));

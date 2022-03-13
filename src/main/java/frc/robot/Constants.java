@@ -138,6 +138,8 @@ public final class Constants {
     public static final int MOTOR_LEADER_CAN_ID = 12;
     public static final int MOTOR_FOLLOWER_PDH_ID = 14;
     public static final int MOTOR_FOLLOWER_CAN_ID = 10;
+
+    public static final double PRE_SHOOT_RPM = 2500;
   }
 
   public static class LimeLight {
