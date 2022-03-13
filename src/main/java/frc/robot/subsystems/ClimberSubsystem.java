@@ -26,6 +26,7 @@ public class ClimberSubsystem extends SubsystemBase {
   private final TalonFX m_rightMotor;
   private final DoubleSolenoid m_armPivot;
   private final DoubleSolenoid m_armLock;
+  private boolean m_isLocked;
 
   
   /** Creates a new ClimberSubsystem. */
@@ -34,6 +35,7 @@ public class ClimberSubsystem extends SubsystemBase {
     m_rightMotor = new TalonFX(RIGHT_CLIMBER_MOTOR, Constants.CANIVORE_CAN_BUS);
     m_armLock = new DoubleSolenoid(PneumaticsModuleType.REVPH, CLIMBER_PANCAKE_ONE, CLIMBER_PANCAKE_TWO);
     m_armPivot = new DoubleSolenoid(PneumaticsModuleType.REVPH, CLIMBER_PISTON_ONE, CLIMBER_PISTON_TWO);
+
 
     //Right motor should be inverted
 
@@ -45,13 +47,17 @@ public class ClimberSubsystem extends SubsystemBase {
     m_rightMotor.setNeutralMode(NeutralMode.Brake);
     m_leftMotor.setNeutralMode(NeutralMode.Brake);
 
+    lock();
+
   }
 
   public void lock() {
+    m_isLocked = true;
     m_armLock.set(Value.kForward); 
   }
 
   public void unlock() {
+    m_isLocked = false;
     m_armLock.set(Value.kReverse);
   }
 
@@ -64,18 +70,30 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void climberRightExtend() {
+    if (isLocked() == true) {
+      return;
+    }
     m_rightMotor.set(TalonFXControlMode.PercentOutput, 0.35);
   }
 
   public void climberLeftExtend() {
+    if (isLocked() == true) {
+      return;
+    }
     m_leftMotor.set(TalonFXControlMode.PercentOutput, 0.35);
   }
 
   public void climberRightRetract() {
+    if (isLocked() == true) {
+      return;
+    }
     m_rightMotor.set(TalonFXControlMode.PercentOutput, -0.35);
   }
 
     public void climberLeftRetract() {
+      if (isLocked() == true) {
+        return;
+      }
       m_leftMotor.set(TalonFXControlMode.PercentOutput, -0.35);
     }
 
@@ -90,7 +108,9 @@ public class ClimberSubsystem extends SubsystemBase {
   public void climberLeftStop() {
     m_leftMotor.set(TalonFXControlMode.PercentOutput, 0);
   }
-
+  public boolean isLocked() {
+      return m_isLocked;
+  }
   private double getMotorPosition(TalonFX motor) {
     return Util.ticksToDistance(motor.getSelectedSensorPosition(), 2048, 1.0625*Math.PI, 15.34);
   }
@@ -103,9 +123,20 @@ public class ClimberSubsystem extends SubsystemBase {
     return getMotorPosition(m_rightMotor);
   }
 
+  public void coastBothMotors() {
+    m_rightMotor.setNeutralMode(NeutralMode.Coast);
+    m_leftMotor.setNeutralMode(NeutralMode.Coast);
+  }
+
+  public void brakeBothMotors() {
+    m_rightMotor.setNeutralMode(NeutralMode.Brake);
+    m_leftMotor.setNeutralMode(NeutralMode.Brake);
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Left Arm Pos", getLeftPosition());
     SmartDashboard.putNumber("Right Arm Pos", getRightPosition());
+    SmartDashboard.putBoolean("Is Locked?", isLocked());
   }
 }

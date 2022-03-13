@@ -116,7 +116,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // System.out.println("hood position " + getHoodPosition());
-    // SmartDashboard.putNumber("RPM-Actual", getRPM());
-    // SmartDashboard.putNumber("rpm-error", getRpmSetpointError());
+    SmartDashboard.putNumber("RPM-Actual", getRPM());
+    SmartDashboard.putNumber("rpm-error", getRpmSetpointError());
   }
 }

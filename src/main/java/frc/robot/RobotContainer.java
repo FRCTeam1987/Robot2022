@@ -4,8 +4,11 @@
 
 package frc.robot;
 
+import java.util.concurrent.locks.Condition;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -74,7 +77,7 @@ public class RobotContainer {
   private final StorageSubsystem m_storage = new StorageSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final LimeLight m_limelight = new LimeLight();
-  // private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
+  private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 
   private final XboxController controller = new XboxController(0);
   private final XboxController coController = new XboxController(1);
@@ -126,14 +129,7 @@ public class RobotContainer {
     new Button(controller::getLeftBumper)
       .whileHeld(  
         new ConditionalCommand(
-        new Shoot(
-          m_shooter,
-          m_storage,
-          m_drivetrain,
-          m_limelight,
-          () -> m_shooter.getRPMFromLimelight(),//m_limelight.getYAxis() < -5 ? 3075 : 2500,
-          () -> m_limelight.getYAxis() > -7.5 ? 50 : 65
-        ),
+          shootCommandHelper(),
         // new SetRumble(controller, RumbleValue.On).withTimeout(0.5).andThen(new SetRumble(controller, RumbleValue.Off)),
         new ParallelCommandGroup(
           new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 1)), 
@@ -145,22 +141,19 @@ public class RobotContainer {
           new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 0))
         ));
 
-    // new POVButton(controller, 180)
-    //   .whenPressed(new InstantCommand(() -> {
-    //     m_climberSubsystem.climberRightRetract();
-    //     m_climberSubsystem.climberLeftRetract();
-    //   }, m_climberSubsystem))
-    //   .whenReleased(new InstantCommand(() -> m_climberSubsystem.climberStop(), m_climberSubsystem));
+    new POVButton(controller, 180)
+      .whenPressed(new InstantCommand(() -> {
+        m_climberSubsystem.climberRightRetract();
+        m_climberSubsystem.climberLeftRetract();
+      }, m_climberSubsystem))
+      .whenReleased(new InstantCommand(() -> m_climberSubsystem.climberStop(), m_climberSubsystem));
 
-    // new POVButton(controller, 0)
-    //   .whenPressed(new InstantCommand(() -> {
-    //     m_climberSubsystem.climberRightExtend();
-    //     m_climberSubsystem.climberLeftExtend();
-    //   }, m_climberSubsystem))
-    //   .whenReleased(new InstantCommand(() -> m_climberSubsystem.climberStop(), m_climberSubsystem));
-
-
-//      new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight));
+    new POVButton(controller, 0)
+      .whenPressed(new InstantCommand(() -> {
+        m_climberSubsystem.climberRightExtend();
+        m_climberSubsystem.climberLeftExtend();
+      }, m_climberSubsystem))
+      .whenReleased(new InstantCommand(() -> m_climberSubsystem.climberStop(), m_climberSubsystem));
 
     new Button(coController::getYButton)
       .whenPressed(new EjectOneBallTop(m_storage, m_shooter));
@@ -176,7 +169,7 @@ public class RobotContainer {
 
   private void configureShuffleboard() {
     m_autoChooser.setDefaultOption("Do Nothing", new InstantCommand());
-    m_autoChooser.addOption("5 Ball Auto", new FiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight));
+    m_autoChooser.addOption("5 Ball Auto", new FiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("Swerve Char - Forwards", new SwerveCharacterizationFF(m_drivetrain, true, false));
     m_autoChooser.addOption("Swerve Char - Reverse", new SwerveCharacterizationFF(m_drivetrain, false, false));
     m_autoChooser.addOption("Swerve Char - Rotate", new SwerveCharacterizationFF(m_drivetrain, true, true));
@@ -198,15 +191,17 @@ public class RobotContainer {
     SmartDashboard.putData("Reset Ball Count", new ZeroBallCount(m_storage));
     SmartDashboard.putData("Rotate-45", new RotateToAngle(m_drivetrain, () -> Rotation2d.fromDegrees(45).getRadians()));
     SmartDashboard.putData("Rotate-LL", new RotateToLimelightAngle(m_drivetrain, m_limelight));
-    // SmartDashboard.putData("Climber Extend", new ClimberExtend(m_climberSubsystem));
-    // SmartDashboard.putData("Climber Pull-Up", new ClimberPullUp(m_climberSubsystem));
-    // SmartDashboard.putData("Climber Shift", new ClimberShift(m_climberSubsystem));
-    // SmartDashboard.putData("Climber Pull-In", new ClimberPullIn(m_climberSubsystem));
-    // SmartDashboard.putData("Lock Climber", new ClimberLock(m_climberSubsystem));
-    // SmartDashboard.putData("Unlock Climber", new ClimberUnlock(m_climberSubsystem));
-    // SmartDashboard.putData("Pivot Down", new ClimberPivotDown(m_climberSubsystem));
-    // SmartDashboard.putData("Pivot Up", new ClimberPivotUp(m_climberSubsystem));
-    // SmartDashboard.putData("Climber to Home", new ClimberToHome(m_climberSubsystem));
+    SmartDashboard.putData("Climber Extend", new ClimberExtend(m_climberSubsystem));
+    SmartDashboard.putData("Climber Pull-Up", new ClimberPullUp(m_climberSubsystem));
+    SmartDashboard.putData("Climber Shift", new ClimberShift(m_climberSubsystem));
+    SmartDashboard.putData("Climber Pull-In", new ClimberPullIn(m_climberSubsystem));
+    SmartDashboard.putData("Lock Climber", new ClimberLock(m_climberSubsystem));
+    SmartDashboard.putData("Unlock Climber", new ClimberUnlock(m_climberSubsystem));
+    SmartDashboard.putData("Pivot Down", new ClimberPivotDown(m_climberSubsystem));
+    SmartDashboard.putData("Pivot Up", new ClimberPivotUp(m_climberSubsystem));
+    SmartDashboard.putData("Climber to Home", new ClimberToHome(m_climberSubsystem));
+    SmartDashboard.putData("Coast Climber", new InstantCommand(() -> m_climberSubsystem.coastBothMotors()));
+    SmartDashboard.putData("Brake Climber", new InstantCommand(() -> m_climberSubsystem.brakeBothMotors()));
   }
 
   private static double deadband(double value, double deadband) {
@@ -229,6 +224,42 @@ public class RobotContainer {
       value = Math.copySign(value * value, value);
 
       return value;
+  }
+
+  public Command shootCommandHelper() {
+    return new ConditionalCommand(
+      new Shoot(
+        m_shooter,
+        m_storage,
+        m_drivetrain,
+        m_limelight,
+        () -> m_shooter.getRPMFromLimelight(),//m_limelight.getYAxis() < -5 ? 3075 : 2500,
+        () -> m_limelight.getYAxis() > -7.5 ? 50 : 65
+      ),
+      new ConditionalCommand(
+        new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 1))
+          .andThen(new WaitCommand(0.25))
+          .andThen(new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 0))), 
+          new InstantCommand(), 
+          () -> DriverStation.isAutonomousEnabled() == false), 
+      () -> m_limelight.getYAxis() > -12 && m_limelight.getYAxis() < 4);
+    // if (m_limelight.getYAxis() > -12 && m_limelight.getYAxis() < 4) {
+      // return new Shoot(
+      //   m_shooter,
+      //   m_storage,
+      //   m_drivetrain,
+      //   m_limelight,
+      //   () -> m_shooter.getRPMFromLimelight(),//m_limelight.getYAxis() < -5 ? 3075 : 2500,
+      //   () -> m_limelight.getYAxis() > -7.5 ? 50 : 65
+      // );
+    // } else if (DriverStation.isAutonomousEnabled() == false) {
+    //     return new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 1))
+    //       .andThen(new WaitCommand(0.25))
+    //       .andThen(new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 0)));
+    // } else {
+    //   return new InstantCommand();
+    // }
+    
   }
 
 

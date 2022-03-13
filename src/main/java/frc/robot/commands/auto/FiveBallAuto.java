@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.RobotContainer;
 import frc.robot.commands.CollectBalls;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.subsystems.CollectorSubsystem;
@@ -21,11 +22,11 @@ import frc.robot.subsystems.StorageSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class FiveBallAuto extends SequentialCommandGroup {
   /** Creates a new FiveBallAuto. */
-  public FiveBallAuto(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight limelight) {
+  public FiveBallAuto(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight limelight, final RobotContainer robotContainer) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ThreeBallAuto(controller, drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, limelight),
+      new ThreeBallAuto(controller, drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, limelight, robotContainer),
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(false, "5BallAutoPart3"),
         new SequentialCommandGroup(
@@ -34,14 +35,7 @@ public class FiveBallAuto extends SequentialCommandGroup {
         )
       ),
       drivetrainSubsystem.followPathCommand(false, "5BallAutoPart4"),
-      new Shoot(
-        shooterSubsystem,
-        storageSubsystem,
-        drivetrainSubsystem,
-        limelight,
-        () -> shooterSubsystem.getRPMFromLimelight(),//m_limelight.getYAxis() < -5 ? 3075 : 2500,
-        () -> limelight.getYAxis() > -7.5 ? 50 : 65
-      )
+      robotContainer.shootCommandHelper()
     );
   }
 }

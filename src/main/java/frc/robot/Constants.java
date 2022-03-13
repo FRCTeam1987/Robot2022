@@ -169,7 +169,7 @@ public final class Constants {
       // kDistanceToShooter.put(new InterpolatingDouble(0.5), new InterpolatingDouble(2500.0));  // hood config far
       // kDistanceToShooter.put(new InterpolatingDouble(-1.45), new InterpolatingDouble(2000.0));  // hood config far
       // kDistanceToShooter.put(new InterpolatingDouble(-8.6), new InterpolatingDouble(3270.0));  // hood config far
-      kDistanceToShooter.put(new InterpolatingDouble(2.75), new InterpolatingDouble(2300.0));
+      kDistanceToShooter.put(new InterpolatingDouble(2.75), new InterpolatingDouble(2325.0));
       kDistanceToShooter.put(new InterpolatingDouble(0.3), new InterpolatingDouble(2400.0));
       kDistanceToShooter.put(new InterpolatingDouble(-1.5), new InterpolatingDouble(2450.0));
       kDistanceToShooter.put(new InterpolatingDouble(-2.88), new InterpolatingDouble(2500.0));

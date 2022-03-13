@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -55,7 +56,10 @@ public class CollectBalls extends SequentialCommandGroup {
       m_collector.stow();
       m_collector.stop();
       m_storage.stop();
-      m_controller.setRumble(RumbleType.kLeftRumble, 0);
-      m_controller.setRumble(RumbleType.kRightRumble, 0);
+
+      if (DriverStation.isAutonomousEnabled() == false) {
+        m_controller.setRumble(RumbleType.kLeftRumble, 0);
+        m_controller.setRumble(RumbleType.kRightRumble, 0);
+      }
   }
 }
