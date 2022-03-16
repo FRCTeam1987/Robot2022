@@ -8,8 +8,10 @@ import frc.robot.Constants;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class DriveCommand extends CommandBase {
@@ -17,6 +19,7 @@ public class DriveCommand extends CommandBase {
     private final DoubleSupplier translationXSupplier;
     private final DoubleSupplier translationYSupplier;
     private final DoubleSupplier rotationSupplier;
+    private final BooleanSupplier isFieldRelativeSupplier;
     private final SlewRateLimiter m_translationXLimiter;
     private final SlewRateLimiter m_translationYLimiter;
     private final SlewRateLimiter m_rotationLimiter;
@@ -25,12 +28,14 @@ public class DriveCommand extends CommandBase {
             DrivetrainSubsystem drivetrain,
             DoubleSupplier translationXSupplier,
             DoubleSupplier translationYSupplier,
-            DoubleSupplier rotationSupplier
+            DoubleSupplier rotationSupplier,
+            BooleanSupplier isFieldRelativeSupplier
     ) {
         this.drivetrain = drivetrain;
         this.translationXSupplier = translationXSupplier;
         this.translationYSupplier = translationYSupplier;
         this.rotationSupplier = rotationSupplier;
+        this.isFieldRelativeSupplier = isFieldRelativeSupplier;
         m_translationXLimiter = new SlewRateLimiter(4);
         m_translationYLimiter = new SlewRateLimiter(4);
         m_rotationLimiter = new SlewRateLimiter(4);
@@ -46,14 +51,22 @@ public class DriveCommand extends CommandBase {
         double translationYPercent = m_translationYLimiter.calculate(translationYSupplier.getAsDouble());
         double rotationPercent = m_rotationLimiter.calculate(rotationSupplier.getAsDouble());
 
-        drivetrain.drive(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                        translationXPercent * Constants.Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-                        translationYPercent * Constants.Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-                        rotationPercent * Constants.Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-                        drivetrain.getAdjustedHeading()
-                )
-        );
+        if (isFieldRelativeSupplier.getAsBoolean()) {
+            drivetrain.drive(
+                    ChassisSpeeds.fromFieldRelativeSpeeds(
+                            translationXPercent * Constants.Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+                            translationYPercent * Constants.Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+                            rotationPercent * Constants.Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+                            drivetrain.getAdjustedHeading()
+                    )
+            );
+        } else {
+            drivetrain.drive(new ChassisSpeeds(
+                translationXPercent * Constants.Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+                translationYPercent * Constants.Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+                rotationPercent * Constants.Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+            ));
+        }
     }
 
     @Override

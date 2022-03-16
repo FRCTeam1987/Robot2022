@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.ClimberSubsystem;
+import static frc.robot.Constants.Climber.*;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -25,16 +26,16 @@ public class ClimberPullIn extends SequentialCommandGroup {
     m_climber = climberSubsystem;
     addCommands(
       new InstantCommand(() -> climberSubsystem.pivotUp(), climberSubsystem),
-      new WaitCommand(2),
+      new WaitCommand(1.0),
       new ParallelCommandGroup(
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberRightRetract()),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) < 1),
+          new InstantCommand(() -> climberSubsystem.climberRightRetract(0.35)),
+          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) < CLIMBER_LOWER_TOLERANCE),
           new InstantCommand(() -> climberSubsystem.climberRightStop())
         ),
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberLeftRetract()),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) < 1),
+          new InstantCommand(() -> climberSubsystem.climberLeftRetract(0.35)),
+          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) < CLIMBER_LOWER_TOLERANCE),
           new InstantCommand(() -> climberSubsystem.climberLeftStop())
         )
       )

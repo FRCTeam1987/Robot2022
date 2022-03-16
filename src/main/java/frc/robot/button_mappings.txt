@@ -1,0 +1,21 @@
+Driver Controls:
+- A: when pressed, pull up climber on mid rung
+- Back: when pressed, zero heading
+- Bumper Left: while held, shoot
+- Bumper Right: while held, collect
+- DPad Up: while held, manual extend climber
+- DPad Down: while held, manual retract climber
+- Stick Left: translate
+- Stick Right: rotate
+- Trigger Left: while held, robot relative
+- Y: when pressed, raise climber to mid rung
+
+
+Co-Driver Controls:
+- A: when pressed, climber pull in
+- Bumper Left: when pressed, eject ball top
+- Bumper Right: when pressed, eject ball bottom
+- DPad Up: when pressed, set ball count 2
+- DPad Right: when pressed, set ball count 1
+- DPad Down: when pressed, set ball count 0
+- Y: when pressed, climber shift

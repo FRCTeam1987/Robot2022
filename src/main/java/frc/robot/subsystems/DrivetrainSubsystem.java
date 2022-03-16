@@ -55,6 +55,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private final SwerveModule m_frontRightModule;
   private final SwerveModule m_backLeftModule;
   private final SwerveModule m_backRightModule;
+  private double m_startYaw;
 
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
@@ -62,6 +63,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public DrivetrainSubsystem() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+    m_startYaw = 0;
 
     m_frontLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
             // This parameter is optional, but will allow you to see the current state of the module on the dashboard.
@@ -131,6 +133,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_navx.reset();
     setHeadingAdjust(Rotation2d.fromDegrees(m_navx.getCompassHeading()));
     System.out.println("Zeroing gyro: " + m_navx.getCompassHeading());
+  }
+  public void rememberStartingPosition() {
+    m_startYaw = m_navx.getYaw();
+  }
+
+  public void reZeroFromStartingPositon() {
+    setHeadingAdjust(Rotation2d.fromDegrees(m_navx.getCompassHeading() - m_startYaw));
   }
 
   public Rotation2d getHeadingAdjust() {
@@ -205,7 +214,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     ));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     // final Trajectory trajectory = generateTrajectory(waypoints);
-    final PathPlannerTrajectory trajectory = PathPlanner.loadPath(trajectoryFileName, 3.5, 3);
+    final PathPlannerTrajectory trajectory = PathPlanner.loadPath(trajectoryFileName, 4.0, 3.5);
     // double Seconds = 0.0;
     // System.out.println("===== Begin Sampling path =====");
     // while(trajectory.getTotalTimeSeconds() > Seconds) {

@@ -211,6 +211,8 @@ public final class Constants {
     public static final int CLIMBER_PANCAKE_TWO = 5;
     public static final int CLIMBER_PISTON_ONE = 2;
     public static final int CLIMBER_PISTON_TWO = 3;
+    public static final double CLIMBER_LOWER_TOLERANCE = 0.1;
+    public static final double CLIMBER_SPEED = 0.35;
 
   }
 

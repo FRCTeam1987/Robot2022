@@ -25,12 +25,12 @@ public class ClimberToHome extends ParallelCommandGroup {
       new ParallelCommandGroup(
         new SequentialCommandGroup(
           new InstantCommand(() -> climberSubsystem.climberRightRetract()),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) < 1),
+          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) < 0.5),
           new InstantCommand(() -> climberSubsystem.climberRightStop())
         ),
         new SequentialCommandGroup(
           new InstantCommand(() -> climberSubsystem.climberLeftRetract()),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) < 1),
+          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) < 0.5),
           new InstantCommand(() -> climberSubsystem.climberLeftStop())  
         )
       )

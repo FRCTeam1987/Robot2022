@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Constants;
 import frc.robot.subsystems.ClimberSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -26,26 +27,26 @@ public class ClimberShift extends SequentialCommandGroup {
     addCommands(
       new ParallelCommandGroup(
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberRightExtend()),
+          new InstantCommand(() -> climberSubsystem.climberRightExtend(0.65)),
           new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) > 8),
           new InstantCommand(() -> climberSubsystem.climberRightStop())
         ),
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberLeftExtend()),
+          new InstantCommand(() -> climberSubsystem.climberLeftExtend(0.65)),
           new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) > 8),
           new InstantCommand(() -> climberSubsystem.climberLeftStop())
         )
       ),
       new InstantCommand(() -> climberSubsystem.pivotDown(), climberSubsystem),
-      new WaitCommand(2),
+      new WaitCommand(1),
       new ParallelCommandGroup(
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberRightExtend()),
+          new InstantCommand(() -> climberSubsystem.climberRightExtend(0.5)),
           new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) > 27),
           new InstantCommand(() -> climberSubsystem.climberRightStop())
         ),
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberLeftExtend()),
+          new InstantCommand(() -> climberSubsystem.climberLeftExtend(0.5)),
           new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) > 27),
           new InstantCommand(() -> climberSubsystem.climberLeftStop())
         )

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import  static frc.robot.Constants.Climber.*;
 import frc.robot.subsystems.ClimberSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -17,6 +18,7 @@ public class ClimberPullUp extends SequentialCommandGroup {
 
   private final ClimberSubsystem m_climber;
 
+
   /** Creates a new ClimberPullUp. */
   public ClimberPullUp(ClimberSubsystem climberSubsystem) {
     // Add your commands in the addCommands() call, e.g.
@@ -25,13 +27,13 @@ public class ClimberPullUp extends SequentialCommandGroup {
     addCommands(
       new ParallelCommandGroup(
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberRightRetract()),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) < 1),
+          new InstantCommand(() -> climberSubsystem.climberRightRetract(0.55)),
+          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) < CLIMBER_LOWER_TOLERANCE),
           new InstantCommand(() -> climberSubsystem.climberRightStop())
         ),
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberLeftRetract()),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) < 1),
+          new InstantCommand(() -> climberSubsystem.climberLeftRetract(0.55)),
+          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) < CLIMBER_LOWER_TOLERANCE),
           new InstantCommand(() -> climberSubsystem.climberLeftStop())  
         )
       )

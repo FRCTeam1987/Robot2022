@@ -4,6 +4,8 @@
 
 package frc.robot.commands.climber;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -24,16 +26,24 @@ public class ClimberExtend extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     m_climber = climberSubsystem;
     addCommands(
+      // TODO for all climber motion, do nothing if before end game period
+      // make more reusable across all climber movements
+      // for example:
+      // new ConditionalCommand(
+      //   new InstantCommand(),
+      //   new InstantCommand(/* does some climber stuff*/),
+      //   () -> DriverStation.getMatchTime() < 40
+      // ),
       new InstantCommand(() -> climberSubsystem.unlock(), climberSubsystem),
       new WaitCommand(0.5),
       new ParallelCommandGroup(
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberRightExtend()),
+          new InstantCommand(() -> climberSubsystem.climberRightExtend(0.65)),
           new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) > 24),
           new InstantCommand(() -> climberSubsystem.climberRightStop())
         ),
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberLeftExtend()),
+          new InstantCommand(() -> climberSubsystem.climberLeftExtend(0.65)),
           new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) > 24),
           new InstantCommand(() -> climberSubsystem.climberLeftStop())
         )

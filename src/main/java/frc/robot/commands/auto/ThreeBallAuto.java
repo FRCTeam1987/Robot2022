@@ -14,6 +14,7 @@ import frc.robot.commands.CollectBalls;
 import frc.robot.commands.collector.DeployCollector;
 import frc.robot.commands.collector.StowCollector;
 import frc.robot.commands.shooter.Shoot;
+import frc.robot.commands.storage.SetBallCount;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimeLight;
@@ -32,9 +33,9 @@ public class ThreeBallAuto extends SequentialCommandGroup {
     addCommands(
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(true, "3BallAutoPart1"),
-        new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2) //FIXME ensure it does not hit the wall and then uncomment me.
+        new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(2).andThen(new SetBallCount(storageSubsystem, 2))
       ),
-      robotContainer.shootCommandHelper(),
+      robotContainer.shootCommandHelper().withTimeout(3).andThen(new SetBallCount(storageSubsystem, 0)),
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(false, "3BallAutoPart2"),
         new SequentialCommandGroup(
