@@ -4,8 +4,9 @@
 
 package frc.robot;
 
-import java.util.concurrent.locks.Condition;
-
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -19,6 +20,8 @@ import frc.robot.commands.ChangeLimeLightStream;
 import frc.robot.commands.CollectBalls;
 import frc.robot.commands.ChangeLimeLightStream.StreamType;
 import frc.robot.commands.auto.FiveBallAuto;
+import frc.robot.commands.auto.TwoBallAndDAuto;
+import frc.robot.commands.climber.BrakeClimber;
 import frc.robot.commands.climber.ClimberExtend;
 import frc.robot.commands.climber.ClimberLock;
 import frc.robot.commands.climber.ClimberPivotDown;
@@ -28,18 +31,17 @@ import frc.robot.commands.climber.ClimberPullUp;
 import frc.robot.commands.climber.ClimberShift;
 import frc.robot.commands.climber.ClimberToHome;
 import frc.robot.commands.climber.ClimberUnlock;
+import frc.robot.commands.climber.CoastClimber;
+import frc.robot.commands.climber.ZeroClimber;
 import frc.robot.commands.collector.DeployCollector;
 import frc.robot.commands.collector.StowCollector;
 import frc.robot.commands.drivetrain.DriveCommand;
 import frc.robot.commands.drivetrain.RotateToAngle;
 import frc.robot.commands.drivetrain.RotateToLimelightAngle;
 import frc.robot.commands.drivetrain.SwerveCharacterizationFF;
-import frc.robot.commands.oi.SetRumble;
-import frc.robot.commands.oi.SetRumble.RumbleValue;
 import frc.robot.commands.shooter.EjectOneBallBottom;
 import frc.robot.commands.shooter.EjectOneBallTop;
 import frc.robot.commands.shooter.SetHoodPosition;
-import frc.robot.commands.shooter.SetShooterRpm;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.storage.FeedShooter;
 import frc.robot.commands.storage.RunStorageIn;
@@ -47,7 +49,6 @@ import frc.robot.commands.storage.RunStorageOut;
 import frc.robot.commands.storage.SetBallCount;
 import frc.robot.commands.storage.StopStorage;
 import frc.robot.commands.storage.ZeroBallCount;
-import frc.robot.lib.Limelight;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -71,7 +72,6 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Compressor m_compressor = new Compressor(PneumaticsModuleType.REVPH);
-  // private final UsbCamera m_camera = CameraServer.startAutomaticCapture();
   private final DrivetrainSubsystem m_drivetrain = new DrivetrainSubsystem();
   private final CollectorSubsystem m_collector = new CollectorSubsystem();
   private final StorageSubsystem m_storage = new StorageSubsystem();
@@ -83,33 +83,32 @@ public class RobotContainer {
   private final XboxController coController = new XboxController(1);
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<Command>();
 
-  // private final Thread m_visionThread = new Thread(() -> {
-  //   final UsbCamera camera = CameraServer.startAutomaticCapture();
-  //   camera.setResolution(320, 240);
-  //   camera.setFPS(30);
-  // });
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
     // drivetrain.register();
     // collector.register();
-    // m_camera.setResolution(320, 240);
-    // m_camera.setFPS(30);
-
-    // m_visionThread.setDaemon(true);
-    // m_visionThread.start();
 
     m_drivetrain.setDefaultCommand(new DriveCommand(
             m_drivetrain,
             () -> -modifyAxis(controller.getLeftY()), // Axes are flipped here on purpose
             () -> -modifyAxis(controller.getLeftX()),
-            () -> -modifyAxis(controller.getRightX())
+            () -> -modifyAxis(controller.getRightX()),
+            // () -> !controller.getLeftStickButton()  // DRIVER MAP TO PREFERRENCE
+            () -> controller.getLeftTriggerAxis() < 0.9  // DRIVER MAP TO PREFERRENCE
     ));
 
     configureButtonBindings();
     configureShuffleboard();
     m_compressor.enableAnalog(100, 120);
+  }
+
+  public void rememberStartingPosition() {
+    m_drivetrain.rememberStartingPosition();
+  }
+
+  public void reZeroFromStartingPositon() {
+    m_drivetrain.reZeroFromStartingPositon();
   }
 
   /**
@@ -155,9 +154,9 @@ public class RobotContainer {
       }, m_climberSubsystem))
       .whenReleased(new InstantCommand(() -> m_climberSubsystem.climberStop(), m_climberSubsystem));
 
-    new Button(coController::getYButton)
+    new Button(coController::getLeftBumper)
       .whenPressed(new EjectOneBallTop(m_storage, m_shooter));
-    new Button(coController::getAButton)
+    new Button(coController::getRightBumper)
       .whenPressed(new EjectOneBallBottom(m_storage, m_collector));
     new POVButton(coController, 0)
       .whenPressed(new SetBallCount(m_storage, 2));
@@ -165,14 +164,24 @@ public class RobotContainer {
       .whenPressed(new SetBallCount(m_storage, 1));
     new POVButton(coController, 180)
       .whenPressed(new SetBallCount(m_storage, 0));
+
+    new Button(controller::getYButton)
+      .whenPressed(new ClimberExtend(m_climberSubsystem));
+    new Button(controller::getAButton)
+      .whenPressed(new ClimberPullUp(m_climberSubsystem));
+    new Button(coController::getYButton)
+      .whenPressed(new ClimberShift(m_climberSubsystem));
+    new Button(coController::getAButton)
+      .whenPressed(new ClimberPullIn(m_climberSubsystem));
   };
 
   private void configureShuffleboard() {
     m_autoChooser.setDefaultOption("Do Nothing", new InstantCommand());
     m_autoChooser.addOption("5 Ball Auto", new FiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    m_autoChooser.addOption("Swerve Char - Forwards", new SwerveCharacterizationFF(m_drivetrain, true, false));
-    m_autoChooser.addOption("Swerve Char - Reverse", new SwerveCharacterizationFF(m_drivetrain, false, false));
-    m_autoChooser.addOption("Swerve Char - Rotate", new SwerveCharacterizationFF(m_drivetrain, true, true));
+    m_autoChooser.addOption("2 Ball & D Auto", new TwoBallAndDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    // m_autoChooser.addOption("Swerve Char - Forwards", new SwerveCharacterizationFF(m_drivetrain, true, false));
+    // m_autoChooser.addOption("Swerve Char - Reverse", new SwerveCharacterizationFF(m_drivetrain, false, false));
+    // m_autoChooser.addOption("Swerve Char - Rotate", new SwerveCharacterizationFF(m_drivetrain, true, true));
     SmartDashboard.putData(m_autoChooser);
 
     SmartDashboard.putData("Collector-Deploy", new DeployCollector(m_collector));
@@ -200,8 +209,9 @@ public class RobotContainer {
     SmartDashboard.putData("Pivot Down", new ClimberPivotDown(m_climberSubsystem));
     SmartDashboard.putData("Pivot Up", new ClimberPivotUp(m_climberSubsystem));
     SmartDashboard.putData("Climber to Home", new ClimberToHome(m_climberSubsystem));
-    SmartDashboard.putData("Coast Climber", new InstantCommand(() -> m_climberSubsystem.coastBothMotors()));
-    SmartDashboard.putData("Brake Climber", new InstantCommand(() -> m_climberSubsystem.brakeBothMotors()));
+    SmartDashboard.putData("Coast Climber", new CoastClimber(m_climberSubsystem));
+    SmartDashboard.putData("Brake Climber", new BrakeClimber(m_climberSubsystem));
+    SmartDashboard.putData("Zero Climber", new ZeroClimber(m_climberSubsystem));
   }
 
   private static double deadband(double value, double deadband) {

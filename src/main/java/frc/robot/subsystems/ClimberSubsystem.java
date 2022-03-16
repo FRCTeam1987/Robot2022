@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import frc.robot.Constants;
 import frc.robot.Util;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,19 +37,21 @@ public class ClimberSubsystem extends SubsystemBase {
     m_armLock = new DoubleSolenoid(PneumaticsModuleType.REVPH, CLIMBER_PANCAKE_ONE, CLIMBER_PANCAKE_TWO);
     m_armPivot = new DoubleSolenoid(PneumaticsModuleType.REVPH, CLIMBER_PISTON_ONE, CLIMBER_PISTON_TWO);
 
-
     //Right motor should be inverted
 
     m_leftMotor.setInverted(InvertType.InvertMotorOutput);
     m_rightMotor.setInverted(InvertType.InvertMotorOutput);
     m_rightMotor.setSelectedSensorPosition(0);
     m_leftMotor.setSelectedSensorPosition(0);
+    m_leftMotor.configVoltageCompSaturation(12.0);
+    m_leftMotor.enableVoltageCompensation(true);
+    m_rightMotor.configVoltageCompSaturation(12.0);
+    m_rightMotor.enableVoltageCompensation(true);
 
     m_rightMotor.setNeutralMode(NeutralMode.Brake);
     m_leftMotor.setNeutralMode(NeutralMode.Brake);
 
     lock();
-
   }
 
   public void lock() {
@@ -69,33 +72,54 @@ public class ClimberSubsystem extends SubsystemBase {
     m_armPivot.set(Value.kReverse);
   }
 
+  public void zeroClimber() {
+    m_rightMotor.setSelectedSensorPosition(0);
+    m_leftMotor.setSelectedSensorPosition(0);
+  }
+
   public void climberRightExtend() {
+    climberRightExtend(CLIMBER_SPEED);
+  }
+  
+  public void climberRightExtend(final double overideSpeed) {
     if (isLocked() == true) {
       return;
     }
-    m_rightMotor.set(TalonFXControlMode.PercentOutput, 0.35);
+    m_rightMotor.set(TalonFXControlMode.PercentOutput, overideSpeed);
   }
 
   public void climberLeftExtend() {
+    climberLeftExtend(CLIMBER_SPEED);
+  }
+
+  public void climberLeftExtend(final double overideSpeed) {
     if (isLocked() == true) {
       return;
     }
-    m_leftMotor.set(TalonFXControlMode.PercentOutput, 0.35);
+    m_leftMotor.set(TalonFXControlMode.PercentOutput, overideSpeed);
   }
 
   public void climberRightRetract() {
+    climberRightRetract(CLIMBER_SPEED);
+  }
+
+  public void climberRightRetract(final double overideSpeed) {
     if (isLocked() == true) {
       return;
     }
-    m_rightMotor.set(TalonFXControlMode.PercentOutput, -0.35);
+    m_rightMotor.set(TalonFXControlMode.PercentOutput, -overideSpeed);
   }
 
-    public void climberLeftRetract() {
-      if (isLocked() == true) {
-        return;
-      }
-      m_leftMotor.set(TalonFXControlMode.PercentOutput, -0.35);
+  public void climberLeftRetract() {
+    climberLeftRetract(CLIMBER_SPEED);
+  }
+
+  public void climberLeftRetract(final double overideSpeed) {
+    if (isLocked() == true) {
+      return;
     }
+    m_leftMotor.set(TalonFXControlMode.PercentOutput, -overideSpeed);
+  }
 
   public void climberStop() {
     climberRightStop();
@@ -118,7 +142,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public double getLeftPosition() {
     return getMotorPosition(m_leftMotor);
   }
-
+  
   public double getRightPosition() {
     return getMotorPosition(m_rightMotor);
   }
