@@ -32,11 +32,11 @@ public class FiveBallAuto extends SequentialCommandGroup {
         drivetrainSubsystem.followPathCommand(false, "5BallAutoPart3"),
         new SequentialCommandGroup(
           new WaitCommand(0.75), 
-          new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(2).andThen(new SetBallCount(storageSubsystem, 2))
+          new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2)
         )
       ),
       drivetrainSubsystem.followPathCommand(false, "5BallAutoPart4"),
-      robotContainer.shootCommandHelper().withTimeout(3).andThen(new SetBallCount(storageSubsystem, 0))
+      robotContainer.shootCommandHelper()
     );
   }
 }

@@ -33,9 +33,9 @@ public class ThreeBallAuto extends SequentialCommandGroup {
     addCommands(
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(true, "3BallAutoPart1"),
-        new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(2).andThen(new SetBallCount(storageSubsystem, 2))
+        new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2)
       ),
-      robotContainer.shootCommandHelper().withTimeout(3).andThen(new SetBallCount(storageSubsystem, 0)),
+      robotContainer.shootCommandHelper(),
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(false, "3BallAutoPart2"),
         new SequentialCommandGroup(

@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      m_robotContainer.rememberStartingPosition();
+      // m_robotContainer.rememberStartingPosition();
       m_autonomousCommand.schedule();
     }
   }
@@ -75,9 +75,8 @@ public class Robot extends TimedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
     if (m_autonomousCommand != null) {
-      
       m_autonomousCommand.cancel();
-      m_robotContainer.reZeroFromStartingPositon();
+      // m_robotContainer.reZeroFromStartingPositon();
     }
   }
 

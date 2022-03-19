@@ -83,7 +83,7 @@ public final class Constants {
      */
     public static final double MAX_VELOCITY_METERS_PER_SECOND = FALCON_MAX_RPM / 60.0 *
         SdsModuleConfigurations.MK4I_L2.getDriveReduction() *
-        SdsModuleConfigurations.MK4I_L2.getWheelDiameter() * Math.PI;
+        SdsModuleConfigurations.MK4I_L2.getWheelDiameter() * Math.PI; //4.97
     /**
      * The maximum angular velocity of the robot in radians per second.
      * <p>
@@ -169,6 +169,8 @@ public final class Constants {
       // kDistanceToShooter.put(new InterpolatingDouble(0.5), new InterpolatingDouble(2500.0));  // hood config far
       // kDistanceToShooter.put(new InterpolatingDouble(-1.45), new InterpolatingDouble(2000.0));  // hood config far
       // kDistanceToShooter.put(new InterpolatingDouble(-8.6), new InterpolatingDouble(3270.0));  // hood config far
+      kDistanceToShooter.put(new InterpolatingDouble(14.42), new InterpolatingDouble(2150.0));  
+      kDistanceToShooter.put(new InterpolatingDouble(13.07), new InterpolatingDouble(2200.0));                                                                                                                    
       kDistanceToShooter.put(new InterpolatingDouble(2.75), new InterpolatingDouble(2325.0));
       kDistanceToShooter.put(new InterpolatingDouble(0.3), new InterpolatingDouble(2400.0));
       kDistanceToShooter.put(new InterpolatingDouble(-1.5), new InterpolatingDouble(2450.0));
@@ -210,8 +212,8 @@ public final class Constants {
     public static final int CLIMBER_PANCAKE_ONE = 4;
     public static final int CLIMBER_PANCAKE_TWO = 5;
     public static final int CLIMBER_PISTON_ONE = 2;
-    public static final int CLIMBER_PISTON_TWO = 3;
-    public static final double CLIMBER_LOWER_TOLERANCE = 0.1;
+    public static final int CLIMBER_PISTON_TWO = 3; 
+    public static final double CLIMBER_LOWER_TOLERANCE = 0.5;
     public static final double CLIMBER_SPEED = 0.35;
 
   }

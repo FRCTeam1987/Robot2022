@@ -66,8 +66,8 @@ public class Shoot extends SequentialCommandGroup {
       storage,
       drivetrain,
       limelight,
-      () -> SmartDashboard.getNumber("RPM-Set", 0.0),
-      () -> SmartDashboard.getNumber("Hood-Pos", 0.0)
+      () -> SmartDashboard.getNumber("RPM-Set", 2600),
+      () -> SmartDashboard.getNumber("Hood-Pos", 50)
     );
   }
 
@@ -77,7 +77,6 @@ public class Shoot extends SequentialCommandGroup {
     if (interrupted) {
       m_shooter.stop();
       m_storage.stop();
-      m_storage.zeroBallCount();
     }
   }
 }

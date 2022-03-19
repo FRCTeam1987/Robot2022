@@ -32,12 +32,8 @@ public class TwoBallAndDAuto extends SequentialCommandGroup {
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(true, "2BallAndDPart1"),
         new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2)
-          .withTimeout(2)
-          .andThen(new SetBallCount(storageSubsystem, 2))
       ),
-      robotContainer.shootCommandHelper()
-        .withTimeout(3)
-        .andThen(new SetBallCount(storageSubsystem, 0)),
+      robotContainer.shootCommandHelper(),
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(false, "2BallAndDPart2"),
         new SequentialCommandGroup(

@@ -35,7 +35,7 @@ public class SetShooterRpm extends CommandBase {
     if (desiredRpm == 0.0) {
       m_shooter.stop();
     } else {
-      m_shooter.setRPM(m_rpmSupplier.getAsDouble());
+      m_shooter.setRPM(m_rpmSupplier.getAsDouble() + 50);
     }
     m_isAtRpm = m_rpmDebouncer.calculate(false);
   }
@@ -55,7 +55,7 @@ public class SetShooterRpm extends CommandBase {
     if (desiredRpm == 0.0) {
       return true;
     }
-    m_isAtRpm = m_rpmDebouncer.calculate(Util.isWithinTolerance(m_shooter.getRPM(), desiredRpm, 50));
+    m_isAtRpm = m_rpmDebouncer.calculate(Util.isWithinTolerance(m_shooter.getRPM(), desiredRpm + 50, 50));
     return m_isAtRpm;
   }
 }
