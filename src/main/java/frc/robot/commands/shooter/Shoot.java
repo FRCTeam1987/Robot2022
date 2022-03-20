@@ -66,10 +66,11 @@ public class Shoot extends SequentialCommandGroup {
       storage,
       drivetrain,
       limelight,
-      () -> SmartDashboard.getNumber("RPM-Set", 2600),
-      () -> SmartDashboard.getNumber("Hood-Pos", 50)
+      () -> 2500,
+      () -> 35
     );
   }
+
 
   @Override
   public void end(boolean interrupted) {

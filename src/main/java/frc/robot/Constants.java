@@ -171,7 +171,7 @@ public final class Constants {
       // kDistanceToShooter.put(new InterpolatingDouble(-8.6), new InterpolatingDouble(3270.0));  // hood config far
       kDistanceToShooter.put(new InterpolatingDouble(14.42), new InterpolatingDouble(2150.0));  
       kDistanceToShooter.put(new InterpolatingDouble(13.07), new InterpolatingDouble(2200.0));                                                                                                                    
-      kDistanceToShooter.put(new InterpolatingDouble(2.75), new InterpolatingDouble(2325.0));
+      kDistanceToShooter.put(new InterpolatingDouble(2.75), new InterpolatingDouble(2375.0));
       kDistanceToShooter.put(new InterpolatingDouble(0.3), new InterpolatingDouble(2400.0));
       kDistanceToShooter.put(new InterpolatingDouble(-1.5), new InterpolatingDouble(2450.0));
       kDistanceToShooter.put(new InterpolatingDouble(-2.88), new InterpolatingDouble(2500.0));
@@ -213,7 +213,7 @@ public final class Constants {
     public static final int CLIMBER_PANCAKE_TWO = 5;
     public static final int CLIMBER_PISTON_ONE = 2;
     public static final int CLIMBER_PISTON_TWO = 3; 
-    public static final double CLIMBER_LOWER_TOLERANCE = 0.5;
+    public static final double CLIMBER_LOWER_TOLERANCE = 1;
     public static final double CLIMBER_SPEED = 0.35;
 
   }
