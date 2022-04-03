@@ -26,4 +26,10 @@ public class SetBallCount extends InstantCommand {
     System.out.println("Setting ball count: " + m_desiredBallCount);
     m_storage.setBallCount(m_desiredBallCount);
   }
+
+  @Override
+  public boolean runsWhenDisabled() {
+    // TODO Auto-generated method stub
+    return true;
+  }
 }

@@ -24,4 +24,10 @@ public class ToggleLimelightOn extends InstantCommand {
   public void initialize() {
     m_powerDistribution.setSwitchableChannel(true);
   }
+
+  @Override
+  public boolean runsWhenDisabled() {
+    // TODO Auto-generated method stub
+    return true;
+  }
 }

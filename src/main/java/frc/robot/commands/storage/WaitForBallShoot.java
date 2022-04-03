@@ -50,7 +50,7 @@ public class WaitForBallShoot extends CommandBase {
     m_hadBallAtExit = isBallAtExit();
     m_startBallCount = m_storage.getBallCount();
     m_desiredBallShootCount  = Math.min(m_originalDesiredBallShootCount, m_startBallCount);
-    System.out.println("desiredBallShootCount in initialize = " + m_desiredBallShootCount);
+    // System.out.println("desiredBallShootCount in initialize = " + m_desiredBallShootCount);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

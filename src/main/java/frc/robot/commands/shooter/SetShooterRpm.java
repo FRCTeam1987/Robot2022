@@ -7,7 +7,9 @@ package frc.robot.commands.shooter;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.Util;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -35,9 +37,10 @@ public class SetShooterRpm extends CommandBase {
     if (desiredRpm == 0.0) {
       m_shooter.stop();
     } else {
-      m_shooter.setRPM(m_rpmSupplier.getAsDouble() + 50);
+      m_shooter.setRPM(m_rpmSupplier.getAsDouble() + m_shooter.getOffsetRPM());
     }
     m_isAtRpm = m_rpmDebouncer.calculate(false);
+    SmartDashboard.putNumber("Shooter RPM Goal", desiredRpm);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -55,7 +58,7 @@ public class SetShooterRpm extends CommandBase {
     if (desiredRpm == 0.0) {
       return true;
     }
-    m_isAtRpm = m_rpmDebouncer.calculate(Util.isWithinTolerance(m_shooter.getRPM(), desiredRpm + 50, 50));
+    m_isAtRpm = m_rpmDebouncer.calculate(Util.isWithinTolerance(m_shooter.getRPM(), desiredRpm + m_shooter.getOffsetRPM(), Constants.Shooter.Shooter_RPM_Tolerance));
     return m_isAtRpm;
   }
 }

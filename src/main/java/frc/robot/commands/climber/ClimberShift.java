@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.DrivetrainSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -20,7 +21,7 @@ public class ClimberShift extends SequentialCommandGroup {
   private final ClimberSubsystem m_climber;
 
   /** Creates a new ClimberShift. */
-  public ClimberShift(ClimberSubsystem climberSubsystem) {
+  public ClimberShift(ClimberSubsystem climberSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_climber = climberSubsystem;
@@ -39,18 +40,19 @@ public class ClimberShift extends SequentialCommandGroup {
       ),
       new InstantCommand(() -> climberSubsystem.pivotDown(), climberSubsystem),
       new WaitCommand(1),
-      new ParallelCommandGroup(
-        new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberRightExtend(0.5)),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) > 27),
-          new InstantCommand(() -> climberSubsystem.climberRightStop())
-        ),
-        new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberLeftExtend(0.5)),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) > 27),
-          new InstantCommand(() -> climberSubsystem.climberLeftStop())
-        )
-      )
+      new ClimberArmExtend(climberSubsystem, drivetrainSubsystem, 24)
+      // new ParallelCommandGroup(
+      //   new SequentialCommandGroup(
+      //     new InstantCommand(() -> climberSubsystem.climberRightExtend(0.5)),
+      //     new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) > 24),
+      //     new InstantCommand(() -> climberSubsystem.climberRightStop())
+      //   ),
+      //   new SequentialCommandGroup(
+      //     new InstantCommand(() -> climberSubsystem.climberLeftExtend(0.5)),
+      //     new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) > 24),
+      //     new InstantCommand(() -> climberSubsystem.climberLeftStop())
+      //   )
+      // )
     );
   }
 

@@ -26,7 +26,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final LinearServo m_linearServoRight = new LinearServo(LINEAR_ACTUATOR_RIGHT_ID, 100, 25);
   private final WPI_TalonFX m_motorRight = new WPI_TalonFX(MOTOR_LEADER_CAN_ID, Constants.CANIVORE_CAN_BUS);
   private final WPI_TalonFX m_motorLeft = new WPI_TalonFX(MOTOR_FOLLOWER_CAN_ID, Constants.CANIVORE_CAN_BUS);
-
+  private double m_OffsetRPM = Constants.Shooter.Offset_RPM_Initial_Amount;
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
@@ -57,12 +57,13 @@ public class ShooterSubsystem extends SubsystemBase {
     setHoodPosition(50);
 
     SmartDashboard.putNumber("Hood-Pos", 35);
-    SmartDashboard.putNumber("RPM-Set", 2500);
+    SmartDashboard.putNumber("RPM-Set", 2500 * SHOOTER_REDUCTION);
+    SmartDashboard.putNumber("rpm-Offset", getOffsetRPM());
 
   }
 
   public double getRpmSetpointError() {
-    return m_motorRight.getClosedLoopError() / Constants.FALCON_ENCODER_RESOLUTION * 600.0;
+    return (m_motorLeft.getClosedLoopError() / Constants.FALCON_ENCODER_RESOLUTION * 600.0);
 
   }
 
@@ -71,7 +72,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public double getRPM(){
-    return m_motorRight.getSensorCollection().getIntegratedSensorVelocity() / Constants.FALCON_ENCODER_RESOLUTION * 600.0;
+    return (m_motorRight.getSensorCollection().getIntegratedSensorVelocity() / Constants.FALCON_ENCODER_RESOLUTION * 600.0);
 
   }
 
@@ -85,10 +86,9 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void setRPM(final double rpm) {
-    double velocity = rpm * Constants.FALCON_ENCODER_RESOLUTION / 600.0; //1,000ms per sec, but robot cares about per 100ms, so then 60 sec/min
+    double velocity = (rpm * (Constants.FALCON_ENCODER_RESOLUTION) / 600.0); //1,000ms per sec, but robot cares about per 100ms, so then 60 sec/min
     m_motorRight.set(TalonFXControlMode.Velocity, velocity);
     m_motorLeft.set(TalonFXControlMode.Velocity, velocity);
-
   }
   
   public double getRPMFromLimelight() {
@@ -100,6 +100,20 @@ public class ShooterSubsystem extends SubsystemBase {
     final double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
     return Constants.Targeting.kDistanceToShooter.getInterpolated(new InterpolatingDouble(ty)).value; //TODO Copied Code, replace with interpreted value of correct Hood height 
     // return 10; //Delete me when fixed
+  }
+
+  public void incrementOffsetRPM() {
+    m_OffsetRPM = m_OffsetRPM + Constants.Shooter.Offset_RPM_Increment_Amount;
+    SmartDashboard.putNumber("rpm-Offset", getOffsetRPM());
+  }
+
+  public void decrementOffsetRPM() {
+    m_OffsetRPM = m_OffsetRPM - Constants.Shooter.Offset_RPM_Increment_Amount;
+    SmartDashboard.putNumber("rpm-Offset", getOffsetRPM());
+  }
+
+  public double getOffsetRPM() {
+    return m_OffsetRPM;
   }
 
   public void stop() {

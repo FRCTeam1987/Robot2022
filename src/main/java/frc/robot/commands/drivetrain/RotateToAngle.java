@@ -30,7 +30,7 @@ public class RotateToAngle extends PIDCommand {
         // This uses the output
         output -> {
           drivetrainSubsystem.drive(ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, output, drivetrainSubsystem.getAdjustedHeading()));
-          System.out.println("The Heading is: " + drivetrainSubsystem.getAdjustedHeading().getDegrees());
+          // System.out.println("The Heading is: " + drivetrainSubsystem.getAdjustedHeading().getDegrees());
         });
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrainSubsystem);

@@ -38,13 +38,13 @@ public class ClimberExtend extends SequentialCommandGroup {
       new WaitCommand(0.5),
       new ParallelCommandGroup(
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberRightExtend(0.65)),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) > 24),
+          new InstantCommand(() -> climberSubsystem.climberRightExtend(0.75)),
+          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) > 20),
           new InstantCommand(() -> climberSubsystem.climberRightStop())
         ),
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberLeftExtend(0.65)),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) > 24),
+          new InstantCommand(() -> climberSubsystem.climberLeftExtend(0.75)),
+          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) > 20),
           new InstantCommand(() -> climberSubsystem.climberLeftStop())
         )
       )

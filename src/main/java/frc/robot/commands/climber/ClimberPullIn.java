@@ -28,14 +28,14 @@ public class ClimberPullIn extends SequentialCommandGroup {
       new InstantCommand(() -> climberSubsystem.pivotUp(), climberSubsystem),
       new WaitCommand(1.0),
       new ParallelCommandGroup(
-        new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberRightRetract(0.35)),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) < CLIMBER_LOWER_TOLERANCE),
+        new SequentialCommandGroup( /* Right Climber */
+          new InstantCommand(() -> climberSubsystem.climberRightRetract(0.35 )),
+          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) < CLIMBER_LOWER_TOLERANCE - .5),
           new InstantCommand(() -> climberSubsystem.climberRightStop())
         ),
-        new SequentialCommandGroup(
+        new SequentialCommandGroup( /* Left Climber */
           new InstantCommand(() -> climberSubsystem.climberLeftRetract(0.35)),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) < CLIMBER_LOWER_TOLERANCE),
+          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) < CLIMBER_LOWER_TOLERANCE - .5),
           new InstantCommand(() -> climberSubsystem.climberLeftStop())
         )
       )

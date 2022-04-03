@@ -6,6 +6,7 @@ package frc.robot.commands.storage;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.Util;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.StorageSubsystem;
@@ -34,7 +35,7 @@ public class FeedShooterWithRPM extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (Util.isWithinTolerance(m_shooter.getRpmSetpointError(), 0, 50)) {
+    if (Util.isWithinTolerance(m_shooter.getRpmSetpointError(), 0, Constants.Shooter.Shooter_RPM_Tolerance * Constants.Shooter.SHOOTER_REDUCTION)) {
       m_storage.runForShooter();
       m_hasStartedShooting = true;
     } else if (m_hasStartedShooting) {

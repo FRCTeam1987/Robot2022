@@ -27,12 +27,12 @@ public class ClimberPullUp extends SequentialCommandGroup {
     addCommands(
       new ParallelCommandGroup(
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberRightRetract(0.55)),
+          new InstantCommand(() -> climberSubsystem.climberRightRetract(0.75)),
           new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) < CLIMBER_LOWER_TOLERANCE),
           new InstantCommand(() -> climberSubsystem.climberRightStop())
         ),
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberLeftRetract(0.55)),
+          new InstantCommand(() -> climberSubsystem.climberLeftRetract(0.75)),
           new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) < CLIMBER_LOWER_TOLERANCE),
           new InstantCommand(() -> climberSubsystem.climberLeftStop())  
         )

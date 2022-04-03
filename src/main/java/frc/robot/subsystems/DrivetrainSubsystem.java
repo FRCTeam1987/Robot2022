@@ -22,6 +22,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -123,6 +124,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     tab.addNumber("Pose X", () -> m_odometry.getPoseMeters().getX()).withPosition(8, 0);
     tab.addNumber("Pose Y", () -> m_odometry.getPoseMeters().getY()).withPosition(8, 1);
     tab.addNumber("Pose Angle", () -> m_odometry.getPoseMeters().getRotation().getDegrees()).withPosition(8, 2);
+    tab.addNumber("Pitch", () -> getPitch()).withPosition(8, 3);
   }
 
   /**
@@ -131,7 +133,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    */
   public void zeroGyroscope() {
     m_navx.reset();
-    setHeadingAdjust(Rotation2d.fromDegrees(m_navx.getCompassHeading()));
+    // setHeadingAdjust(Rotation2d.fromDegrees(m_navx.getCompassHeading()));
     System.out.println("Zeroing gyro: " + m_navx.getCompassHeading());
   }
   public void rememberStartingPosition() {
@@ -164,6 +166,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
    // We have to invert the angle of the NavX so that rotating the robot counter-clockwise makes the angle increase.
    return Rotation2d.fromDegrees(360.0 - m_navx.getYaw());
+  }
+
+  /* reused code implementation is pain */
+  public Rotation2d getYaw() {
+    return getAdjustedHeading();
+  }
+
+  public double getPitch() {
+    return m_navx.getPitch();
   }
 
   public void drive(ChassisSpeeds chassisSpeeds) {
@@ -274,5 +285,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_frontRightModule.set(velocityToVolts(states[1].speedMetersPerSecond), states[1].angle.getRadians());
     m_backLeftModule.set(velocityToVolts(states[2].speedMetersPerSecond), states[2].angle.getRadians());
     m_backRightModule.set(velocityToVolts(states[3].speedMetersPerSecond), states[3].angle.getRadians());
+    if (!m_navx.isConnected()) {
+      DriverStation.reportError("navx not connected", false);
+    }
   }
 }

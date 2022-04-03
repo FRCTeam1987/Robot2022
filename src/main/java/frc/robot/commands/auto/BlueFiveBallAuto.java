@@ -21,21 +21,21 @@ import frc.robot.subsystems.StorageSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class FiveBallAuto extends SequentialCommandGroup {
+public class BlueFiveBallAuto extends SequentialCommandGroup {
   /** Creates a new FiveBallAuto. */
-  public FiveBallAuto(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight limelight, final RobotContainer robotContainer) {
+  public BlueFiveBallAuto(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight limelight, final RobotContainer robotContainer) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ThreeBallAuto(controller, drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, limelight, robotContainer),
+      new BlueThreeBallAuto(controller, drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, limelight, robotContainer),
       new ParallelCommandGroup(
-        drivetrainSubsystem.followPathCommand(false, "5BallAutoPart3"),
+        drivetrainSubsystem.followPathCommand(false, "Blue5BallPart3"),
         new SequentialCommandGroup(
           new WaitCommand(0.75), 
           new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(3)
         )
       ),
-      drivetrainSubsystem.followPathCommand(false, "5BallAutoPart4"),
+      drivetrainSubsystem.followPathCommand(false, "Blue5BallPart4"),
       robotContainer.shootCommandHelper()
     );
   }

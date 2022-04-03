@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoMode;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -22,11 +19,14 @@ import frc.robot.commands.CollectBalls;
 import frc.robot.commands.PowercycleLimelight;
 import frc.robot.commands.ResetLimelightPipeline;
 import frc.robot.commands.ChangeLimeLightStream.StreamType;
+import frc.robot.commands.auto.BlueFiveBallAuto;
+import frc.robot.commands.auto.BlueThreeBallAuto;
 import frc.robot.commands.auto.FiveBallAuto;
 import frc.robot.commands.auto.TaxiAuto;
 import frc.robot.commands.auto.ThreeBallAuto;
 import frc.robot.commands.auto.TwoBallAndDAuto;
 import frc.robot.commands.climber.BrakeClimber;
+import frc.robot.commands.climber.ClimberArmExtend;
 import frc.robot.commands.climber.ClimberExtend;
 import frc.robot.commands.climber.ClimberLock;
 import frc.robot.commands.climber.ClimberPivotDown;
@@ -120,6 +120,10 @@ public class RobotContainer {
     m_drivetrain.reZeroFromStartingPositon();
   }
 
+  public void psiDashboardUpdate() {
+    SmartDashboard.putNumber("AIR PRESSURE", m_compressor.getPressure());
+  }
+
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -175,24 +179,38 @@ public class RobotContainer {
       .whenPressed(new SetBallCount(m_storage, 0));
 
     new Button(controller::getYButton)
-      .whenPressed(new ClimberExtend(m_climberSubsystem));
+      .whenPressed(
+        new SequentialCommandGroup(
+          new ClimberPivotUp(m_climberSubsystem),
+          new ClimberExtend(m_climberSubsystem)
+        )
+      );
     new Button(controller::getAButton)
       .whenPressed(new ClimberPullUp(m_climberSubsystem));
     new Button(coController::getYButton)
-      .whenPressed(new ClimberShift(m_climberSubsystem));
+      .whenPressed(new ClimberShift(m_climberSubsystem, m_drivetrain));
     new Button(coController::getAButton)
       .whenPressed(new ClimberPullIn(m_climberSubsystem));
 
     new Button(controller::getBButton)
     .whileHeld(new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight));
+  
+    new Button(coController::getBackButton)
+    .whenPressed(new InstantCommand(() -> m_shooter.decrementOffsetRPM()));
+
+    new Button(coController::getStartButton)
+    .whenPressed(new InstantCommand(() -> m_shooter.incrementOffsetRPM()));
   };
 
   private void configureShuffleboard() {
     m_autoChooser.addOption("5 Ball Auto", new FiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("Blue 5 Ball", new BlueFiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("Taxi Auto", new TaxiAuto(controller, m_drivetrain, this));
     m_autoChooser.addOption("2 Ball & D Auto", new TwoBallAndDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("3 Ball Auto", new ThreeBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    m_autoChooser.addOption("Test",  m_drivetrain.followPathCommand(false, "Test"));// m_autoChooser.addOption("Swerve Char - Forwards", new SwerveCharacterizationFF(m_drivetrain, true, false));
+    m_autoChooser.addOption("Blue 3 Ball", new BlueThreeBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("Test",  m_drivetrain.followPathCommand(false, "Test"));
+    // m_autoChooser.addOption("Swerve Char - Forwards", new SwerveCharacterizationFF(m_drivetrain, true, false));
     
     m_autoChooser.setDefaultOption("Do Nothing", new InstantCommand());
     // m_autoChooser.addOption("Swerve Char - Reverse", new SwerveCharacterizationFF(m_drivetrain, false, false));
@@ -202,7 +220,7 @@ public class RobotContainer {
     // SmartDashboard.putData("Collector-Deploy", new DeployCollector(m_collector));
     // SmartDashboard.putData("Collector-Stow", new StowCollector(m_collector));
     // SmartDashboard.putData("Feed Shooter", new FeedShooter(m_storage));
-    // SmartDashboard.putData("Set Hood Pos",new SetHoodPosition(m_shooter, () -> SmartDashboard.getNumber("Hood-Pos", 0.0)));
+    SmartDashboard.putData("Set Hood Pos",new SetHoodPosition(m_shooter, () -> SmartDashboard.getNumber("Hood-Pos", 0.0)));
     // SmartDashboard.putData("Shooter-Spin", new SetShooterRpm(m_shooter, () -> 1500.0));
     // SmartDashboard.putData("Shooter-Stop", new SetShooterRpm(m_shooter, () -> 0.0));
     // SmartDashboard.putData("Store-In", new RunStorageIn(m_storage));
@@ -227,11 +245,15 @@ public class RobotContainer {
     SmartDashboard.putData("Coast Climber", new CoastClimber(m_climberSubsystem));
     SmartDashboard.putData("Brake Climber", new BrakeClimber(m_climberSubsystem));
     SmartDashboard.putData("Zero Climber", new ZeroClimber(m_climberSubsystem));
+    
+    SmartDashboard.putData("Extend Climber", new ClimberArmExtend(m_climberSubsystem, m_drivetrain, 24));
+    
     SmartDashboard.putData("Powercycle Limelight", new PowercycleLimelight(m_powerDistribution));
     SmartDashboard.putData("Reset Limelight Pipeline", new ResetLimelightPipeline(m_limelight));
     SmartDashboard.putData("Pivot Up", new ClimberPivotUp(m_climberSubsystem));
     SmartDashboard.putData("Pivot Down", new ClimberPivotDown(m_climberSubsystem));
-
+    SmartDashboard.putData("Increment Offset", new InstantCommand(() -> m_shooter.incrementOffsetRPM()));
+    SmartDashboard.putData("Decrement Offset", new InstantCommand(() -> m_shooter.decrementOffsetRPM()));
   }
 
   private static double deadband(double value, double deadband) {
@@ -263,7 +285,7 @@ public class RobotContainer {
         m_storage,
         m_drivetrain,
         m_limelight,
-        () -> m_shooter.getRPMFromLimelight(),//m_limelight.getYAxis() < -5 ? 3075 : 2500,
+        () -> m_shooter.getRPMFromLimelight() * Constants.Shooter.SHOOTER_REDUCTION,//m_limelight.getYAxis() < -5 ? 3075 : 2500,
         () -> m_limelight.getYAxis() > -7.5 ? 50 : 65
       ),
       new ConditionalCommand(
@@ -272,7 +294,8 @@ public class RobotContainer {
           .andThen(new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 0))), 
           new InstantCommand(), 
           () -> DriverStation.isAutonomousEnabled() == false), 
-      () -> m_limelight.getYAxis() > -12 && m_limelight.getYAxis() < 16);
+      () -> m_limelight.getYAxis() > -14.5 && m_limelight.getYAxis() < 16);
+
     // if (m_limelight.getYAxis() > -12 && m_limelight.getYAxis() < 4) {
       // return new Shoot(
       //   m_shooter,
