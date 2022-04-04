@@ -141,7 +141,7 @@ public final class Constants {
 
     public static final double PRE_SHOOT_RPM = 2500;
     public static final double Offset_RPM_Increment_Amount = 50;
-    public static final double Offset_RPM_Initial_Amount = 65; // 50 at heartland
+    public static final double Offset_RPM_Initial_Amount = 80; // 50 at heartland
     public static final double Shooter_RPM_Tolerance = 50;
     public static final double SHOOTER_REDUCTION = 1.0; //20.0/16.0;
   }
@@ -174,10 +174,10 @@ public final class Constants {
       // kDistanceToShooter.put(new InterpolatingDouble(-1.45), new InterpolatingDouble(2000.0));  // hood config far
       // kDistanceToShooter.put(new InterpolatingDouble(-8.6), new InterpolatingDouble(3270.0));  // hood config far
       kDistanceToShooter.put(new InterpolatingDouble(14.42), new InterpolatingDouble(2100.0));  
-      kDistanceToShooter.put(new InterpolatingDouble(13.07), new InterpolatingDouble(2150.0)); // 2100
-      kDistanceToShooter.put(new InterpolatingDouble(11.0), new InterpolatingDouble(2150.0));  // 2150
-      kDistanceToShooter.put(new InterpolatingDouble(10.3), new InterpolatingDouble(2150.0));  // 2150
-      kDistanceToShooter.put(new InterpolatingDouble(5.0), new InterpolatingDouble(2200.0));                                                                                                                  
+      kDistanceToShooter.put(new InterpolatingDouble(13.07), new InterpolatingDouble(2150.0)); 
+      kDistanceToShooter.put(new InterpolatingDouble(11.0), new InterpolatingDouble(2200.0));  // 2150
+      kDistanceToShooter.put(new InterpolatingDouble(10.3), new InterpolatingDouble(2200.0));  // 2150
+      kDistanceToShooter.put(new InterpolatingDouble(5.0), new InterpolatingDouble(2300.0));   // 2200                                                                                                         
       kDistanceToShooter.put(new InterpolatingDouble(2.75), new InterpolatingDouble(2300.0));
       kDistanceToShooter.put(new InterpolatingDouble(0.3), new InterpolatingDouble(2400.0));
       kDistanceToShooter.put(new InterpolatingDouble(-1.5), new InterpolatingDouble(2450.0));

@@ -180,10 +180,10 @@ public class RobotContainer {
 
     new Button(controller::getYButton)
       .whenPressed(
-        new SequentialCommandGroup(
-          new ClimberPivotUp(m_climberSubsystem),
+        // new SequentialCommandGroup(
+        //   new ClimberPivotUp(m_climberSubsystem),
           new ClimberExtend(m_climberSubsystem)
-        )
+        // )
       );
     new Button(controller::getAButton)
       .whenPressed(new ClimberPullUp(m_climberSubsystem));
