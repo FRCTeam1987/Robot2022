@@ -4,9 +4,9 @@
 
 package frc.robot.commands.shooter;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -32,8 +32,9 @@ public class Shoot extends SequentialCommandGroup {
   private final DrivetrainSubsystem m_drivetrain;
   private final LimeLight m_limelight;
 
+
   /** Creates a new ShooterCommandGroup. */
-  public Shoot(final ShooterSubsystem shooter, final StorageSubsystem storage, final DrivetrainSubsystem drivetrain, final LimeLight limelight, final DoubleSupplier rpmSupplier, final DoubleSupplier hoodSupplier) {
+  public Shoot(final ShooterSubsystem shooter, final StorageSubsystem storage, final DrivetrainSubsystem drivetrain, final LimeLight limelight, final DoubleSupplier rpmSupplier, final BooleanSupplier isHoodRaised) {
     m_shooter = shooter;
     m_storage = storage;
     m_drivetrain = drivetrain;
@@ -49,8 +50,22 @@ public class Shoot extends SequentialCommandGroup {
         new InstantCommand(() -> m_shooter.setRPM(Constants.Shooter.PRE_SHOOT_RPM), m_shooter)
       ),
       new RotateToLimelightAngle(m_drivetrain, m_limelight),
+      new ConditionalCommand(
+        new RaiseHood(m_shooter),
+        new LowerHood(m_shooter),
+        isHoodRaised
+      ),
       new SetShooterRpm(m_shooter, rpmSupplier),
-      new SetHoodPosition(m_shooter, hoodSupplier),
+      // new SetHoodPosition(m_shooter, hoodPos),
+      
+      
+      // if (hoodPos > 57.5) {
+      //   new HoodHighPosition(m_shooter);
+      // } else {
+      //   new HoodLowPosition(m_shooter);
+      // }
+      // () -> hoodPos == true ? new HoodHighPosition(m_shooter) : new HoodLowPosition(m_shooter),
+
       new ParallelRaceGroup(
         new WaitForBallShoot(m_storage),
         new FeedShooterWithRPM(m_storage, m_shooter)
@@ -66,8 +81,8 @@ public class Shoot extends SequentialCommandGroup {
       storage,
       drivetrain,
       limelight,
-      () -> 2500,
-      () -> 35
+      () -> 2350, //TODO test speeds and hood position because of the new hood manual shooting does not match. 
+      () -> false 
     );
   }
 

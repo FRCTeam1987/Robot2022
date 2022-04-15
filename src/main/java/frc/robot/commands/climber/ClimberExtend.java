@@ -34,7 +34,6 @@ public class ClimberExtend extends SequentialCommandGroup {
       //   new InstantCommand(/* does some climber stuff*/),
       //   () -> DriverStation.getMatchTime() < 40
       // ),
-      new InstantCommand(() -> climberSubsystem.unlock(), climberSubsystem),
       new WaitCommand(0.5),
       new ParallelCommandGroup(
         new SequentialCommandGroup(

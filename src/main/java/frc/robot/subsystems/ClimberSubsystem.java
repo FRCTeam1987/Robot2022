@@ -26,15 +26,12 @@ public class ClimberSubsystem extends SubsystemBase {
   private final TalonFX m_leftMotor;
   private final TalonFX m_rightMotor;
   private final DoubleSolenoid m_armPivot;
-  private final DoubleSolenoid m_armLock;
-  private boolean m_isLocked;
 
   
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
     m_leftMotor = new TalonFX(LEFT_CLIMBER_MOTOR, Constants.CANIVORE_CAN_BUS);
     m_rightMotor = new TalonFX(RIGHT_CLIMBER_MOTOR, Constants.CANIVORE_CAN_BUS);
-    m_armLock = new DoubleSolenoid(PneumaticsModuleType.REVPH, CLIMBER_PANCAKE_ONE, CLIMBER_PANCAKE_TWO);
     m_armPivot = new DoubleSolenoid(PneumaticsModuleType.REVPH, CLIMBER_PISTON_ONE, CLIMBER_PISTON_TWO);
 
     //Right motor should be inverted
@@ -51,18 +48,8 @@ public class ClimberSubsystem extends SubsystemBase {
     m_rightMotor.setNeutralMode(NeutralMode.Brake);
     m_leftMotor.setNeutralMode(NeutralMode.Brake);
 
-    lock();
   }
 
-  public void lock() {
-    m_isLocked = true;
-    m_armLock.set(Value.kForward); 
-  }
-
-  public void unlock() {
-    m_isLocked = false;
-    m_armLock.set(Value.kReverse);
-  }
 
   public void pivotDown() {
     m_armPivot.set(Value.kForward);
@@ -82,9 +69,6 @@ public class ClimberSubsystem extends SubsystemBase {
   }
   
   public void climberRightExtend(final double overideSpeed) {
-    if (isLocked() == true) {
-      return;
-    }
     m_rightMotor.set(TalonFXControlMode.PercentOutput, overideSpeed);
   }
 
@@ -93,9 +77,6 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void climberLeftExtend(final double overideSpeed) {
-    if (isLocked() == true) {
-      return;
-    }
     m_leftMotor.set(TalonFXControlMode.PercentOutput, overideSpeed);
   }
 
@@ -104,9 +85,6 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void climberRightRetract(final double overideSpeed) {
-    if (isLocked() == true) {
-      return;
-    }
     m_rightMotor.set(TalonFXControlMode.PercentOutput, -overideSpeed);
   }
 
@@ -115,9 +93,6 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void climberLeftRetract(final double overideSpeed) {
-    if (isLocked() == true) {
-      return;
-    }
     m_leftMotor.set(TalonFXControlMode.PercentOutput, -overideSpeed);
   }
 
@@ -131,9 +106,6 @@ public class ClimberSubsystem extends SubsystemBase {
   }
   public void climberLeftStop() {
     m_leftMotor.set(TalonFXControlMode.PercentOutput, 0);
-  }
-  public boolean isLocked() {
-      return m_isLocked;
   }
   private double getMotorPosition(TalonFX motor) {
     return Util.ticksToDistance(motor.getSelectedSensorPosition(), 2048, 1.0625*Math.PI, 15.34);
@@ -161,6 +133,5 @@ public class ClimberSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Left Arm Pos", getLeftPosition());
     SmartDashboard.putNumber("Right Arm Pos", getRightPosition());
-    SmartDashboard.putBoolean("Is Locked?", isLocked());
   }
 }

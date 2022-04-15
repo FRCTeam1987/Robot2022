@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -14,11 +13,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.ChangeLimeLightStream;
 import frc.robot.commands.CollectBalls;
 import frc.robot.commands.PowercycleLimelight;
 import frc.robot.commands.ResetLimelightPipeline;
-import frc.robot.commands.ChangeLimeLightStream.StreamType;
 import frc.robot.commands.auto.BlueFiveBallAuto;
 import frc.robot.commands.auto.BlueThreeBallAuto;
 import frc.robot.commands.auto.FiveBallAuto;
@@ -28,32 +25,26 @@ import frc.robot.commands.auto.TwoBallAndDAuto;
 import frc.robot.commands.climber.BrakeClimber;
 import frc.robot.commands.climber.ClimberArmExtend;
 import frc.robot.commands.climber.ClimberExtend;
-import frc.robot.commands.climber.ClimberLock;
 import frc.robot.commands.climber.ClimberPivotDown;
 import frc.robot.commands.climber.ClimberPivotUp;
 import frc.robot.commands.climber.ClimberPullIn;
 import frc.robot.commands.climber.ClimberPullUp;
 import frc.robot.commands.climber.ClimberShift;
 import frc.robot.commands.climber.ClimberToHome;
-import frc.robot.commands.climber.ClimberUnlock;
 import frc.robot.commands.climber.CoastClimber;
 import frc.robot.commands.climber.ZeroClimber;
-import frc.robot.commands.collector.DeployCollector;
 import frc.robot.commands.collector.StowCollector;
 import frc.robot.commands.drivetrain.DriveCommand;
-import frc.robot.commands.drivetrain.RotateToAngle;
-import frc.robot.commands.drivetrain.RotateToLimelightAngle;
-import frc.robot.commands.drivetrain.SwerveCharacterizationFF;
+import frc.robot.commands.drivetrain.RotationToHub;
 import frc.robot.commands.shooter.EjectOneBallBottom;
 import frc.robot.commands.shooter.EjectOneBallTop;
-import frc.robot.commands.shooter.SetHoodPosition;
+import frc.robot.commands.shooter.LowerHood;
+import frc.robot.commands.shooter.RaiseHood;
+import frc.robot.commands.shooter.SetShooterRpm;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.storage.FeedShooter;
-import frc.robot.commands.storage.RunStorageIn;
-import frc.robot.commands.storage.RunStorageOut;
 import frc.robot.commands.storage.SetBallCount;
 import frc.robot.commands.storage.StopStorage;
-import frc.robot.commands.storage.ZeroBallCount;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -64,7 +55,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -219,10 +209,9 @@ public class RobotContainer {
 
     // SmartDashboard.putData("Collector-Deploy", new DeployCollector(m_collector));
     // SmartDashboard.putData("Collector-Stow", new StowCollector(m_collector));
-    // SmartDashboard.putData("Feed Shooter", new FeedShooter(m_storage));
-    SmartDashboard.putData("Set Hood Pos",new SetHoodPosition(m_shooter, () -> SmartDashboard.getNumber("Hood-Pos", 0.0)));
-    // SmartDashboard.putData("Shooter-Spin", new SetShooterRpm(m_shooter, () -> 1500.0));
-    // SmartDashboard.putData("Shooter-Stop", new SetShooterRpm(m_shooter, () -> 0.0));
+    SmartDashboard.putData("Feed Shooter", new FeedShooter(m_storage));
+    SmartDashboard.putData("Shooter-Spin", new SetShooterRpm(m_shooter, () -> SmartDashboard.getNumber("RPM-Set", 0.0) ));
+    SmartDashboard.putData("Shooter-Stop", new SetShooterRpm(m_shooter, () -> 0.0));
     // SmartDashboard.putData("Store-In", new RunStorageIn(m_storage));
     // SmartDashboard.putData("Store-Out", new RunStorageOut(m_storage));
     // SmartDashboard.putData("Store-Stop", new StopStorage(m_storage));
@@ -237,8 +226,6 @@ public class RobotContainer {
     // SmartDashboard.putData("Climber Pull-Up", new ClimberPullUp(m_climberSubsystem));
     // SmartDashboard.putData("Climber Shift", new ClimberShift(m_climberSubsystem));
     // SmartDashboard.putData("Climber Pull-In", new ClimberPullIn(m_climberSubsystem));
-    SmartDashboard.putData("Lock Climber", new ClimberLock(m_climberSubsystem));
-    SmartDashboard.putData("Unlock Climber", new ClimberUnlock(m_climberSubsystem));
     // SmartDashboard.putData("Pivot Down", new ClimberPivotDown(m_climberSubsystem));
     // SmartDashboard.putData("Pivot Up", new ClimberPivotUp(m_climberSubsystem));
     SmartDashboard.putData("Climber to Home", new ClimberToHome(m_climberSubsystem));
@@ -254,6 +241,9 @@ public class RobotContainer {
     SmartDashboard.putData("Pivot Down", new ClimberPivotDown(m_climberSubsystem));
     SmartDashboard.putData("Increment Offset", new InstantCommand(() -> m_shooter.incrementOffsetRPM()));
     SmartDashboard.putData("Decrement Offset", new InstantCommand(() -> m_shooter.decrementOffsetRPM()));
+    SmartDashboard.putData("Raise Shoot Hood", new RaiseHood(m_shooter));
+    SmartDashboard.putData("Lower Shoot Hood", new LowerHood(m_shooter));
+    SmartDashboard.putData("Rotate to Hub", new RotationToHub(m_drivetrain)); //untested
   }
 
   private static double deadband(double value, double deadband) {
@@ -286,7 +276,7 @@ public class RobotContainer {
         m_drivetrain,
         m_limelight,
         () -> m_shooter.getRPMFromLimelight() * Constants.Shooter.SHOOTER_REDUCTION,//m_limelight.getYAxis() < -5 ? 3075 : 2500,
-        () -> m_limelight.getYAxis() > -7.5 ? 50 : 65
+        () -> m_limelight.getYAxis() < -8
       ),
       new ConditionalCommand(
         new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 1))
@@ -294,7 +284,7 @@ public class RobotContainer {
           .andThen(new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 0))), 
           new InstantCommand(), 
           () -> DriverStation.isAutonomousEnabled() == false), 
-      () -> m_limelight.getYAxis() > -14.5 && m_limelight.getYAxis() < 16);
+      () -> m_limelight.getYAxis() > -14 && m_limelight.getYAxis() < 16.3);
 
     // if (m_limelight.getYAxis() > -12 && m_limelight.getYAxis() < 4) {
       // return new Shoot(
@@ -303,7 +293,7 @@ public class RobotContainer {
       //   m_drivetrain,
       //   m_limelight,
       //   () -> m_shooter.getRPMFromLimelight(),//m_limelight.getYAxis() < -5 ? 3075 : 2500,
-      //   () -> m_limelight.getYAxis() > -7.5 ? 50 : 65
+      //   () -> m_limelight.getYAxis() < -7.5 ? 50 : 65
       // );
     // } else if (DriverStation.isAutonomousEnabled() == false) {
     //     return new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 1))

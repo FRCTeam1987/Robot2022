@@ -12,6 +12,9 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -22,10 +25,10 @@ import frc.robot.lib.LinearServo;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-  private final LinearServo m_linearServoLeft = new LinearServo(LINEAR_ACTUATOR_LEFT_ID, 100, 25);
-  private final LinearServo m_linearServoRight = new LinearServo(LINEAR_ACTUATOR_RIGHT_ID, 100, 25);
   private final WPI_TalonFX m_motorRight = new WPI_TalonFX(MOTOR_LEADER_CAN_ID, Constants.CANIVORE_CAN_BUS);
   private final WPI_TalonFX m_motorLeft = new WPI_TalonFX(MOTOR_FOLLOWER_CAN_ID, Constants.CANIVORE_CAN_BUS);
+  private final DoubleSolenoid m_hood = new DoubleSolenoid(PneumaticsModuleType.REVPH, SOLENOID_FORWARD_ID, SOLENOID_REVERSE_ID);
+
   private double m_OffsetRPM = Constants.Shooter.Offset_RPM_Initial_Amount;
 
   /** Creates a new ShooterSubsystem. */
@@ -53,8 +56,6 @@ public class ShooterSubsystem extends SubsystemBase {
     m_motorLeft.config_kP(0, 0.1); //p = push and oscillating once it gets there
     m_motorLeft.config_kI(0, 0.0);
     m_motorLeft.config_kD(0, 0.0); //d =  dampening for the oscillation
-  
-    setHoodPosition(50);
 
     SmartDashboard.putNumber("Hood-Pos", 35);
     SmartDashboard.putNumber("RPM-Set", 2500 * SHOOTER_REDUCTION);
@@ -62,27 +63,21 @@ public class ShooterSubsystem extends SubsystemBase {
 
   }
 
-  public double getRpmSetpointError() {
-    return (m_motorLeft.getClosedLoopError() / Constants.FALCON_ENCODER_RESOLUTION * 600.0);
-
+  public void raiseHood() {
+    m_hood.set(Value.kForward);
   }
 
-  public double getHoodPosition() {
-    return m_linearServoLeft.getPosition();
+  public void lowerHood() {
+    m_hood.set(Value.kReverse);
+  }
+
+  public double getRpmSetpointError() {
+    return (m_motorLeft.getClosedLoopError() / Constants.FALCON_ENCODER_RESOLUTION * 600.0);
   }
 
   public double getRPM(){
     return (m_motorRight.getSensorCollection().getIntegratedSensorVelocity() / Constants.FALCON_ENCODER_RESOLUTION * 600.0);
 
-  }
-
-  public boolean isHoodAtDesiredPosition() {
-    return m_linearServoLeft.isFinished();
-  }
-
-  public void setHoodPosition(final double position) {
-    m_linearServoRight.setPosition(position);
-    m_linearServoLeft.setPosition(position);
   }
 
   public void setRPM(final double rpm) {
@@ -119,11 +114,6 @@ public class ShooterSubsystem extends SubsystemBase {
   public void stop() {
     m_motorRight.stopMotor();
     m_motorLeft.stopMotor();
-  }
-
-  public void updateHoodPosition() {
-    m_linearServoLeft.updateCurPos();
-    m_linearServoRight.updateCurPos();
   }
 
   @Override
