@@ -5,6 +5,7 @@
 package frc.robot.commands.storage;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.StorageSubsystem;
 
 import static frc.robot.Constants.Storage.*;
@@ -15,6 +16,9 @@ public class WaitUntilBallsStored extends CommandBase {
   private final int m_desiredBallCount;
   private boolean m_hadBallAtEntrance;
   private boolean m_hadBallAtExit;
+  private boolean m_hasFirstBall;
+  private boolean m_hasSecondBall;
+  private double m_colorTop;
 
   /** Creates a new WaitUntilMaxBallsStored. */
   public WaitUntilBallsStored(final StorageSubsystem storage) {
@@ -48,6 +52,14 @@ public class WaitUntilBallsStored extends CommandBase {
       m_storage.decrementBallCount();
     }
     m_hadBallAtEntrance = hasBallAtEntrance;
+
+    // if (m_hasFirstBall == true && m_hasSecondBall == false) {
+    //   m_storage.setBallCount(1);
+    // }
+    // if (m_hasFirstBall == true && m_hasSecondBall == true) {
+    //   m_storage.setBallCount(2);
+    // }
+    
   }
 
   // Called once the command ends or is interrupted.

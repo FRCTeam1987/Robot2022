@@ -22,37 +22,30 @@ import frc.robot.subsystems.StorageSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TwoBallAndDAuto extends SequentialCommandGroup {
+public class TwoBallAndOneHubAuto extends SequentialCommandGroup {
   /** Creates a new TwoBallAndDAuto. */
-  public TwoBallAndDAuto(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight limelight, final RobotContainer robotContainer) {
+  public TwoBallAndOneHubAuto(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight limelight, final RobotContainer robotContainer) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     //2BallAndDPart1
     addCommands(
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(true, "2BallAndDPart1"),
-        new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2)
+        new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(3)
       ),
       robotContainer.shootCommandHelper(),
       new ParallelCommandGroup(
-        drivetrainSubsystem.followPathCommand(false, "2BallAndDPart2"),
+        drivetrainSubsystem.followPathCommand(false, "2BallAndOneDPart2"),
         new SequentialCommandGroup(
           new WaitCommand(0.25), 
-          new CollectBalls(controller, collectorSubsystem, storageSubsystem, 1).withTimeout(2)
+          new CollectBalls(controller, collectorSubsystem, storageSubsystem, 1).withTimeout(3)
         )
       ),
-      new ParallelCommandGroup(
-        drivetrainSubsystem.followPathCommand(false, "2BallAndDPart3"),
-        new SequentialCommandGroup(
-          new WaitCommand(0.25), 
-          new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(2)
-        )
-      ),
-      drivetrainSubsystem.followPathCommand(false, "2BallAndDPart4"),
+      drivetrainSubsystem.followPathCommand(false, "2BallAndDHubPart4"),
       new InstantCommand(() -> {
         collectorSubsystem.deploy();
-        collectorSubsystem.runRollerOut();
-        storageSubsystem.runForOutput();
+        collectorSubsystem.runRollerOutSlow();
+        storageSubsystem.runForOutputSlow();
       }, collectorSubsystem, storageSubsystem),
       new WaitCommand(1.5),
       new InstantCommand(() -> {
@@ -63,7 +56,7 @@ public class TwoBallAndDAuto extends SequentialCommandGroup {
         controller.setRumble(RumbleType.kRightRumble, 0);
       }, collectorSubsystem, storageSubsystem),
       new SetBallCount(storageSubsystem, 0),
-      drivetrainSubsystem.followPathCommand(false, "2BallAndDPart5")
+      drivetrainSubsystem.followPathCommand(false, "2BallAndDHubPart5")
       // new InstantCommand(() -> storageSubsystem.runForIntake(), storageSubsystem),
       // robotContainer.shootCommandHelper()
     );

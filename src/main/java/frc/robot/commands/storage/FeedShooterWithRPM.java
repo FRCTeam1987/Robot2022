@@ -40,6 +40,8 @@ public class FeedShooterWithRPM extends CommandBase {
       m_hasStartedShooting = true;
     } else if (m_hasStartedShooting) {
       m_storage.runForIntake();
+    } else if (m_storage.getBallCount() == 1){
+      m_storage.runForIntake();
     } else {
       m_storage.stop();
     }

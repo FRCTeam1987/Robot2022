@@ -11,9 +11,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
-import frc.robot.Constants.Shooter;
 import frc.robot.commands.CollectBalls;
-import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.storage.SetBallCount;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -24,9 +22,9 @@ import frc.robot.subsystems.StorageSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TwoBallAndDManual extends SequentialCommandGroup {
+public class TwoBallAndOneDAuto extends SequentialCommandGroup {
   /** Creates a new TwoBallAndDAuto. */
-  public TwoBallAndDManual(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight limelight, final RobotContainer robotContainer) {
+  public TwoBallAndOneDAuto(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight limelight, final RobotContainer robotContainer) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     //2BallAndDPart1
@@ -35,27 +33,12 @@ public class TwoBallAndDManual extends SequentialCommandGroup {
         drivetrainSubsystem.followPathCommand(true, "2BallAndDPart1"),
         new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2)
       ),
-      new Shoot(shooterSubsystem, storageSubsystem, drivetrainSubsystem, limelight),
-      //   Shoot(
-      //     shooterSubsystem,
-      //     storageSubsystem,
-      //     drivetrainSubsystem,
-      //     limelight,
-      //     () -> 2400
-      //   )
-      // },
+      robotContainer.shootCommandHelper(),
       new ParallelCommandGroup(
-        drivetrainSubsystem.followPathCommand(false, "2BallAndDPart2"),
+        drivetrainSubsystem.followPathCommand(false, "2BallAndOneDPart2"),
         new SequentialCommandGroup(
           new WaitCommand(0.25), 
           new CollectBalls(controller, collectorSubsystem, storageSubsystem, 1)
-        )
-      ),
-      new ParallelCommandGroup(
-        drivetrainSubsystem.followPathCommand(false, "2BallAndDPart3"),
-        new SequentialCommandGroup(
-          new WaitCommand(0.25), 
-          new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2)
         )
       ),
       drivetrainSubsystem.followPathCommand(false, "2BallAndDPart4"),

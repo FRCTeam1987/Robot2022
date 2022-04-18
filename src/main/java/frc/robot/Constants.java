@@ -174,24 +174,27 @@ public final class Constants {
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kDistanceToShooter = new InterpolatingTreeMap<>();
     static {
 
-      kDistanceToShooter.put(new InterpolatingDouble(16.22), new InterpolatingDouble(1800.0));  
-      kDistanceToShooter.put(new InterpolatingDouble(14.07), new InterpolatingDouble(1800.0)); 
-      kDistanceToShooter.put(new InterpolatingDouble(12.11), new InterpolatingDouble(1850.0));  // 2150
-      kDistanceToShooter.put(new InterpolatingDouble(10.07), new InterpolatingDouble(1900.0));  // 2150
-      kDistanceToShooter.put(new InterpolatingDouble(6.0), new InterpolatingDouble(2000.0));   // 2200    //2300                                                                                                 
-      kDistanceToShooter.put(new InterpolatingDouble(3.5), new InterpolatingDouble(2000.0));
-      kDistanceToShooter.put(new InterpolatingDouble(0.97), new InterpolatingDouble(2075.0));
-      kDistanceToShooter.put(new InterpolatingDouble(-1.0), new InterpolatingDouble(2125.0));
+      kDistanceToShooter.put(new InterpolatingDouble(16.06), new InterpolatingDouble(1800.0));  
+      kDistanceToShooter.put(new InterpolatingDouble(14.0), new InterpolatingDouble(1800.0)); 
+      kDistanceToShooter.put(new InterpolatingDouble(12.10), new InterpolatingDouble(1850.0)); 
+      kDistanceToShooter.put(new InterpolatingDouble(10.13), new InterpolatingDouble(1905.0));  
+      kDistanceToShooter.put(new InterpolatingDouble(7.97), new InterpolatingDouble(1950.0));  
+      kDistanceToShooter.put(new InterpolatingDouble(6.0), new InterpolatingDouble(1980.0));                                                                                                  
+      kDistanceToShooter.put(new InterpolatingDouble(3.55), new InterpolatingDouble(2000.0));
+      kDistanceToShooter.put(new InterpolatingDouble(1.01), new InterpolatingDouble(2050.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-1.02), new InterpolatingDouble(2085.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-1.4), new InterpolatingDouble(2125.0)); //Auto shot point (approximate)
       kDistanceToShooter.put(new InterpolatingDouble(-2.4), new InterpolatingDouble(2175.0));
-      kDistanceToShooter.put(new InterpolatingDouble(-4.45), new InterpolatingDouble(2200.0));
-      kDistanceToShooter.put(new InterpolatingDouble(-6.0), new InterpolatingDouble(2250.0));
-      kDistanceToShooter.put(new InterpolatingDouble(-7.03), new InterpolatingDouble(2325.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-4.3), new InterpolatingDouble(2225.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-4.3), new InterpolatingDouble(2245.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-6.0), new InterpolatingDouble(2260.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-7.03), new InterpolatingDouble(2335.0));
       // hood lowered:
       // hood raised:
       kDistanceToShooter.put(new InterpolatingDouble(-8.0), new InterpolatingDouble(2375.0));
       kDistanceToShooter.put(new InterpolatingDouble(-8.59), new InterpolatingDouble(2400.0));
       kDistanceToShooter.put(new InterpolatingDouble(-9.4), new InterpolatingDouble(2450.0));
-      kDistanceToShooter.put(new InterpolatingDouble(-11.0), new InterpolatingDouble(2575.0));
+      kDistanceToShooter.put(new InterpolatingDouble(-11.0), new InterpolatingDouble(2550.0));
       kDistanceToShooter.put(new InterpolatingDouble(-13.0), new InterpolatingDouble(2800.0));
       kDistanceToShooter.put(new InterpolatingDouble(-14.0), new InterpolatingDouble(2800.0));  
 
@@ -200,8 +203,12 @@ public final class Constants {
     }
 
   public static class Storage {
-    public static final double DEBOUNCE_DURATION_BOTTOM = 0.075;
-    public static final double DEBOUNCE_DURATION_TOP = 0.04;
+    public static final double DEBOUNCE_DURATION_BOTTOM_LB = 0.075;
+    public static final double DEBOUNCE_DURATION_TOP_LB = 0.04;
+    public static final double DEBOUNCE_DURATION_BOTTOM_C = 0.04; //TODO Magic Number
+    public static final double DEBOUNCE_DURATION_TOP_C = 0.05; //TODO Magic Number
+    public static final int COLOR_SENSOR_TOP_ID = 2; //TODO Predicted IDs before sensors plugged in, verify accurate
+    public static final int COLOR_SENSOR_BOTTOM_ID = 3; //TODO Predicted IDs before sensors plugged in, verify accurate
     public static final int DIGITAL_INPUT_BOTTOM_ID = 0;
     public static final int DIGITAL_INPUT_TOP_ID = 1;
     public static final int INITIAL_BALL_COUNT = 1;
@@ -213,6 +220,11 @@ public final class Constants {
     public static final double RUN_OUT_SPEED_BOTTOM = -0.95;
     public static final int SENSOR_BOTTOM = 9;
     public static final int SENSOR_TOP = 8;
+    public static final double[] DEFAULT_COLOR = new double[]{0.0, 0.0, 0.0, 0.0};
+    public static final double[] RED = new double[]{16500.0, 10300.0, 4800.0, 325.0};
+    public static final double[] BLUE = new double[]{4900.0, 13300.0, 16300, 325.0};
+    public static final double[] COLOR_TOLERANCE = new double[]{5000.0, 5000.0, 5000.0, 500.0};
+    public static final double MAX_COLOR_SENSOR_PROXIMITY = 1750;
 
   
   }

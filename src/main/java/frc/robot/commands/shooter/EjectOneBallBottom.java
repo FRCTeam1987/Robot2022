@@ -4,18 +4,14 @@
 
 package frc.robot.commands.shooter;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.collector.DeployCollector;
 import frc.robot.commands.collector.StowCollector;
 import frc.robot.commands.storage.StopStorage;
 import frc.robot.commands.storage.WaitForBallShoot;
 import frc.robot.subsystems.CollectorSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.StorageSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -32,7 +28,7 @@ public class EjectOneBallBottom extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ConditionalCommand(
-        new InstantCommand(() -> m_storage.runForIntake()).andThen(new WaitCommand(0.25)),
+        new InstantCommand(() -> m_storage.runForIntake()).andThen(new WaitCommand(0.15)),
         new InstantCommand(),
         () -> m_storage.getBallCount() == 1
       ),
@@ -42,7 +38,7 @@ public class EjectOneBallBottom extends SequentialCommandGroup {
         m_storage.runForOutput();
       }, m_collector),
       new WaitForBallShoot(m_storage, false, 1),
-      new WaitCommand(0.125),
+      new WaitCommand(0.25),
       new StopStorage(m_storage),
       new StowCollector(m_collector)
       // new SetShooterRpm(m_shooter, () -> 0)

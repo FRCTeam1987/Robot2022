@@ -36,9 +36,9 @@ public class DriveCommand extends CommandBase {
         this.translationYSupplier = translationYSupplier;
         this.rotationSupplier = rotationSupplier;
         this.isFieldRelativeSupplier = isFieldRelativeSupplier;
-        m_translationXLimiter = new SlewRateLimiter(4);
-        m_translationYLimiter = new SlewRateLimiter(4);
-        m_rotationLimiter = new SlewRateLimiter(4);
+        m_translationXLimiter = new SlewRateLimiter(6);
+        m_translationYLimiter = new SlewRateLimiter(6);
+        m_rotationLimiter = new SlewRateLimiter(6);
         addRequirements(drivetrain);
     }
 
@@ -64,7 +64,7 @@ public class DriveCommand extends CommandBase {
             drivetrain.drive(new ChassisSpeeds(
                 translationXPercent * Constants.Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
                 translationYPercent * Constants.Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-                rotationPercent * Constants.Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+                rotationPercent * (Constants.Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * .8)
             ));
         }
     }

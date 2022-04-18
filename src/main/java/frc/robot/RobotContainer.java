@@ -19,9 +19,16 @@ import frc.robot.commands.ResetLimelightPipeline;
 import frc.robot.commands.auto.BlueFiveBallAuto;
 import frc.robot.commands.auto.BlueThreeBallAuto;
 import frc.robot.commands.auto.FiveBallAuto;
+import frc.robot.commands.auto.OneBallAndD;
+import frc.robot.commands.auto.OneBallAndSteal;
 import frc.robot.commands.auto.TaxiAuto;
 import frc.robot.commands.auto.ThreeBallAuto;
+import frc.robot.commands.auto.ThreeBallSteal;
 import frc.robot.commands.auto.TwoBallAndDAuto;
+import frc.robot.commands.auto.TwoBallAndDHubAuto;
+import frc.robot.commands.auto.TwoBallAndOneDAuto;
+import frc.robot.commands.auto.TwoBallAndOneHubAuto;
+import frc.robot.commands.auto.TwoBallSteal;
 import frc.robot.commands.climber.BrakeClimber;
 import frc.robot.commands.climber.ClimberArmExtend;
 import frc.robot.commands.climber.ClimberExtend;
@@ -45,6 +52,7 @@ import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.storage.FeedShooter;
 import frc.robot.commands.storage.SetBallCount;
 import frc.robot.commands.storage.StopStorage;
+import frc.robot.commands.storage.StorageDefault;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -55,6 +63,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -80,6 +89,8 @@ public class RobotContainer {
   private final XboxController coController = new XboxController(1);
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<Command>();
 
+  private boolean m_ShouldEjectOpponentBall = false;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
@@ -94,6 +105,8 @@ public class RobotContainer {
             // () -> !controller.getLeftStickButton()  // DRIVER MAP TO PREFERRENCE
             () -> controller.getLeftTriggerAxis() < 0.9  // DRIVER MAP TO PREFERRENCE
     ));
+
+    m_storage.setDefaultCommand(new StorageDefault(m_storage));;
 
     configureButtonBindings();
     configureShuffleboard();
@@ -197,8 +210,17 @@ public class RobotContainer {
     m_autoChooser.addOption("Blue 5 Ball", new BlueFiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("Taxi Auto", new TaxiAuto(controller, m_drivetrain, this));
     m_autoChooser.addOption("2 Ball & D Auto", new TwoBallAndDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("2 Ball & Hub D Auto", new TwoBallAndDHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("2 Ball & 1 D Auto", new TwoBallAndOneDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("2 Ball & 1 Hub Auto", new TwoBallAndOneHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("1 Ball & D Auto", new OneBallAndD(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("2 Ball & D Steal", new TwoBallSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("1 Ball & Steal", new OneBallAndSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("3 Ball & Steal", new ThreeBallSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+
     m_autoChooser.addOption("3 Ball Auto", new ThreeBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("Blue 3 Ball", new BlueThreeBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    
     m_autoChooser.addOption("Test",  m_drivetrain.followPathCommand(false, "Test"));
     // m_autoChooser.addOption("Swerve Char - Forwards", new SwerveCharacterizationFF(m_drivetrain, true, false));
     
@@ -244,6 +266,9 @@ public class RobotContainer {
     SmartDashboard.putData("Raise Shoot Hood", new RaiseHood(m_shooter));
     SmartDashboard.putData("Lower Shoot Hood", new LowerHood(m_shooter));
     SmartDashboard.putData("Rotate to Hub", new RotationToHub(m_drivetrain)); //untested
+    SmartDashboard.putBoolean("Should Use Color Ejection", m_ShouldEjectOpponentBall); //untested
+    SmartDashboard.putData("Eject Op. Ball", ejectOpponentBall());
+
   }
 
   private static double deadband(double value, double deadband) {
@@ -276,7 +301,7 @@ public class RobotContainer {
         m_drivetrain,
         m_limelight,
         () -> m_shooter.getRPMFromLimelight() * Constants.Shooter.SHOOTER_REDUCTION,//m_limelight.getYAxis() < -5 ? 3075 : 2500,
-        () -> m_limelight.getYAxis() < -8
+        () -> m_limelight.getYAxis() < 11
       ),
       new ConditionalCommand(
         new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 1))
@@ -304,7 +329,24 @@ public class RobotContainer {
     // }
     
   }
-
+  public ConditionalCommand ejectOpponentBall() {  //FIXME This code  deals with ball ejeection based on color
+    return new ConditionalCommand(
+      new SequentialCommandGroup(
+        new ConditionalCommand(
+          new EjectOneBallBottom(m_storage, m_collector),
+          new InstantCommand(),
+          () -> !m_storage.isBottomOurs()
+        ),
+        new ConditionalCommand(
+          new EjectOneBallTop(m_storage, m_shooter),
+          new InstantCommand(),
+        () -> !m_storage.isTopOurs() && m_storage.getBallCount() != 2
+      )
+    ), 
+    new InstantCommand(), 
+    () -> (SmartDashboard.getBoolean("Should Use Color Ejection", false)
+    ));
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
