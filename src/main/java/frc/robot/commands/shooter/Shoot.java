@@ -81,8 +81,8 @@ public class Shoot extends SequentialCommandGroup {
       storage,
       drivetrain,
       limelight,
-      () -> 2350, //TODO test speeds and hood position because of the new hood manual shooting does not match. 
-      () -> false 
+      () -> 2225,
+      () -> true 
     );
   }
 

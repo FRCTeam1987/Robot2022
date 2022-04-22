@@ -57,8 +57,8 @@ public class ShooterSubsystem extends SubsystemBase {
     m_motorLeft.config_kI(0, 0.0);
     m_motorLeft.config_kD(0, 0.0); //d =  dampening for the oscillation
 
-    SmartDashboard.putNumber("Hood-Pos", 35);
-    SmartDashboard.putNumber("RPM-Set", 2500 * SHOOTER_REDUCTION);
+    // SmartDashboard.putNumber("Hood-Pos", 35);
+    // SmartDashboard.putNumber("RPM-Set", 2500 * SHOOTER_REDUCTION);
     SmartDashboard.putNumber("rpm-Offset", getOffsetRPM());
 
   }

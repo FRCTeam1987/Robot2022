@@ -45,7 +45,7 @@ public class TwoBallAndDAuto extends SequentialCommandGroup {
         drivetrainSubsystem.followPathCommand(false, "2BallAndDPart3"),
         new SequentialCommandGroup(
           new WaitCommand(0.25), 
-          new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(2)
+          new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(3)
         )
       ),
       drivetrainSubsystem.followPathCommand(false, "2BallAndDPart4"),

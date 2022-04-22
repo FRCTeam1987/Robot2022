@@ -4,6 +4,7 @@
 
 package frc.robot.commands.auto;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -35,7 +36,9 @@ public class ThreeBallAuto extends SequentialCommandGroup {
         drivetrainSubsystem.followPathCommand(true, "3BallAutoPart1"),
         new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2)
       ),
+      new InstantCommand(() -> DriverStation.reportWarning("Three Ball - A", false)),
       robotContainer.shootCommandHelper(),
+      new InstantCommand(() -> DriverStation.reportWarning("Three Ball - B", false)),
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(false, "3BallAutoPart2"),
         new SequentialCommandGroup(
@@ -43,8 +46,10 @@ public class ThreeBallAuto extends SequentialCommandGroup {
           new CollectBalls(controller, collectorSubsystem, storageSubsystem, 1)
         )
       ),
+      new InstantCommand(() -> DriverStation.reportWarning("Three Ball - C", false)),
       // new InstantCommand(() -> storageSubsystem.runForIntake(), storageSubsystem),
-      robotContainer.shootCommandHelper()
+      robotContainer.shootCommandHelper(),
+      new InstantCommand(() -> DriverStation.reportWarning("Three Ball - D", false))
     );
   }
 }

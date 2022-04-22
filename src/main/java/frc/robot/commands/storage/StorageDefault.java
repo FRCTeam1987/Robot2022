@@ -32,7 +32,7 @@ public class StorageDefault extends CommandBase {
         measuredBallCount++;
       // if(measuredBallCount != m_storage.getBallCount())
         // m_storage.setBallCount(measuredBallCount);
-        SmartDashboard.putNumber("color-ball-count", measuredBallCount);
+        // SmartDashboard.putNumber("color-ball-count", measuredBallCount);
     // }
   }
 

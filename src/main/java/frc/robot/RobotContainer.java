@@ -158,15 +158,15 @@ public class RobotContainer {
 
     new POVButton(controller, 180)
       .whenPressed(new InstantCommand(() -> {
-        m_climberSubsystem.climberRightRetract();
-        m_climberSubsystem.climberLeftRetract();
+        m_climberSubsystem.climberRightRetract(0.75);
+        m_climberSubsystem.climberLeftRetract(0.75);
       }, m_climberSubsystem))
       .whenReleased(new InstantCommand(() -> m_climberSubsystem.climberStop(), m_climberSubsystem));
 
     new POVButton(controller, 0)
       .whenPressed(new InstantCommand(() -> {
-        m_climberSubsystem.climberRightExtend();
-        m_climberSubsystem.climberLeftExtend();
+        m_climberSubsystem.climberRightExtend(0.75);
+        m_climberSubsystem.climberLeftExtend(0.75);
       }, m_climberSubsystem))
       .whenReleased(new InstantCommand(() -> m_climberSubsystem.climberStop(), m_climberSubsystem));
 
@@ -213,7 +213,7 @@ public class RobotContainer {
     m_autoChooser.addOption("2 Ball & Hub D Auto", new TwoBallAndDHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("2 Ball & 1 D Auto", new TwoBallAndOneDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("2 Ball & 1 Hub Auto", new TwoBallAndOneHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    m_autoChooser.addOption("1 Ball & D Auto", new OneBallAndD(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("1 Ball & D Steal", new OneBallAndD(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("2 Ball & D Steal", new TwoBallSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("1 Ball & Steal", new OneBallAndSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("3 Ball & Steal", new ThreeBallSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
@@ -231,16 +231,16 @@ public class RobotContainer {
 
     // SmartDashboard.putData("Collector-Deploy", new DeployCollector(m_collector));
     // SmartDashboard.putData("Collector-Stow", new StowCollector(m_collector));
-    SmartDashboard.putData("Feed Shooter", new FeedShooter(m_storage));
-    SmartDashboard.putData("Shooter-Spin", new SetShooterRpm(m_shooter, () -> SmartDashboard.getNumber("RPM-Set", 0.0) ));
-    SmartDashboard.putData("Shooter-Stop", new SetShooterRpm(m_shooter, () -> 0.0));
+    // SmartDashboard.putData("Feed Shooter", new FeedShooter(m_storage));
+    // SmartDashboard.putData("Shooter-Spin", new SetShooterRpm(m_shooter, () -> SmartDashboard.getNumber("RPM-Set", 0.0) ));
+    // SmartDashboard.putData("Shooter-Stop", new SetShooterRpm(m_shooter, () -> 0.0));
     // SmartDashboard.putData("Store-In", new RunStorageIn(m_storage));
     // SmartDashboard.putData("Store-Out", new RunStorageOut(m_storage));
     // SmartDashboard.putData("Store-Stop", new StopStorage(m_storage));
     // SmartDashboard.putData("LL-Standard", new ChangeLimeLightStream(StreamType.standard));
     // SmartDashboard.putData("LL-PipMain", new ChangeLimeLightStream(StreamType.pipMain));
     // SmartDashboard.putData("LL-PipSecondary", new ChangeLimeLightStream(StreamType.pipSecondary));
-    SmartDashboard.putData("shoot", new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight));
+    // SmartDashboard.putData("shoot", new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight));
     // SmartDashboard.putData("Reset Ball Count", new ZeroBallCount(m_storage));
     // SmartDashboard.putData("Rotate-45", new RotateToAngle(m_drivetrain, () -> Rotation2d.fromDegrees(45).getRadians()));
     // SmartDashboard.putData("Rotate-LL", new RotateToLimelightAngle(m_drivetrain, m_limelight));
@@ -261,13 +261,13 @@ public class RobotContainer {
     SmartDashboard.putData("Reset Limelight Pipeline", new ResetLimelightPipeline(m_limelight));
     SmartDashboard.putData("Pivot Up", new ClimberPivotUp(m_climberSubsystem));
     SmartDashboard.putData("Pivot Down", new ClimberPivotDown(m_climberSubsystem));
-    SmartDashboard.putData("Increment Offset", new InstantCommand(() -> m_shooter.incrementOffsetRPM()));
-    SmartDashboard.putData("Decrement Offset", new InstantCommand(() -> m_shooter.decrementOffsetRPM()));
+    // SmartDashboard.putData("Increment Offset", new InstantCommand(() -> m_shooter.incrementOffsetRPM()));
+    // SmartDashboard.putData("Decrement Offset", new InstantCommand(() -> m_shooter.decrementOffsetRPM()));
     SmartDashboard.putData("Raise Shoot Hood", new RaiseHood(m_shooter));
     SmartDashboard.putData("Lower Shoot Hood", new LowerHood(m_shooter));
-    SmartDashboard.putData("Rotate to Hub", new RotationToHub(m_drivetrain)); //untested
-    SmartDashboard.putBoolean("Should Use Color Ejection", m_ShouldEjectOpponentBall); //untested
-    SmartDashboard.putData("Eject Op. Ball", ejectOpponentBall());
+    // SmartDashboard.putData("Rotate to Hub", new RotationToHub(m_drivetrain)); //untested
+    // SmartDashboard.putBoolean("Should Use Color Ejection", m_ShouldEjectOpponentBall); //untested
+    // SmartDashboard.putData("Eject Op. Ball", ejectOpponentBall());
 
   }
 
@@ -309,7 +309,7 @@ public class RobotContainer {
           .andThen(new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 0))), 
           new InstantCommand(), 
           () -> DriverStation.isAutonomousEnabled() == false), 
-      () -> m_limelight.getYAxis() > -14 && m_limelight.getYAxis() < 16.3);
+      () -> m_limelight.getYAxis() > -16 && m_limelight.getYAxis() < 16.3);
 
     // if (m_limelight.getYAxis() > -12 && m_limelight.getYAxis() < 4) {
       // return new Shoot(

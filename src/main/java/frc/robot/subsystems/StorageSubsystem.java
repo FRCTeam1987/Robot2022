@@ -58,7 +58,7 @@ public class StorageSubsystem extends SubsystemBase {
     m_motorTop.restoreFactoryDefaults();
     m_motorTop.setIdleMode(IdleMode.kBrake);
     stop();
-    SmartDashboard.putBoolean("Should Use Color Sensor", m_UseColorSensorForBallCount);
+    // SmartDashboard.putBoolean("Should Use Color Sensor", m_UseColorSensorForBallCount);
     
    
     // this.table = table;
@@ -209,7 +209,7 @@ public class StorageSubsystem extends SubsystemBase {
     // m_hasSecondBall = m_debouncerColorBottom.calculate(isBottomBlue() || isBottomRed());
     // SmartDashboard.putBoolean("ball-bottom", m_isBallAtBottom);
     // SmartDashboard.putBoolean("ball-top", m_isballAtTop);
-    // SmartDashboard.putNumber("ball count", m_ballCount);
+    SmartDashboard.putNumber("ball count", m_ballCount);
     // SmartDashboard.putBoolean("Top Red", isTopRed());
     // SmartDashboard.putBoolean("Top Blue", isTopBlue());
     // SmartDashboard.putBoolean("Bottom Red", isBottomRed());

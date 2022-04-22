@@ -4,7 +4,9 @@
 
 package frc.robot.commands.auto;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -28,6 +30,7 @@ public class FiveBallAuto extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ThreeBallAuto(controller, drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, limelight, robotContainer),
+      new InstantCommand(() -> DriverStation.reportWarning("Five Ball - A", false)),
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(false, "5BallAutoPart3"),
         new SequentialCommandGroup(
@@ -35,8 +38,11 @@ public class FiveBallAuto extends SequentialCommandGroup {
           new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(3)
         )
       ),
+      new InstantCommand(() -> DriverStation.reportWarning("Five Ball - B", false)),
       drivetrainSubsystem.followPathCommand(false, "5BallAutoPart4"),
-      robotContainer.shootCommandHelper()
+      new InstantCommand(() -> DriverStation.reportWarning("Five Ball - C", false)),
+      robotContainer.shootCommandHelper(), 
+      new InstantCommand(() -> DriverStation.reportWarning("Five Ball - D", false))
     );
   }
 }
