@@ -35,6 +35,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.*;
 import static frc.robot.Constants.Drivetrain.*;
 
+import java.util.Set;
+
 public class DrivetrainSubsystem extends SubsystemBase {
 
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
@@ -56,6 +58,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private final SwerveModule m_frontRightModule;
   private final SwerveModule m_backLeftModule;
   private final SwerveModule m_backRightModule;
+  private double m_pitchOffset;
   private Rotation2d m_startYaw;
 
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
@@ -134,7 +137,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void zeroGyroscope() {
     m_navx.reset();
     // setHeadingAdjust(Rotation2d.fromDegrees(m_navx.getCompassHeading()));
-    System.out.println("Zeroing gyro: " + m_navx.getCompassHeading());
+    // System.out.println("Zeroing gyro: " + m_navx.getCompassHeading());
   }
   public void rememberStartingPosition() {
     m_startYaw = Rotation2d.fromDegrees(m_navx.getYaw());
@@ -150,7 +153,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   private void setHeadingAdjust(final Rotation2d headingAdjust) {
     m_headingAdjust = headingAdjust;
-    System.out.println("Set heading adjust: " + m_headingAdjust.getDegrees());
+    // System.out.println("Set heading adjust: " + m_headingAdjust.getDegrees());
   }
 
   private Rotation2d getUnadjustedHeading() {
@@ -175,6 +178,22 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public double getPitch() {
     return m_navx.getPitch();
+  }
+
+  private void setPitchOffset(double pitchOffset) {
+    m_pitchOffset = pitchOffset;
+  }
+
+  public double getPitchOffset() {
+    return m_pitchOffset;
+  }
+
+  public double getPitchWithOffset() {
+    return getPitch() + getPitchOffset();
+  }
+
+  public void zeroPitch() {
+    setPitchOffset(-getPitch());
   }
 
   public void drive(ChassisSpeeds chassisSpeeds) {

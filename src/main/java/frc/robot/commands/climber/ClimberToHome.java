@@ -17,21 +17,21 @@ public class ClimberToHome extends ParallelCommandGroup {
   private final ClimberSubsystem m_climber;
 
   /** Creates a new ClimberToHome. */
-  public ClimberToHome(ClimberSubsystem climberSubsystem) {
+  public ClimberToHome(ClimberSubsystem climberSubsystem) { //TODO Change to wait for current spike then stop climber
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_climber = climberSubsystem;
     addCommands(
       new ParallelCommandGroup(
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberRightRetract()),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) < 0.5),
-          new InstantCommand(() -> climberSubsystem.climberRightStop())
+          new InstantCommand(() -> climberSubsystem.climberBackRetract()),
+          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getBackPosition()) < 0.5),
+          new InstantCommand(() -> climberSubsystem.climberBackStop())
         ),
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberLeftRetract()),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) < 0.5),
-          new InstantCommand(() -> climberSubsystem.climberLeftStop())  
+          new InstantCommand(() -> climberSubsystem.climberFrontRetract()),
+          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getFrontPosition()) < 0.5),
+          new InstantCommand(() -> climberSubsystem.climberFrontStop())  
         )
       )
     );

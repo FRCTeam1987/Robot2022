@@ -37,7 +37,7 @@ public class WaitForBallShoot extends CommandBase {
     m_startBallCount = 0;
     m_originalDesiredBallShootCount = desiredBallShootCount;
     m_desiredBallShootCount = desiredBallShootCount;
-    System.out.println("desiredBallShootCount in constructor = " + m_desiredBallShootCount);
+    // System.out.println("desiredBallShootCount in constructor = " + m_desiredBallShootCount);
     // m_desiredBallCount = desiredBallCount;
     // if (m_desiredBallCount < m_startBallCount) {
     //   m_desiredBallCount = m_startBallCount;

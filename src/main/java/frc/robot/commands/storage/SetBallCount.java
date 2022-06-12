@@ -23,7 +23,7 @@ public class SetBallCount extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("Setting ball count: " + m_desiredBallCount);
+    // System.out.println("Setting ball count: " + m_desiredBallCount);
     m_storage.setBallCount(m_desiredBallCount);
   }
 

@@ -31,28 +31,25 @@ import frc.robot.commands.auto.TwoBallAndOneHubAuto;
 import frc.robot.commands.auto.TwoBallSteal;
 import frc.robot.commands.climber.BrakeClimber;
 import frc.robot.commands.climber.ClimberArmExtend;
-import frc.robot.commands.climber.ClimberExtend;
-import frc.robot.commands.climber.ClimberPivotDown;
-import frc.robot.commands.climber.ClimberPivotUp;
-import frc.robot.commands.climber.ClimberPullIn;
-import frc.robot.commands.climber.ClimberPullUp;
-import frc.robot.commands.climber.ClimberShift;
+import frc.robot.commands.climber.ClimberBackExtend;
+import frc.robot.commands.climber.ClimberFrontExtend;
+// import frc.robot.commands.climber.ClimberPivotDown;
+// import frc.robot.commands.climber.ClimberPivotUp;
+// import frc.robot.commands.climber.ClimberPullIn;
+import frc.robot.commands.climber.ClimberRetract;
+import frc.robot.commands.climber.ClimbStep3;
 import frc.robot.commands.climber.ClimberToHome;
 import frc.robot.commands.climber.CoastClimber;
 import frc.robot.commands.climber.ZeroClimber;
 import frc.robot.commands.collector.StowCollector;
 import frc.robot.commands.drivetrain.DriveCommand;
-import frc.robot.commands.drivetrain.RotationToHub;
 import frc.robot.commands.shooter.EjectOneBallBottom;
 import frc.robot.commands.shooter.EjectOneBallTop;
 import frc.robot.commands.shooter.LowerHood;
 import frc.robot.commands.shooter.RaiseHood;
-import frc.robot.commands.shooter.SetShooterRpm;
 import frc.robot.commands.shooter.Shoot;
-import frc.robot.commands.storage.FeedShooter;
 import frc.robot.commands.storage.SetBallCount;
 import frc.robot.commands.storage.StopStorage;
-import frc.robot.commands.storage.StorageDefault;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -106,7 +103,7 @@ public class RobotContainer {
             () -> controller.getLeftTriggerAxis() < 0.9  // DRIVER MAP TO PREFERRENCE
     ));
 
-    m_storage.setDefaultCommand(new StorageDefault(m_storage));;
+    // m_storage.setDefaultCommand(new StorageDefault(m_storage));;
 
     configureButtonBindings();
     configureShuffleboard();
@@ -158,15 +155,15 @@ public class RobotContainer {
 
     new POVButton(controller, 180)
       .whenPressed(new InstantCommand(() -> {
-        m_climberSubsystem.climberRightRetract(0.75);
-        m_climberSubsystem.climberLeftRetract(0.75);
+        m_climberSubsystem.climberFrontRetract(0.75);
+        m_climberSubsystem.climberBackRetract(0.75);
       }, m_climberSubsystem))
       .whenReleased(new InstantCommand(() -> m_climberSubsystem.climberStop(), m_climberSubsystem));
 
     new POVButton(controller, 0)
       .whenPressed(new InstantCommand(() -> {
-        m_climberSubsystem.climberRightExtend(0.75);
-        m_climberSubsystem.climberLeftExtend(0.75);
+        m_climberSubsystem.climberFrontExtend(0.75);
+        m_climberSubsystem.climberBackExtend(0.75);
       }, m_climberSubsystem))
       .whenReleased(new InstantCommand(() -> m_climberSubsystem.climberStop(), m_climberSubsystem));
 
@@ -185,15 +182,18 @@ public class RobotContainer {
       .whenPressed(
         // new SequentialCommandGroup(
         //   new ClimberPivotUp(m_climberSubsystem),
-          new ClimberExtend(m_climberSubsystem)
+        new ParallelCommandGroup(
+          new ClimberBackExtend(m_climberSubsystem),
+          new ClimberFrontExtend(m_climberSubsystem)
+        )
         // )
       );
     new Button(controller::getAButton)
-      .whenPressed(new ClimberPullUp(m_climberSubsystem));
+      .whenPressed(new ClimberRetract(m_climberSubsystem, 0.4));
     new Button(coController::getYButton)
-      .whenPressed(new ClimberShift(m_climberSubsystem, m_drivetrain));
-    new Button(coController::getAButton)
-      .whenPressed(new ClimberPullIn(m_climberSubsystem));
+      .whenPressed(new ClimbStep3(m_climberSubsystem, m_drivetrain));
+    // new Button(coController::getAButton) //TODO REPLACE WITH NEW COMMAND
+    //   .whenPressed(new ClimberPullIn(m_climberSubsystem));
 
     new Button(controller::getBButton)
     .whileHeld(new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight));
@@ -259,8 +259,8 @@ public class RobotContainer {
     
     SmartDashboard.putData("Powercycle Limelight", new PowercycleLimelight(m_powerDistribution));
     SmartDashboard.putData("Reset Limelight Pipeline", new ResetLimelightPipeline(m_limelight));
-    SmartDashboard.putData("Pivot Up", new ClimberPivotUp(m_climberSubsystem));
-    SmartDashboard.putData("Pivot Down", new ClimberPivotDown(m_climberSubsystem));
+    // SmartDashboard.putData("Pivot Up", new ClimberPivotUp(m_climberSubsystem));
+    // SmartDashboard.putData("Pivot Down", new ClimberPivotDown(m_climberSubsystem));
     // SmartDashboard.putData("Increment Offset", new InstantCommand(() -> m_shooter.incrementOffsetRPM()));
     // SmartDashboard.putData("Decrement Offset", new InstantCommand(() -> m_shooter.decrementOffsetRPM()));
     SmartDashboard.putData("Raise Shoot Hood", new RaiseHood(m_shooter));

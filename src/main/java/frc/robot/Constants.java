@@ -217,9 +217,9 @@ public final class Constants {
     public static final int MAX_BALL_COUNT = 2;
     public static final int MOTOR_BOTTOM_CAN_ID = 8;
     public static final int MOTOR_TOP_CAN_ID = 9;
-    public static final double RUN_IN_SPEED_BOTTOM = 0.75;
+    public static final double RUN_IN_SPEED_BOTTOM = -0.75;
     public static final double RUN_IN_SPEED_TOP = -0.95;
-    public static final double RUN_OUT_SPEED_BOTTOM = -0.95;
+    public static final double RUN_OUT_SPEED_BOTTOM = 0.95;
     public static final int SENSOR_BOTTOM = 9;
     public static final int SENSOR_TOP = 8;
     public static final double[] DEFAULT_COLOR = new double[]{0.0, 0.0, 0.0, 0.0};
@@ -232,15 +232,16 @@ public final class Constants {
   }
 
   public static class Climber {
-    public static final int LEFT_CLIMBER_MOTOR = 13;
-    public static final int RIGHT_CLIMBER_MOTOR = 14;
+    public static final int Back_CLIMBER_MOTOR = 13;
+    public static final int Front_CLIMBER_MOTOR = 14;
     // public static final int CLIMBER_PANCAKE_ONE = 4;
     // public static final int CLIMBER_PANCAKE_TWO = 5;
-    public static final int CLIMBER_PISTON_ONE = 2;
-    public static final int CLIMBER_PISTON_TWO = 3; 
+    // public static final int CLIMBER_PISTON_ONE = 2;
+    // public static final int CLIMBER_PISTON_TWO = 3;
     public static final double CLIMBER_LOWER_TOLERANCE = 1;
     public static final double CLIMBER_SPEED = 0.35;
     public static final double CLIMBER_MAX_EXTEND_ANGLE = -6.5; /* magic number */
+    public static final double initialExtendPosition = 20;
   }
 
   

@@ -7,36 +7,34 @@ package frc.robot.commands.climber;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import  static frc.robot.Constants.Climber.*;
 import frc.robot.subsystems.ClimberSubsystem;
-import static frc.robot.Constants.Climber.*;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ClimberPullIn extends SequentialCommandGroup {
+public class ClimberRetract extends SequentialCommandGroup {
 
   private final ClimberSubsystem m_climber;
 
-  /** Creates a new ClimberPullIn. */
-  public ClimberPullIn(ClimberSubsystem climberSubsystem) {
+
+  /** Creates a new ClimberPullUp. */
+  public ClimberRetract(ClimberSubsystem climberSubsystem, double speed) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_climber = climberSubsystem;
     addCommands(
-      new InstantCommand(() -> climberSubsystem.pivotUp(), climberSubsystem),
-      new WaitCommand(1.0),
       new ParallelCommandGroup(
-        new SequentialCommandGroup( /* Right Climber */
-          new InstantCommand(() -> climberSubsystem.climberRightRetract(0.35 )),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getRightPosition()) < CLIMBER_LOWER_TOLERANCE - .5),
-          new InstantCommand(() -> climberSubsystem.climberRightStop())
+        new SequentialCommandGroup(
+          new InstantCommand(() -> climberSubsystem.climberFrontRetract(speed)), // speed = 0.75
+          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getFrontPosition()) < CLIMBER_LOWER_TOLERANCE),
+          new InstantCommand(() -> climberSubsystem.climberFrontStop())
         ),
-        new SequentialCommandGroup( /* Left Climber */
-          new InstantCommand(() -> climberSubsystem.climberLeftRetract(0.35)),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getLeftPosition()) < CLIMBER_LOWER_TOLERANCE - .5),
-          new InstantCommand(() -> climberSubsystem.climberLeftStop())
+        new SequentialCommandGroup(
+          new InstantCommand(() -> climberSubsystem.climberBackRetract(speed)), // speed = 0.75
+          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getBackPosition()) < CLIMBER_LOWER_TOLERANCE),
+          new InstantCommand(() -> climberSubsystem.climberBackStop())  
         )
       )
     );
