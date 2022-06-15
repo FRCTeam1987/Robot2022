@@ -36,7 +36,7 @@ import frc.robot.commands.climber.ClimberFrontExtend;
 // import frc.robot.commands.climber.ClimberPivotDown;
 // import frc.robot.commands.climber.ClimberPivotUp;
 // import frc.robot.commands.climber.ClimberPullIn;
-import frc.robot.commands.climber.ClimberRetract;
+import frc.robot.commands.climber.ClimberFrontRetract;
 import frc.robot.commands.climber.ClimbStep3;
 import frc.robot.commands.climber.ClimberToHome;
 import frc.robot.commands.climber.CoastClimber;
@@ -50,7 +50,8 @@ import frc.robot.commands.shooter.RaiseHood;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.storage.SetBallCount;
 import frc.robot.commands.storage.StopStorage;
-import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ClimberBackSubsystem;
+import frc.robot.subsystems.ClimberFrontSubsystem;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimeLight;
@@ -80,7 +81,8 @@ public class RobotContainer {
   private final StorageSubsystem m_storage = new StorageSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final LimeLight m_limelight = new LimeLight();
-  private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
+  private final ClimberFrontSubsystem m_climberFrontSubsystem = new ClimberFrontSubsystem();
+  private final ClimberBackSubsystem m_climberBackSubsystem = new ClimberBackSubsystem();
 
   private final XboxController controller = new XboxController(0);
   private final XboxController coController = new XboxController(1);
@@ -155,17 +157,23 @@ public class RobotContainer {
 
     new POVButton(controller, 180)
       .whenPressed(new InstantCommand(() -> {
-        m_climberSubsystem.climberFrontRetract(0.75);
-        m_climberSubsystem.climberBackRetract(0.75);
-      }, m_climberSubsystem))
-      .whenReleased(new InstantCommand(() -> m_climberSubsystem.climberStop(), m_climberSubsystem));
+        m_climberFrontSubsystem.climberRetract(0.75);
+        m_climberBackSubsystem.climberRetract(0.75);
+      }, m_climberFrontSubsystem, m_climberFrontSubsystem))
+      .whenReleased(new InstantCommand(() -> {
+        m_climberFrontSubsystem.climberStop();
+        m_climberBackSubsystem.climberStop();
+      }, m_climberFrontSubsystem, m_climberBackSubsystem));
 
     new POVButton(controller, 0)
       .whenPressed(new InstantCommand(() -> {
-        m_climberSubsystem.climberFrontExtend(0.75);
-        m_climberSubsystem.climberBackExtend(0.75);
-      }, m_climberSubsystem))
-      .whenReleased(new InstantCommand(() -> m_climberSubsystem.climberStop(), m_climberSubsystem));
+        m_climberFrontSubsystem.climberExtend(0.75);
+        m_climberBackSubsystem.climberExtend(0.75);
+      }, m_climberFrontSubsystem, m_climberBackSubsystem))
+      .whenReleased(new InstantCommand(() -> {
+        m_climberFrontSubsystem.climberStop();
+        m_climberBackSubsystem.climberStop();
+      }, m_climberFrontSubsystem, m_climberBackSubsystem));
 
     new Button(coController::getLeftBumper)
       .whenPressed(new EjectOneBallTop(m_storage, m_shooter));
@@ -183,15 +191,15 @@ public class RobotContainer {
         // new SequentialCommandGroup(
         //   new ClimberPivotUp(m_climberSubsystem),
         new ParallelCommandGroup(
-          new ClimberBackExtend(m_climberSubsystem),
-          new ClimberFrontExtend(m_climberSubsystem)
+          // new ClimberBackExtend(m_climberSubsystem),
+          // new ClimberFrontExtend(m_climberSubsystem)
         )
         // )
       );
-    new Button(controller::getAButton)
-      .whenPressed(new ClimberRetract(m_climberSubsystem, 0.4));
+    // new Button(controller::getAButton)
+    //   .whenPressed(new ClimberFrontRetract(m_climberSubsystem, 0.4));
     new Button(coController::getYButton)
-      .whenPressed(new ClimbStep3(m_climberSubsystem, m_drivetrain));
+      .whenPressed(new ClimbStep3(m_climberFrontSubsystem, m_climberBackSubsystem, m_drivetrain));
     // new Button(coController::getAButton) //TODO REPLACE WITH NEW COMMAND
     //   .whenPressed(new ClimberPullIn(m_climberSubsystem));
 
@@ -250,12 +258,12 @@ public class RobotContainer {
     // SmartDashboard.putData("Climber Pull-In", new ClimberPullIn(m_climberSubsystem));
     // SmartDashboard.putData("Pivot Down", new ClimberPivotDown(m_climberSubsystem));
     // SmartDashboard.putData("Pivot Up", new ClimberPivotUp(m_climberSubsystem));
-    SmartDashboard.putData("Climber to Home", new ClimberToHome(m_climberSubsystem));
-    SmartDashboard.putData("Coast Climber", new CoastClimber(m_climberSubsystem));
-    SmartDashboard.putData("Brake Climber", new BrakeClimber(m_climberSubsystem));
-    SmartDashboard.putData("Zero Climber", new ZeroClimber(m_climberSubsystem));
+    SmartDashboard.putData("Climber to Home", new ClimberToHome(m_climberFrontSubsystem, m_climberBackSubsystem));
+    SmartDashboard.putData("Coast Climber", new CoastClimber(m_climberFrontSubsystem, m_climberBackSubsystem));
+    SmartDashboard.putData("Brake Climber", new BrakeClimber(m_climberFrontSubsystem, m_climberBackSubsystem));
+    SmartDashboard.putData("Zero Climber", new ZeroClimber(m_climberFrontSubsystem, m_climberBackSubsystem));
     
-    SmartDashboard.putData("Extend Climber", new ClimberArmExtend(m_climberSubsystem, m_drivetrain, 24));
+    SmartDashboard.putData("Extend Climber", new ClimberArmExtend(m_climberFrontSubsystem, m_climberBackSubsystem, m_drivetrain, 24));
     
     SmartDashboard.putData("Powercycle Limelight", new PowercycleLimelight(m_powerDistribution));
     SmartDashboard.putData("Reset Limelight Pipeline", new ResetLimelightPipeline(m_limelight));

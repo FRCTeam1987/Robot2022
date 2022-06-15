@@ -9,21 +9,24 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
-import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ClimberBackSubsystem;
+import frc.robot.subsystems.ClimberFrontSubsystem;
 
 public class ArmGoToPosition extends CommandBase {
   /** Creates a new ArmGoToPosition. */
-  private final Enum m_arm;
-  private final double m_desiredPosition;
-  private final ClimberSubsystem m_climber;
-  private double m_percentSpeed;
+  private final double m_desiredFrontPosition;
+  private final double m_desiredBackPosition;
+  private final ClimberFrontSubsystem m_climberFront;
+  private final ClimberBackSubsystem m_climberBack;
+  private double m_percentSpeedFront;
+  private double m_percentSpeedBack;
 
-  public ArmGoToPosition(ClimberSubsystem climberSubsystem, Enum climberArm, double desiredPosition, double percentSpeed) { //remove enum and create 2 doubles for desired position (front and back)
+  public ArmGoToPosition(ClimberFrontSubsystem climberFrontSubsystem, ClimberBackSubsystem climberBackSubsystem, double desiredFrontPosition, double desiredBackPosition) { //remove enum and create 2 doubles for desired position (front and back)
     // Use addRequirements() here to declare subsystem dependencies.
-    m_arm = climberArm;
-    m_desiredPosition = desiredPosition;
-    m_climber = climberSubsystem;
-    m_percentSpeed = percentSpeed;
+    m_desiredFrontPosition = desiredFrontPosition;
+    m_desiredBackPosition = desiredBackPosition;
+    m_climberFront = climberFrontSubsystem;
+    m_climberBack = climberBackSubsystem;
   }
 
   // Called when the command is initially scheduled.
@@ -33,23 +36,31 @@ public class ArmGoToPosition extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() { //set front arm and back arm to position (parellel)
-    if (m_arm == ClimberSubsystem.ClimberArm.kFront) {
-      double percentSign = m_climber.getFrontPosition() > m_desiredPosition ? -1 : 1;
-      m_percentSpeed = Math.copySign(m_percentSpeed, percentSign);
-      new SequentialCommandGroup(
-          new InstantCommand(() -> m_climber.climberFrontExtend(m_percentSpeed)),
-          new WaitUntilCommand(() -> Math.abs(m_climber.getFrontPosition()) > Constants.Climber.initialExtendPosition), //20
-          new InstantCommand(() -> m_climber.climberFrontStop())
-        );
-    } else {
-      double percentSign = m_climber.getBackPosition() > m_desiredPosition ? -1 : 1;
-      m_percentSpeed = Math.copySign(m_percentSpeed, percentSign);
-      new SequentialCommandGroup(
-          new InstantCommand(() -> m_climber.climberBackExtend(m_percentSpeed)),
-          new WaitUntilCommand(() -> Math.abs(m_climber.getBackPosition()) > Constants.Climber.initialExtendPosition), //20
-          new InstantCommand(() -> m_climber.climberBackStop())
-      );
-    }
+    // if (front arm pos is below target) {
+    //   go up();
+    // } else if (front arm pos is above target) {
+    //   go down();
+    // } else {
+    //   stop();
+    // }
+
+      if (m_climberFront.getPosition() < (m_desiredFrontPosition - (Constants.Climber.ExceptableErrorValue / 2))) {
+        m_climberFront.climberExtend();
+      } else if (m_climberFront.getPosition() > (m_desiredFrontPosition + (Constants.Climber.ExceptableErrorValue / 2))) {
+        m_climberFront.climberRetract();
+      } else {
+        m_climberFront.climberStop();
+      }
+
+
+      if (m_climberBack.getPosition() < (m_desiredBackPosition - 0.5)) {
+        m_climberBack.climberExtend();
+      } else if (m_climberBack.getPosition() > (m_desiredBackPosition + 0.5)) {
+        m_climberBack.climberRetract();
+      } else {
+        m_climberBack.climberStop();
+      }
+      
 
     /**
      * if armFront then
@@ -67,8 +78,8 @@ public class ArmGoToPosition extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_climber.climberFrontStop();
-    m_climber.climberBackStop();
+    m_climberFront.climberStop();
+    m_climberBack.climberStop();
     // stop motors
   }
 
@@ -76,15 +87,9 @@ public class ArmGoToPosition extends CommandBase {
   @Override
   public boolean isFinished() {
     // return false; // isWithinTolerance
-    if (m_arm == ClimberSubsystem.ClimberArm.kFront) {
-      if (Math.abs(m_climber.getFrontPosition() - m_desiredPosition) <= 3) {
+      if ((Math.abs(m_climberFront.getPosition() - m_desiredFrontPosition) <= 3) && (Math.abs(m_climberBack.getPosition() - m_desiredBackPosition) <= 3)) {
         return true;
       }
-    } else {
-      if (Math.abs(m_climber.getBackPosition() - m_desiredPosition) <= 3) {
-        return true;
-      }
-    }
     return false;
   }
 }

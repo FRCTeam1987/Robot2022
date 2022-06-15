@@ -5,7 +5,8 @@
 package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ClimberBackSubsystem;
+import frc.robot.subsystems.ClimberFrontSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -14,17 +15,20 @@ import frc.robot.subsystems.ClimberSubsystem;
 
 public class CoastClimber extends InstantCommand {
   
-  private final ClimberSubsystem m_climberSubsystem;
+  private final ClimberFrontSubsystem m_climberFrontSubsystem;
+  private final ClimberBackSubsystem m_climberBackSubsystem;
 
-  public CoastClimber(ClimberSubsystem climberSubsystem) {
+  public CoastClimber(ClimberFrontSubsystem climberFrontSubsystem, ClimberBackSubsystem climberBackSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_climberSubsystem = climberSubsystem;
+    m_climberFrontSubsystem = climberFrontSubsystem;
+    m_climberBackSubsystem = climberBackSubsystem;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_climberSubsystem.coastBothMotors();
+    m_climberFrontSubsystem.coastMotor();
+    m_climberBackSubsystem.coastMotor();
   }
 
   @Override

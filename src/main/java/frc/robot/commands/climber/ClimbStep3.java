@@ -6,22 +6,24 @@ package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ClimberBackSubsystem;
+import frc.robot.subsystems.ClimberFrontSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.subsystems.ClimberSubsystem.ClimberArm;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ClimbStep3 extends SequentialCommandGroup {
 
-  private final ClimberSubsystem m_climber;
+  private final ClimberFrontSubsystem m_climberFront;
+  private final ClimberBackSubsystem m_climberBack;
 
   /** Creates a new ClimberShift. */
-  public ClimbStep3(ClimberSubsystem climberSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
+  public ClimbStep3(ClimberFrontSubsystem climberFrontSubsystem, ClimberBackSubsystem climberBackSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    m_climber = climberSubsystem;
+    m_climberFront = climberFrontSubsystem;
+    m_climberBack = climberBackSubsystem;
     addCommands(
       // new ParallelCommandGroup(
         // new SequentialCommandGroup(
@@ -30,10 +32,10 @@ public class ClimbStep3 extends SequentialCommandGroup {
         //   new WaitUntilCommand(() -> Math.abs(climberSubsystem.getFrontPosition()) < 2),
         //   new InstantCommand(() -> climberSubsystem.climberFrontStop())
         // ),
-        new ArmGoToPosition(m_climber, ClimberArm.kBack, 8, 0.65),
+        new ArmGoToPosition(m_climberFront, m_climberBack, 3.5, 8),
       // ),
       new WaitCommand(1),
-      new ArmGoToPosition(m_climber, ClimberArm.kBack, 3.5, 0.65)
+      new ArmGoToPosition(m_climberFront, m_climberBack, 3.5, 3.5)
 
       // new ClimberArmExtend(climberSubsystem, drivetrainSubsystem, 24) //24 //TODO Check me
 
@@ -58,7 +60,8 @@ public class ClimbStep3 extends SequentialCommandGroup {
       // TODO Auto-generated method stub
       super.end(interrupted);
       if (interrupted) {
-        m_climber.climberStop();
+        m_climberFront.climberStop();
+        m_climberBack.climberStop();
       }
   }
 }

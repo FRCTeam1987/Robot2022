@@ -8,30 +8,34 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ClimberBackSubsystem;
+import frc.robot.subsystems.ClimberFrontSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ClimberToHome extends ParallelCommandGroup {
-  private final ClimberSubsystem m_climber;
+  private final ClimberFrontSubsystem m_climberFront;
+  private final ClimberBackSubsystem m_climberBack;
 
   /** Creates a new ClimberToHome. */
-  public ClimberToHome(ClimberSubsystem climberSubsystem) { //TODO Change to wait for current spike then stop climber
+  public ClimberToHome(ClimberFrontSubsystem climberFrontSubsystem, ClimberBackSubsystem climberBackSubsystem) { //TODO Change to wait for current spike then stop climber
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    m_climber = climberSubsystem;
+    m_climberFront = climberFrontSubsystem;
+    m_climberBack = climberBackSubsystem;
     addCommands(
+
       new ParallelCommandGroup(
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberBackRetract()),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getBackPosition()) < 0.5),
-          new InstantCommand(() -> climberSubsystem.climberBackStop())
+          new InstantCommand(() -> m_climberBack.climberRetract()),
+          new WaitUntilCommand(() -> Math.abs(m_climberBack.getPosition()) < 0.5),
+          new InstantCommand(() -> m_climberBack.climberStop())
         ),
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberFrontRetract()),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getFrontPosition()) < 0.5),
-          new InstantCommand(() -> climberSubsystem.climberFrontStop())  
+          new InstantCommand(() -> m_climberFront.climberRetract()),
+          new WaitUntilCommand(() -> Math.abs(m_climberFront.getPosition()) < 0.5),
+          new InstantCommand(() -> m_climberFront.climberStop())  
         )
       )
     );
@@ -43,7 +47,8 @@ public void end(boolean interrupted) {
     // TODO Auto-generated method stub
     super.end(interrupted);
     if (interrupted) {
-      m_climber.climberStop();
+      m_climberBack.climberStop();
+      m_climberFront.climberStop();
     }
 }
 }

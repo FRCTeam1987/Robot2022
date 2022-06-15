@@ -5,23 +5,26 @@
 package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ClimberBackSubsystem;
+import frc.robot.subsystems.ClimberFrontSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.subsystems.ClimberSubsystem.ClimberArm;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ClimbStep2 extends SequentialCommandGroup {
   /** Creates a new ClimberGroundToMedium. */
-  private final ClimberSubsystem m_climber;
+  private final ClimberFrontSubsystem m_climberFront;
+  private final ClimberBackSubsystem m_climberBack;
 
-  public ClimbStep2(ClimberSubsystem climberSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
-    m_climber = climberSubsystem;
+  public ClimbStep2(ClimberFrontSubsystem climberFrontSubsystem, ClimberBackSubsystem climberBackSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
+    m_climberFront = climberFrontSubsystem;
+    m_climberBack = climberBackSubsystem;
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ArmGoToPosition(m_climber, ClimberArm.kFront, 3.5, 0.7)
+      // new ArmGoToPosition(m_climber, ClimberArm.kFront, 3.5, 0.7)
+      new ArmGoToPosition(m_climberFront, m_climberBack, 3.5, 3.5)
     );
   }
 }

@@ -11,17 +11,17 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ClimberBackSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ClimberBackExtend extends SequentialCommandGroup {
 
-  private final ClimberSubsystem m_climber;
+  private final ClimberBackSubsystem m_climber;
 
   /** Creates a new ClimberExtend. */
-  public ClimberBackExtend(ClimberSubsystem climberSubsystem) {
+  public ClimberBackExtend(ClimberBackSubsystem climberSubsystem, double desiredPosition, double percentSpeed) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_climber = climberSubsystem;
@@ -34,12 +34,11 @@ public class ClimberBackExtend extends SequentialCommandGroup {
       //   new InstantCommand(/* does some climber stuff*/),
       //   () -> DriverStation.getMatchTime() < 40
       // ),
-      new WaitCommand(0.5),
       new ParallelCommandGroup(
         new SequentialCommandGroup(
-          new InstantCommand(() -> climberSubsystem.climberBackExtend(0.75)),
-          new WaitUntilCommand(() -> Math.abs(climberSubsystem.getBackPosition()) > 20),
-          new InstantCommand(() -> climberSubsystem.climberBackStop())
+          new InstantCommand(() -> m_climber.climberExtend(percentSpeed)),
+          new WaitUntilCommand(() -> Math.abs(m_climber.getPosition()) > desiredPosition), //20
+          new InstantCommand(() -> m_climber.climberStop())
         )
       )
     );
