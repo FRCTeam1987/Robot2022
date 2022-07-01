@@ -5,28 +5,36 @@
 package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.ClimberBackSubsystem;
-import frc.robot.subsystems.ClimberFrontSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.subsystems.ClimberFrontSubsystem.ClimberArm;
+import frc.robot.subsystems.TelescopeSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ClimbStep1 extends SequentialCommandGroup {
   /** Creates a new ClimberGroundToMedium. */
-  private final ClimberFrontSubsystem m_climberFront;
-  private final ClimberBackSubsystem m_climberBack;
+  private final TelescopeSubsystem m_telescopeFront;
 
-  public ClimbStep1(ClimberFrontSubsystem climberFrontSubsystem, ClimberBackSubsystem climberBackSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
-    m_climberFront = climberFrontSubsystem;
-    m_climberBack = climberBackSubsystem;
+  public ClimbStep1(TelescopeSubsystem telescopeFront) {
+    m_telescopeFront = telescopeFront;
+    // m_telscopeBack = telescopBack;
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ArmGoToPosition(m_climberFront, m_climberBack, 20, 0.5)
+      new TelescopeGoToPosition(m_telescopeFront, 19.0) // 178300 ticks
+      // new ArmGoToPosition(m_telescopeFront, m_telscopeBack, 20, 0.5)
     );
   }
+
+  @Override
+  public void end(boolean interrupted) {
+      // TODO Auto-generated method stub
+      super.end(interrupted);
+      if (interrupted) {
+        m_telescopeFront.stopTelescope();
+      }
+  }
+
 }
 
 // new SequentialCommandGroup(

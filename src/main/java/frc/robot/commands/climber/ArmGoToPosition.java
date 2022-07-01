@@ -5,28 +5,22 @@
 package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
-import frc.robot.subsystems.ClimberBackSubsystem;
-import frc.robot.subsystems.ClimberFrontSubsystem;
+import frc.robot.subsystems.TelescopeSubsystem;
 
 public class ArmGoToPosition extends CommandBase {
   /** Creates a new ArmGoToPosition. */
   private final double m_desiredFrontPosition;
   private final double m_desiredBackPosition;
-  private final ClimberFrontSubsystem m_climberFront;
-  private final ClimberBackSubsystem m_climberBack;
-  private double m_percentSpeedFront;
-  private double m_percentSpeedBack;
+  private final TelescopeSubsystem m_telescopeFront;
+  private final TelescopeSubsystem m_telescopeBack;
 
-  public ArmGoToPosition(ClimberFrontSubsystem climberFrontSubsystem, ClimberBackSubsystem climberBackSubsystem, double desiredFrontPosition, double desiredBackPosition) { //remove enum and create 2 doubles for desired position (front and back)
+  public ArmGoToPosition(TelescopeSubsystem telescopeFront, TelescopeSubsystem telescopeBack, double desiredFrontPosition, double desiredBackPosition) { //remove enum and create 2 doubles for desired position (front and back)
     // Use addRequirements() here to declare subsystem dependencies.
     m_desiredFrontPosition = desiredFrontPosition;
     m_desiredBackPosition = desiredBackPosition;
-    m_climberFront = climberFrontSubsystem;
-    m_climberBack = climberBackSubsystem;
+    m_telescopeFront = telescopeFront;
+    m_telescopeBack = telescopeBack;
   }
 
   // Called when the command is initially scheduled.
@@ -44,21 +38,21 @@ public class ArmGoToPosition extends CommandBase {
     //   stop();
     // }
 
-      if (m_climberFront.getPosition() < (m_desiredFrontPosition - (Constants.Climber.ExceptableErrorValue / 2))) {
-        m_climberFront.climberExtend();
-      } else if (m_climberFront.getPosition() > (m_desiredFrontPosition + (Constants.Climber.ExceptableErrorValue / 2))) {
-        m_climberFront.climberRetract();
+      if (m_telescopeFront.getPositionInches() < (m_desiredFrontPosition - (Constants.Climber.ExceptableErrorValue / 2))) {
+        m_telescopeFront.extend();
+      } else if (m_telescopeFront.getPositionInches() > (m_desiredFrontPosition + (Constants.Climber.ExceptableErrorValue / 2))) {
+        m_telescopeFront.retract();
       } else {
-        m_climberFront.climberStop();
+        m_telescopeFront.stopTelescope();
       }
 
 
-      if (m_climberBack.getPosition() < (m_desiredBackPosition - 0.5)) {
-        m_climberBack.climberExtend();
-      } else if (m_climberBack.getPosition() > (m_desiredBackPosition + 0.5)) {
-        m_climberBack.climberRetract();
+      if (m_telescopeBack.getPositionInches() < (m_desiredBackPosition - 0.5)) {
+        m_telescopeBack.extend();
+      } else if (m_telescopeBack.getPositionInches() > (m_desiredBackPosition + 0.5)) {
+        m_telescopeBack.retract();
       } else {
-        m_climberBack.climberStop();
+        m_telescopeBack.stopTelescope();
       }
       
 
@@ -78,8 +72,8 @@ public class ArmGoToPosition extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_climberFront.climberStop();
-    m_climberBack.climberStop();
+    m_telescopeFront.stopTelescope();
+    m_telescopeBack.stopTelescope();
     // stop motors
   }
 
@@ -87,7 +81,7 @@ public class ArmGoToPosition extends CommandBase {
   @Override
   public boolean isFinished() {
     // return false; // isWithinTolerance
-      if ((Math.abs(m_climberFront.getPosition() - m_desiredFrontPosition) <= 3) && (Math.abs(m_climberBack.getPosition() - m_desiredBackPosition) <= 3)) {
+      if ((Math.abs(m_telescopeFront.getPositionInches() - m_desiredFrontPosition) <= 3) && (Math.abs(m_telescopeBack.getPositionInches() - m_desiredBackPosition) <= 3)) {
         return true;
       }
     return false;

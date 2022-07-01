@@ -16,6 +16,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,6 +25,7 @@ import frc.robot.RobotContainer;
 import frc.robot.Util;
 import frc.robot.Constants.Storage;
 import frc.robot.commands.shooter.EjectOneBallBottom;
+import frc.robot.commands.storage.SetBallCount;
 
 import static frc.robot.Constants.Storage.*;
 
@@ -53,6 +56,14 @@ public class StorageSubsystem extends SubsystemBase {
 
   /** Creates a new StorageSubsystem. */
   public StorageSubsystem() {//NetworkTable table) {
+    ShuffleboardTab shooterTab = Shuffleboard.getTab("Shooter");
+    shooterTab.addBoolean("ball-bottom",() -> m_isBallAtBottom);
+    shooterTab.addBoolean("ball-top", () -> m_isballAtTop);
+    shooterTab.addNumber("ball count", () -> m_ballCount);
+    shooterTab.add("0 Count", new SetBallCount(this, 0));
+    shooterTab.add("1 Count", new SetBallCount(this, 1));
+    shooterTab.add("2 Count", new SetBallCount(this, 2));
+
     m_motorBottom.restoreFactoryDefaults();
     m_motorBottom.setIdleMode(IdleMode.kBrake); 
     m_motorTop.restoreFactoryDefaults();
@@ -206,9 +217,9 @@ public class StorageSubsystem extends SubsystemBase {
     m_isBallAtBottom = m_debouncerBottom.calculate(!m_digitalInputBottom.get());
     m_isballAtTop = m_debouncerTop.calculate(!m_digitalInputTop.get());
     // m_hasFirstBall = m_debouncerColorTop.calculate(isTopBlue() || isTopRed());
-    // m_hasSecondBall = m_debouncerColorBottom.calculate(isBottomBlue() || isBottomRed());
-    // SmartDashboard.putBoolean("ball-bottom", m_isBallAtBottom);
-    // SmartDashboard.putBoolean("ball-top", m_isballAtTop);
+    // m_hasSecondBall = m_debouncerColorBottom.calculate(isBottomBlue() || isdBottomRed());
+    SmartDashboard.putBoolean("ball-bottom", m_isBallAtBottom);
+    SmartDashboard.putBoolean("ball-top", m_isballAtTop);
     SmartDashboard.putNumber("ball count", m_ballCount);
     // SmartDashboard.putBoolean("Top Red", isTopRed());
     // SmartDashboard.putBoolean("Top Blue", isTopBlue());

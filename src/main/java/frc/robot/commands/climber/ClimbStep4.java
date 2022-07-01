@@ -5,27 +5,26 @@
 package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.TelescopeSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ClimbStep2 extends ParallelCommandGroup {
-  /** Creates a new ClimberGroundToMedium. */
-  private final TelescopeSubsystem m_telescopeFront;
+public class ClimbStep4 extends ParallelCommandGroup {
+
   private final TelescopeSubsystem m_telescopeBack;
 
-  public ClimbStep2(TelescopeSubsystem telescopeFront, TelescopeSubsystem telescopeBack) {
-    m_telescopeFront = telescopeFront;
-    m_telescopeBack = telescopeBack;
+  /** Creates a new ClimberShift. */
+  public ClimbStep4(TelescopeSubsystem telescopeBack) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
+    m_telescopeBack = telescopeBack;
     addCommands(
-      // new ArmGoToPosition(m_climber, ClimberArm.kFront, 3.5, 0.7)
-      // new ArmGoToPosition(m_telescopeFront, m_telescopeBack, 3.5, 3.5)
-      new TelescopeGoToPosition(m_telescopeFront, 3.5),
-      new TelescopeGoToPosition(m_telescopeBack, 20)
+      
+      // new TelescopeGoToPosition(telescopeFront, 20),
+      new TelescopeGoToPosition(m_telescopeBack, 6)
     );
   }
 
@@ -34,9 +33,7 @@ public class ClimbStep2 extends ParallelCommandGroup {
       // TODO Auto-generated method stub
       super.end(interrupted);
       if (interrupted) {
-        m_telescopeFront.stopTelescope();
         m_telescopeBack.stopTelescope();
       }
   }
-
 }

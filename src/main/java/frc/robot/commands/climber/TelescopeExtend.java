@@ -4,26 +4,27 @@
 
 package frc.robot.commands.climber;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants;
-import frc.robot.subsystems.ClimberFrontSubsystem;
+import frc.robot.subsystems.TelescopeSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ClimberFrontExtend extends SequentialCommandGroup {
+public class TelescopeExtend extends SequentialCommandGroup {
 
-  private final ClimberFrontSubsystem m_climber;
+  private final TelescopeSubsystem m_telescope;
 
   /** Creates a new ClimberExtend. */
-  public ClimberFrontExtend(ClimberFrontSubsystem climberSubsystem, double desiredPosition, double percentSpeed) {
+  public TelescopeExtend(TelescopeSubsystem telescope, double desiredPosition, double percentSpeed) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    m_climber = climberSubsystem;
+    m_telescope = telescope;
     addCommands(
       // TODO for all climber motion, do nothing if before end game period
       // make more reusable across all climber movements
@@ -35,9 +36,9 @@ public class ClimberFrontExtend extends SequentialCommandGroup {
       // ),
       new ParallelCommandGroup(
         new SequentialCommandGroup(
-          new InstantCommand(() -> m_climber.climberExtend(percentSpeed)),
-          new WaitUntilCommand(() -> Math.abs(m_climber.getPosition()) > desiredPosition), //20
-          new InstantCommand(() -> m_climber.climberStop())
+          new InstantCommand(() -> m_telescope.extend(percentSpeed)),
+          new WaitUntilCommand(() -> Math.abs(m_telescope.getPositionInches()) > desiredPosition), //20
+          new InstantCommand(() -> m_telescope.stopTelescope())
         )
       )
     );
@@ -48,7 +49,7 @@ public class ClimberFrontExtend extends SequentialCommandGroup {
       // TODO Auto-generated method stub
       super.end(interrupted);
       if (interrupted) {
-        m_climber.climberStop();
+        m_telescope.stopTelescope();
       }
   }
 }

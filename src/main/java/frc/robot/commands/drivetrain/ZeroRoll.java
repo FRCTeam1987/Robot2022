@@ -2,37 +2,31 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.climber;
+package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.subsystems.TelescopeSubsystem;
+import frc.robot.subsystems.DrivetrainSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-
-
-public class BrakeClimber extends InstantCommand {
-  
-  private final TelescopeSubsystem m_telescopeFront;
-  private final TelescopeSubsystem m_telescopeBack;
-
-  public BrakeClimber(TelescopeSubsystem telescopeFront, TelescopeSubsystem telescopeBack) {
+public class ZeroRoll extends InstantCommand {
+  private final DrivetrainSubsystem m_drivetrain;
+  public ZeroRoll(DrivetrainSubsystem drivetrain) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_telescopeFront = telescopeFront;
-    m_telescopeBack = telescopeBack;
+
+    m_drivetrain = drivetrain;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_telescopeFront.brakeMotor();
-    m_telescopeBack.brakeMotor();
+    m_drivetrain.zeroRoll();
   }
 
   @Override
   public boolean runsWhenDisabled() {
-      // TODO Auto-generated method stub
-      return true;
+    return true;
+    
   }
 }

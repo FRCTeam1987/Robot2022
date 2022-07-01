@@ -12,22 +12,19 @@ import frc.robot.subsystems.TelescopeSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
 
-public class BrakeClimber extends InstantCommand {
+public class CoastTelescope extends InstantCommand {
   
-  private final TelescopeSubsystem m_telescopeFront;
-  private final TelescopeSubsystem m_telescopeBack;
+  private final TelescopeSubsystem m_telescope;
 
-  public BrakeClimber(TelescopeSubsystem telescopeFront, TelescopeSubsystem telescopeBack) {
+  public CoastTelescope(TelescopeSubsystem telescope) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_telescopeFront = telescopeFront;
-    m_telescopeBack = telescopeBack;
+    m_telescope = telescope;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_telescopeFront.brakeMotor();
-    m_telescopeBack.brakeMotor();
+    m_telescope.coastMotor();
   }
 
   @Override

@@ -15,11 +15,17 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.Shooter.*;
 import frc.robot.Constants;
+import frc.robot.commands.shooter.LowerHood;
+import frc.robot.commands.shooter.RaiseHood;
+import frc.robot.commands.shooter.Shoot;
 import frc.robot.lib.InterpolatingDouble;
 import frc.robot.lib.LinearServo;
 
@@ -33,6 +39,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
+    ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
+    tab.addNumber("RPM-Actual", () -> getRPM());
+    tab.addNumber("rpm-error", () -> getRpmSetpointError());
+    tab.addNumber("rpm-Offset", () -> getOffsetRPM());
+    tab.add("Increment Offset", new InstantCommand(() -> incrementOffsetRPM()));
+    tab.add("Decrement Offset", new InstantCommand(() -> decrementOffsetRPM()));
+    tab.add("Raise Shoot Hood", new RaiseHood(this));
+    tab.add("Lower Shoot Hood", new LowerHood(this));
+    
+
     m_motorRight.configFactoryDefault();
     // m_motorRight.configOpenloopRamp(1.5);
     m_motorRight.setNeutralMode(NeutralMode.Coast);

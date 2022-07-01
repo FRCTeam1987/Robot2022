@@ -4,54 +4,28 @@
 
 package frc.robot.commands.climber;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.subsystems.ClimberBackSubsystem;
-import frc.robot.subsystems.ClimberFrontSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.TelescopeSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ClimbStep3 extends SequentialCommandGroup {
+public class ClimbStep3 extends ParallelCommandGroup {
 
-  private final ClimberFrontSubsystem m_climberFront;
-  private final ClimberBackSubsystem m_climberBack;
+  private final TelescopeSubsystem m_telescopeFront;
+  private final TelescopeSubsystem m_telescopeBack;
 
   /** Creates a new ClimberShift. */
-  public ClimbStep3(ClimberFrontSubsystem climberFrontSubsystem, ClimberBackSubsystem climberBackSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
+  public ClimbStep3(TelescopeSubsystem telescopeFront, TelescopeSubsystem telescopeBack) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    m_climberFront = climberFrontSubsystem;
-    m_climberBack = climberBackSubsystem;
+    m_telescopeFront = telescopeFront;
+    m_telescopeBack = telescopeBack;
     addCommands(
-      // new ParallelCommandGroup(
-        // new SequentialCommandGroup(
-        //   new WaitCommand(1), //REMOVE ME WHEN TESTED, SAFTEY VALUE
-        //   new InstantCommand(() -> climberSubsystem.climberFrontRetract(0.65)),
-        //   new WaitUntilCommand(() -> Math.abs(climberSubsystem.getFrontPosition()) < 2),
-        //   new InstantCommand(() -> climberSubsystem.climberFrontStop())
-        // ),
-        new ArmGoToPosition(m_climberFront, m_climberBack, 3.5, 8),
-      // ),
-      new WaitCommand(1),
-      new ArmGoToPosition(m_climberFront, m_climberBack, 3.5, 3.5)
-
-      // new ClimberArmExtend(climberSubsystem, drivetrainSubsystem, 24) //24 //TODO Check me
-
-
-      // new ParallelCommandGroup(
-      //   new SequentialCommandGroup(
-      //     new InstantCommand(() -> climberSubsystem.climberFrontExtend(0.5)),
-      //     new WaitUntilCommand(() -> Math.abs(climberSubsystem.getFrontPosition()) > 24),
-      //     new InstantCommand(() -> climberSubsystem.climberFrontStop())
-      //   ),
-      //   new SequentialCommandGroup(
-      //     new InstantCommand(() -> climberSubsystem.climberBackExtend(0.5)),
-      //     new WaitUntilCommand(() -> Math.abs(climberSubsystem.getBackPosition()) > 24),
-      //     new InstantCommand(() -> climberSubsystem.climberBackStop())
-      //   )
-      // )
+      new TelescopeGoToPosition(telescopeFront, 20),
+      new TelescopeGoToPosition(m_telescopeBack, 3)
     );
   }
 
@@ -60,8 +34,8 @@ public class ClimbStep3 extends SequentialCommandGroup {
       // TODO Auto-generated method stub
       super.end(interrupted);
       if (interrupted) {
-        m_climberFront.climberStop();
-        m_climberBack.climberStop();
+        m_telescopeFront.stopTelescope();
+        m_telescopeBack.stopTelescope();
       }
   }
 }

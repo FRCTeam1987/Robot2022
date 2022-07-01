@@ -5,8 +5,7 @@
 package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.subsystems.ClimberBackSubsystem;
-import frc.robot.subsystems.ClimberFrontSubsystem;
+import frc.robot.subsystems.TelescopeSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -15,19 +14,19 @@ import frc.robot.subsystems.ClimberFrontSubsystem;
 
 public class ZeroClimber extends InstantCommand {
   
-  private final ClimberFrontSubsystem m_climberFrontSubsystem;
-  private final ClimberBackSubsystem m_climberBackSubsystem;
+  private final TelescopeSubsystem m_telescopeFront;
+  private final TelescopeSubsystem m_telescopeBack;
 
-  public ZeroClimber(ClimberFrontSubsystem climberFrontSubsystem, ClimberBackSubsystem climberBackSubsystem) {
+  public ZeroClimber(TelescopeSubsystem telescopeFront, TelescopeSubsystem telescopeBack) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_climberFrontSubsystem = climberFrontSubsystem;
-    m_climberBackSubsystem = climberBackSubsystem;  }
+    m_telescopeFront = telescopeFront;
+    m_telescopeBack = telescopeBack;  }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_climberFrontSubsystem.zeroClimber();
-    m_climberBackSubsystem.zeroClimber();
+    m_telescopeFront.zeroTelescope();
+    m_telescopeBack.zeroTelescope();
   }
 
   @Override

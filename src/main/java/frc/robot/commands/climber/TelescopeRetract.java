@@ -10,33 +10,33 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import  static frc.robot.Constants.Climber.*;
 
-import frc.robot.subsystems.ClimberBackSubsystem;
+import frc.robot.subsystems.TelescopeSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ClimberBackRetract extends SequentialCommandGroup {
+public class TelescopeRetract extends SequentialCommandGroup {
 
-  private final ClimberBackSubsystem m_climber;
+  private final TelescopeSubsystem m_telescope;
 
 
   /** Creates a new ClimberPullUp. */
-  public ClimberBackRetract(ClimberBackSubsystem climberSubsystem, double desiredPosition, double speed) {
+  public TelescopeRetract(TelescopeSubsystem telescope, double desiredPosition, double percentSpeed) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    m_climber = climberSubsystem;
+    m_telescope = telescope;
     addCommands(
       // new ParallelCommandGroup(
-        // new SequentialCommandGroup(
-        //   new InstantCommand(() -> climberSubsystem.climberFrontRetract(speed)), // speed = 0.75
-        //   new WaitUntilCommand(() -> Math.abs(climberSubsystem.getFrontPosition()) < desiredPosition),
-        //   new InstantCommand(() -> climberSubsystem.climberFrontStop())
-        // )
         new SequentialCommandGroup(
-          new InstantCommand(() -> m_climber.climberRetract(speed)), // speed = 0.75
-          new WaitUntilCommand(() -> Math.abs(m_climber.getPosition()) < desiredPosition),
-          new InstantCommand(() -> m_climber.climberStop())  
+          new InstantCommand(() -> m_telescope.retract(percentSpeed)), // speed = 0.75
+          new WaitUntilCommand(() -> Math.abs(m_telescope.getPositionInches()) < desiredPosition),
+          new InstantCommand(() -> m_telescope.stopTelescope())
         )
+        // new SequentialCommandGroup(
+        //   new InstantCommand(() -> climberSubsystem.climberBackRetract(speed)), // speed = 0.75
+        //   new WaitUntilCommand(() -> Math.abs(climberSubsystem.getBackPosition()) < desiredPosition),
+        //   new InstantCommand(() -> climberSubsystem.climberBackStop())  
+        // )
       // )
     );
   }
@@ -46,7 +46,7 @@ public class ClimberBackRetract extends SequentialCommandGroup {
       // TODO Auto-generated method stub
       super.end(interrupted);
       if (interrupted) {
-        m_climber.climberStop();
+        m_telescope.stopTelescope();
       }
   }
 }
