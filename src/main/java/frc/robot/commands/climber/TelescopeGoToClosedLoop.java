@@ -13,15 +13,21 @@ public class TelescopeGoToClosedLoop extends CommandBase {
 
   private final TelescopeSubsystem m_telescope;
   private final int m_desiredPosition;
+  private final boolean m_shouldLogPosition;
+
+  public TelescopeGoToClosedLoop(final TelescopeSubsystem telescope, final int desiredPosition) {
+    this(telescope, desiredPosition, false);
+  }
 
   /**
    * Creates a new TelescopeGoToClosedLoop.
    * @param telescope The telescope to control.
    * @param desiredPosition The desired position in ticks.
    */
-  public TelescopeGoToClosedLoop(final TelescopeSubsystem telescope, final int desiredPosition) {
+  public TelescopeGoToClosedLoop(final TelescopeSubsystem telescope, final int desiredPosition, final boolean shouldLogPosition) {
     m_telescope = telescope;
     m_desiredPosition = desiredPosition;
+    m_shouldLogPosition = shouldLogPosition;
     addRequirements(m_telescope);
   }
 
@@ -37,12 +43,15 @@ public class TelescopeGoToClosedLoop extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (m_shouldLogPosition) {
+      System.out.println(" Arm position: " + m_telescope.getPositionTicks());
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_telescope.stopTelescope();
+    // m_telescope.stopTelescope();
   }
 
   // Returns true when the command should end.
@@ -52,10 +61,10 @@ public class TelescopeGoToClosedLoop extends CommandBase {
       DriverStation.reportWarning("Telescope - Go To Position - Not zeroed!", false);
       return true;
     }
-    if (m_telescope.getCurrent() > 20) {
-      DriverStation.reportWarning("Telescope - Go To Position - Current Spiked!", false);
-      return true;
-    }
+    // if (m_telescope.getCurrent() > 50) {
+    //   DriverStation.reportWarning("Telescope - Go To Position - Current Spiked!", false);
+    //   return true;
+    // }
     return Util.isWithinTolerance(m_telescope.getPositionTicks(), m_desiredPosition, 10000);
   }
 }

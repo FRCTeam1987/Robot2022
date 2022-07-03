@@ -24,7 +24,7 @@ public class ClimbStep4 extends ParallelCommandGroup {
     addCommands(
       
       // new TelescopeGoToPosition(telescopeFront, 20),
-      new TelescopeGoToPosition(m_telescopeBack, 6)
+      new TelescopeGoToClosedLoop(m_telescopeBack, 6) // TODO find ticks
     );
   }
 

@@ -19,23 +19,23 @@ import frc.robot.subsystems.TelescopeSubsystem;
 public class Climb extends SequentialCommandGroup {
   private final TelescopeSubsystem m_telescopeFront;
   private final TelescopeSubsystem m_telescopeBack;
-  private final DrivetrainSubsystem m_Drivetrain;
+  private final DrivetrainSubsystem m_drivetrain;
   private final XboxController m_xbox;
   /** Creates a new Climb. */
-  public Climb(TelescopeSubsystem telescopeFront, TelescopeSubsystem telescopeBack, DrivetrainSubsystem Drivetrain, final XboxController xbox) {
+  public Climb(TelescopeSubsystem telescopeFront, TelescopeSubsystem telescopeBack, DrivetrainSubsystem drivetrain, final XboxController xbox) {
 
     m_telescopeFront = telescopeFront;
     m_telescopeBack = telescopeBack;
-    m_Drivetrain = Drivetrain;
+    m_drivetrain = drivetrain;
     m_xbox = xbox;
 
     addCommands(
       new ClimbStep1(m_telescopeFront),
       new WaitUntilCommand(() -> m_xbox.getAButtonPressed()),
-      new ClimbStep2(m_telescopeFront, m_telescopeBack),
-      new WaitUntilRoll(m_Drivetrain, true, 45), // TODO find angle
-      new ClimbStep3(m_telescopeFront, m_telescopeBack),
-      new WaitUntilRoll(m_Drivetrain, true, 45), // TODO find angle
+      new ClimbStep2(m_telescopeFront, m_telescopeBack, m_drivetrain),
+      new WaitUntilRoll(m_drivetrain, true, 45), // TODO find angle
+      new ClimbStep3(m_telescopeFront, m_telescopeBack, m_drivetrain),
+      new WaitUntilRoll(m_drivetrain, true, 45), // TODO find angle
       new ClimbStep4(m_telescopeBack)
 
       

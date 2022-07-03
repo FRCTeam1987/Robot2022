@@ -4,6 +4,7 @@
 
 package frc.robot.commands.climber;
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.TelescopeSubsystem;
@@ -11,7 +12,7 @@ import frc.robot.subsystems.TelescopeSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ClimbStep1 extends SequentialCommandGroup {
+public class ClimbStep1 extends ParallelCommandGroup {
   /** Creates a new ClimberGroundToMedium. */
   private final TelescopeSubsystem m_telescopeFront;
 
@@ -21,7 +22,7 @@ public class ClimbStep1 extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new TelescopeGoToPosition(m_telescopeFront, 19.0) // 178300 ticks
+      new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_maxExtensionTicks) // 19 inches
       // new ArmGoToPosition(m_telescopeFront, m_telscopeBack, 20, 0.5)
     );
   }

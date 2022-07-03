@@ -17,7 +17,7 @@ import frc.robot.commands.oi.RumbleWhile;
 import frc.robot.commands.oi.SetRumble;
 import frc.robot.commands.oi.SetRumble.RumbleValue;
 import frc.robot.commands.storage.RunStorageIn;
-import frc.robot.commands.storage.WaitUntilBallsStoredIncremental;
+import frc.robot.commands.storage.WaitUntilBallsStored;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.StorageSubsystem;
 
@@ -42,7 +42,7 @@ public class CollectBalls extends SequentialCommandGroup {
       new DeployCollector(m_collector),
       new RunStorageIn(m_storage),
       new ParallelRaceGroup(
-        new WaitUntilBallsStoredIncremental(m_storage, desiredBallCount),
+        new WaitUntilBallsStored(m_storage, desiredBallCount),
         new RumbleWhile(controller, () -> m_storage.isBallAtEntrance())
       ),
       new WaitCommand(0.2)

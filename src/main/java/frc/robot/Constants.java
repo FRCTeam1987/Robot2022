@@ -42,7 +42,7 @@ public final class Constants {
     public static final int MOTOR_CAN_ID = 9;
     public static final double RUN_IN_SPEED = -1;
     public static final double RUN_OUT_SPEED = 0.5;
-    public static final int SOLENOID_FORWARD_ID = 5;
+    public static final int SOLENOID_FORWARD_ID = 0;
     public static final int SOLENOID_REVERSE_ID = 1;
   }
 
@@ -53,7 +53,7 @@ public final class Constants {
      * This can be reduced to cap the robot's maximum speed. Typically, this is
      * useful during initial testing of the robot.
      */
-    public static final double MAX_VOLTAGE = 12.0; 
+    public static final double MAX_VOLTAGE = 12.0;
     /**
      * The left-to-right distance between the drivetrain wheels
      *
@@ -81,9 +81,9 @@ public final class Constants {
      * This is a measure of how fast the robot should be able to drive in a straight
      * line.
      */
-    public static final double MAX_VELOCITY_METERS_PER_SECOND = FALCON_MAX_RPM / 60.0 * SdsModuleConfigurations.MK4I_L2.getDriveReduction() * SdsModuleConfigurations.MK4I_L2.getWheelDiameter() * Math.PI; //4.97
-
-
+    public static final double MAX_VELOCITY_METERS_PER_SECOND = FALCON_MAX_RPM / 60.0 *
+        SdsModuleConfigurations.MK4I_L2.getDriveReduction() *
+        SdsModuleConfigurations.MK4I_L2.getWheelDiameter() * Math.PI; //4.97
     /**
      * The maximum angular velocity of the robot in radians per second.
      * <p>
@@ -145,8 +145,8 @@ public final class Constants {
     public static final double Shooter_RPM_Tolerance = 50;
     public static final double SHOOTER_REDUCTION = 1.0; //20.0/16.0;
 
-    public static final int SOLENOID_FORWARD_ID = 3;
-    public static final int SOLENOID_REVERSE_ID = 2;
+    public static final int SOLENOID_FORWARD_ID = 5;
+    public static final int SOLENOID_REVERSE_ID = 4;
 
     public static final double HubXPosition = 8.25;
     public static final double HubYPosition = 4.15;

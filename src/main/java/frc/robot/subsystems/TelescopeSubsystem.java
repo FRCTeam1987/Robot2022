@@ -20,8 +20,6 @@ import frc.robot.commands.climber.BrakeTelescope;
 import frc.robot.commands.climber.CoastTelescope;
 import frc.robot.commands.climber.TelescopeAutoHome;
 import frc.robot.commands.climber.TelescopeGoToClosedLoop;
-import frc.robot.commands.climber.TelescopeGoToPosition;
-import frc.robot.commands.climber.TelescopeToHome;
 import frc.robot.commands.climber.ZeroTelescope;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -35,9 +33,10 @@ public class TelescopeSubsystem extends SubsystemBase {
 
   private static final double k_spoolCircumference = 1.0625 * Math.PI;
   private static final double k_postEncoderGearing = 15.34;
-  private static final StatorCurrentLimitConfiguration k_currentLimit = new StatorCurrentLimitConfiguration(true, 60, 60, 0.2);
+  private static final StatorCurrentLimitConfiguration k_currentLimit = new StatorCurrentLimitConfiguration(true, 70, 70, 0.2);
   private static final double k_maxExtensionInches = 20.5;
-  private static final int k_maxExtensionTicks = 193100;
+  public static final int k_maxExtensionTicks = 207000;
+  public static final int k_minExtensionTicks = 1000;
 
   private final TalonFX m_motor;
   private final String m_name;
@@ -72,26 +71,28 @@ public class TelescopeSubsystem extends SubsystemBase {
     m_motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 10);
     m_motor.configMotionAcceleration(40000, 10);
     m_motor.configMotionCruiseVelocity(20000, 10);
+    m_motor.configAllowableClosedloopError(0, 2000, 10);
     m_motor.config_kP(0, 0.6);
     m_motor.config_kI(0, 0);
     m_motor.config_kD(0, 0);
-    m_motor.config_kF(0, 0.77);
+    m_motor.config_kF(0, 0.79);
     brakeMotor();
     m_motor.configVoltageCompSaturation(12.0);
     m_motor.enableVoltageCompensation(true);
     m_motor.configStatorCurrentLimit(k_currentLimit);
 
-    tab.addNumber(m_name + " Arm Pos",() -> getPositionInches()).withPosition(0, 2+m_shuffleboardRowOffset);
+    // tab.addNumber(m_name + " Arm Pos",() -> getPositionInches()).withPosition(0, 2+m_shuffleboardRowOffset);
     tab.addNumber(m_name + " Arm Pos Ticks", () -> getPositionTicks()).withPosition(1, 2+m_shuffleboardRowOffset);
-    tab.addNumber(m_name + " Voltage", () -> m_motor.getBusVoltage()).withPosition(2, 2+m_shuffleboardRowOffset);
-    tab.addNumber(m_name + " Current", () -> m_motor.getStatorCurrent()).withPosition(3, 2+m_shuffleboardRowOffset);
-    tab.addBoolean(m_name + " Is Brake", () -> m_isBrake).withPosition(4, 2+m_shuffleboardRowOffset);
-    tab.addBoolean(m_name + " Is Bottomed Out", () -> isBottomedOut()).withPosition(5, 2+m_shuffleboardRowOffset);
+    // tab.addNumber(m_name + " Voltage", () -> m_motor.getBusVoltage()).withPosition(2, 2+m_shuffleboardRowOffset);
+    // tab.addNumber(m_name + " Current", () -> m_motor.getStatorCurrent()).withPosition(3, 2+m_shuffleboardRowOffset);
+    // tab.addBoolean(m_name + " Is Brake", () -> m_isBrake).withPosition(4, 2+m_shuffleboardRowOffset);
+    // tab.addBoolean(m_name + " Is Bottomed Out", () -> isBottomedOut()).withPosition(5, 2+m_shuffleboardRowOffset);
     // if (motorId == Constants.Climber.Front_CLIMBER_MOTOR) { // limit switch not working on back telescope right now
       tab.add(m_name + " Auto Home", new TelescopeAutoHome(this)).withPosition(6, 2+m_shuffleboardRowOffset);
       tab.add(m_name + " Go To 5", new TelescopeGoToClosedLoop(this, 46000)).withPosition(7, 2+m_shuffleboardRowOffset);
       tab.add(m_name + " Go To 10", new TelescopeGoToClosedLoop(this, 95000)).withPosition(8, 2+m_shuffleboardRowOffset);
       tab.add(m_name + " Go To 15", new TelescopeGoToClosedLoop(this, 143000)).withPosition(9, 2+m_shuffleboardRowOffset);
+      tab.add(m_name + " Go To max", new TelescopeGoToClosedLoop(this, this.k_maxExtensionTicks)).withPosition(10, 2+m_shuffleboardRowOffset);
     // }
 
     tab.add(m_name + " Break Motor", new BrakeTelescope(this));
@@ -113,6 +114,14 @@ public class TelescopeSubsystem extends SubsystemBase {
   
   public void extend(final double overideSpeed) {
     m_motor.set(TalonFXControlMode.PercentOutput, overideSpeed);
+  }
+
+  public void setVoltageSaturation() {
+    setVoltageSaturation(12.0);
+  }
+
+  public void setVoltageSaturation(double volts) {
+    m_motor.configVoltageCompSaturation(volts);
   }
   
   /**

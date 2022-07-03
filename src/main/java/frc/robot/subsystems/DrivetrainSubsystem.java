@@ -72,7 +72,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_frontLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
             // This parameter is optional, but will allow you to see the current state of the module on the dashboard.
             tab.getLayout("Front Left Module", BuiltInLayouts.kList)
-                    .withSize(2, 3)
+                    .withSize(2, 4)
                     .withPosition(0, 0),
             // This can either be STANDARD or FAST depending on your gear configuration
             Mk4iSwerveModuleHelper.GearRatio.L2,
@@ -89,7 +89,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // We will do the same for the other modules
     m_frontRightModule = Mk4iSwerveModuleHelper.createFalcon500(
             tab.getLayout("Front Right Module", BuiltInLayouts.kList)
-                    .withSize(2, 3)
+                    .withSize(2, 4)
                     .withPosition(2, 0),
             Mk4iSwerveModuleHelper.GearRatio.L2,
             FRONT_RIGHT_MODULE_DRIVE_MOTOR,
@@ -100,7 +100,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     m_backLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
             tab.getLayout("Back Left Module", BuiltInLayouts.kList)
-                    .withSize(2, 3)
+                    .withSize(2, 4)
                     .withPosition(4, 0),
             Mk4iSwerveModuleHelper.GearRatio.L2,
             BACK_LEFT_MODULE_DRIVE_MOTOR,
@@ -111,7 +111,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     m_backRightModule = Mk4iSwerveModuleHelper.createFalcon500(
             tab.getLayout("Back Right Module", BuiltInLayouts.kList)
-                    .withSize(2, 3)
+                    .withSize(2, 4)
                     .withPosition(6, 0),
             Mk4iSwerveModuleHelper.GearRatio.L2,
             BACK_RIGHT_MODULE_DRIVE_MOTOR,
@@ -120,14 +120,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
             BACK_RIGHT_MODULE_STEER_OFFSET
     );
     zeroGyroscope();
+    /* TODO uncomment - temporary
     tab.addNumber("Adjusted Angle", () -> getAdjustedHeading().getDegrees()).withPosition(9, 2);
-    // tab.addNumber("Heading", () -> m_navx.getCompassHeading()).withPosition(9, 3);
+    tab.addNumber("Heading", () -> m_navx.getCompassHeading()).withPosition(9, 3);
     tab.addNumber("Yaw", () -> m_navx.getYaw()).withPosition(9, 1);
     // tab.addNumber("Heading Adjust", () -> getHeadingAdjust().getDegrees()).withPosition(8, 2);
     tab.addNumber("Pose X", () -> m_odometry.getPoseMeters().getX()).withPosition(8, 0);
     tab.addNumber("Pose Y", () -> m_odometry.getPoseMeters().getY()).withPosition(8, 1);
     tab.addNumber("Pose Angle", () -> m_odometry.getPoseMeters().getRotation().getDegrees()).withPosition(8, 2);
-
+    tab.addNumber("Pitch", () -> getPitch()).withPosition(8, 3);
+    */
     // final ShuffleboardTab telescopeTab = Shuffleboard.getTab("Telescopes");
     tab.addNumber("roll without offset", () -> getRoll()).withPosition(8, 3);
     tab.addNumber("roll with offset", () -> getRollWithOffset()).withPosition(9, 3);
@@ -136,6 +138,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     });
     zeroRollCommand.runsWhenDisabled();
     tab.add("Zero Roll", zeroRollCommand);
+    
   }
 
   /**
@@ -184,12 +187,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return getAdjustedHeading();
   }
 
+  public double getPitch() {
+    return m_navx.getPitch();
+  }
+
   public double getRoll() {
     return m_navx.getRoll();  // Positive rolling towards climber / climber side lower.
   }
 
   public void setRollOffset() {
-    m_rollOffset = getRoll();
+    setRollOffset(getRoll());
   }
 
   public void setRollOffset(double rollOffset) {
@@ -324,7 +331,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("roll with offset", getRollWithOffset());
     if (!m_navx.isConnected()) {
       DriverStation.reportError("navx not connected", false);
-    
     }
   }
 }

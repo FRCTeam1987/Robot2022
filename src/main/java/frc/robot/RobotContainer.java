@@ -35,14 +35,15 @@ import frc.robot.commands.climber.BrakeClimber;
 import frc.robot.commands.climber.BrakeTelescope;
 import frc.robot.commands.climber.Climb;
 import frc.robot.commands.climber.ClimbStep1;
-import frc.robot.commands.climber.TelescopeExtend;
+import frc.robot.commands.climber.ClimbStep2;
 // import frc.robot.commands.climber.ClimberPivotDown;
 // import frc.robot.commands.climber.ClimberPivotUp;
 // import frc.robot.commands.climber.ClimberPullIn;
-import frc.robot.commands.climber.TelescopeRetract;
+import frc.robot.commands.climber.ClimberFrontRetract;
 import frc.robot.commands.climber.ClimbStep3;
 import frc.robot.commands.climber.ClimberToHome;
 import frc.robot.commands.climber.CoastClimber;
+import frc.robot.commands.climber.TelescopeAutoHome;
 import frc.robot.commands.climber.ZeroClimber;
 import frc.robot.commands.collector.StowCollector;
 import frc.robot.commands.drivetrain.DriveCommand;
@@ -54,6 +55,8 @@ import frc.robot.commands.shooter.RaiseHood;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.storage.SetBallCount;
 import frc.robot.commands.storage.StopStorage;
+import frc.robot.subsystems.ClimberBackSubsystem;
+import frc.robot.subsystems.ClimberFrontSubsystem;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimeLight;
@@ -143,13 +146,11 @@ public class RobotContainer {
     new Button(controller::getRightBumperReleased)
       .whenReleased(new StowCollector(m_collector)
         .andThen(new StopStorage(m_storage)));
-
-      new Button(controller::getLeftBumper)
-        .whenPressed(new EjectOneBallTop(m_storage, m_shooter));
     new Button(controller::getLeftBumper)
       .whileHeld(  
         new ConditionalCommand(
           shootCommandHelper(),
+        // new SetRumble(controller, RumbleValue.On).withTimeout(0.5).andThen(new SetRumble(controller, RumbleValue.Off)),
         new ParallelCommandGroup(
           new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 1)), 
           new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 1))),
@@ -160,30 +161,30 @@ public class RobotContainer {
           new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 0))
         ));
 
-    new POVButton(controller, 180) 
-      .whenPressed(new InstantCommand(() -> { 
-        m_telescopeFront.retract(0.75);
-        m_telescopeBack.retract(0.75);
-      }, m_telescopeFront, m_telescopeBack))
-      .whenReleased(new InstantCommand(() -> { 
-        m_telescopeFront.stopTelescope();
-        m_telescopeBack.stopTelescope();
-      }, m_telescopeFront, m_telescopeBack)); 
+    // new POVButton(controller, 180)
+    //   .whenPressed(new InstantCommand(() -> {
+    //     m_climberFrontSubsystem.climberRetract(0.75);
+    //     m_climberBackSubsystem.climberRetract(0.75);
+    //   }, m_climberFrontSubsystem, m_climberFrontSubsystem))
+    //   .whenReleased(new InstantCommand(() -> {
+    //     m_climberFrontSubsystem.climberStop();
+    //     m_climberBackSubsystem.climberStop();
+    //   }, m_climberFrontSubsystem, m_climberBackSubsystem));
 
-    new POVButton(controller, 0) 
-      .whenPressed(new InstantCommand(() -> { 
-        m_telescopeFront.extend();
-        m_telescopeBack.extend();
-      }, m_telescopeFront, m_telescopeBack)) 
-      .whenReleased(new InstantCommand(() -> { 
-        m_telescopeFront.stopTelescope();
-        m_telescopeBack.stopTelescope();
-      }, m_telescopeFront, m_telescopeBack)); 
+    // new POVButton(controller, 0)
+    //   .whenPressed(new InstantCommand(() -> {
+    //     m_climberFrontSubsystem.climberExtend(0.75);
+    //     m_climberBackSubsystem.climberExtend(0.75);
+    //   }, m_climberFrontSubsystem, m_climberBackSubsystem))
+    //   .whenReleased(new InstantCommand(() -> {
+    //     m_climberFrontSubsystem.climberStop();
+    //     m_climberBackSubsystem.climberStop();
+    //   }, m_climberFrontSubsystem, m_climberBackSubsystem));
 
-    
+    new Button(coController::getLeftBumper)
+      .whenPressed(new EjectOneBallTop(m_storage, m_shooter));
     new Button(coController::getRightBumper)
       .whenPressed(new EjectOneBallBottom(m_storage, m_collector));
-      
     new POVButton(coController, 0)
       .whenPressed(new SetBallCount(m_storage, 2));
     new POVButton(coController, 90)
@@ -191,6 +192,16 @@ public class RobotContainer {
     new POVButton(coController, 180)
       .whenPressed(new SetBallCount(m_storage, 0));
 
+    new Button(controller::getYButton)
+      .whenPressed(
+        // new SequentialCommandGroup(
+        //   new ClimberPivotUp(m_climberSubsystem),
+        new ParallelCommandGroup(
+          // new ClimberBackExtend(m_climberSubsystem),
+          // new ClimberFrontExtend(m_climberSubsystem)
+        )
+        // )
+      );
     // new Button(controller::getAButton)
     //   .whenPressed(new ClimberFrontRetract(m_climberSubsystem, 0.4));
     // new Button(coController::getYButton)
@@ -198,8 +209,8 @@ public class RobotContainer {
     // new Button(coController::getAButton) //TODO REPLACE WITH NEW COMMAND
     //   .whenPressed(new ClimberPullIn(m_climberSubsystem));
 
-    // new Button(controller::getBButton) //TODO uncomment after summer camps
-    // .whileHeld(new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight)); //TODO uncomment after summer camps
+    new Button(controller::getBButton)
+    .whileHeld(new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight));
   
     new Button(coController::getBackButton)
     .whenPressed(new InstantCommand(() -> m_shooter.decrementOffsetRPM()));
@@ -236,8 +247,34 @@ public class RobotContainer {
     // m_autoChooser.addOption("Swerve Char - Reverse", new SwerveCharacterizationFF(m_drivetrain, false, false));
     // m_autoChooser.addOption("Swerve Char - Rotate", new SwerveCharacterizationFF(m_drivetrain, true, true));
     SmartDashboard.putData(m_autoChooser);
-    
-    // SmartDashboard.putData("Climber to Home", new ClimberToHome(m_telescopeFront, m_telescopeBack));
+
+        
+    limeLightTab.add("Powercycle Limelight", new PowercycleLimelight(m_powerDistribution));
+    limeLightTab.add("Reset Limelight Pipeline", new ResetLimelightPipeline(m_limelight));
+
+    SmartDashboard.putData("Increment Offset", new InstantCommand(() -> m_shooter.incrementOffsetRPM()));
+    SmartDashboard.putData("Decrement Offset", new InstantCommand(() -> m_shooter.decrementOffsetRPM()));
+    // SmartDashboard.putData("Collector-Deploy", new DeployCollector(m_collector));
+    // SmartDashboard.putData("Collector-Stow", new StowCollector(m_collector));
+    // SmartDashboard.putData("Feed Shooter", new FeedShooter(m_storage));
+    // SmartDashboard.putData("Shooter-Spin", new SetShooterRpm(m_shooter, () -> SmartDashboard.getNumber("RPM-Set", 0.0) ));
+    // SmartDashboard.putData("Shooter-Stop", new SetShooterRpm(m_shooter, () -> 0.0));
+    // SmartDashboard.putData("Store-In", new RunStorageIn(m_storage));
+    // SmartDashboard.putData("Store-Out", new RunStorageOut(m_storage));
+    // SmartDashboard.putData("Store-Stop", new StopStorage(m_storage));
+    // SmartDashboard.putData("LL-Standard", new ChangeLimeLightStream(StreamType.standard));
+    // SmartDashboard.putData("LL-PipMain", new ChangeLimeLightStream(StreamType.pipMain));
+    // SmartDashboard.putData("LL-PipSecondary", new ChangeLimeLightStream(StreamType.pipSecondary));
+    // SmartDashboard.putData("shoot", new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight));
+    // SmartDashboard.putData("Reset Ball Count", new ZeroBallCount(m_storage));
+    // SmartDashboard.putData("Rotate-45", new RotateToAngle(m_drivetrain, () -> Rotation2d.fromDegrees(45).getRadians()));
+    // SmartDashboard.putData("Rotate-LL", new RotateToLimelightAngle(m_drivetrain, m_limelight));
+    // SmartDashboard.putData("Climber Extend", new ClimberExtend(m_climberSubsystem));
+    // SmartDashboard.putData("Climber Pull-Up", new ClimberPullUp(m_climberSubsystem));
+    // SmartDashboard.putData("Climber Shift", new ClimberShift(m_climberSubsystem));
+    // SmartDashboard.putData("Climber Pull-In", new ClimberPullIn(m_climberSubsystem));
+    // SmartDashboard.putData("Pivot Down", new ClimberPivotDown(m_climberSubsystem));
+    // SmartDashboard.putData("Pivot Up", new ClimberPivotUp(m_climberSubsystem));
     SmartDashboard.putData("Coast Climber", new CoastClimber(m_telescopeFront, m_telescopeBack));
     SmartDashboard.putData("Brake Climber", new BrakeClimber(m_telescopeFront, m_telescopeBack));
     SmartDashboard.putData("Zero Climber", new ZeroClimber(m_telescopeFront, m_telescopeBack));
@@ -251,12 +288,10 @@ public class RobotContainer {
     
     SmartDashboard.putData("Powercycle Limelight", new PowercycleLimelight(m_powerDistribution));
     SmartDashboard.putData("Reset Limelight Pipeline", new ResetLimelightPipeline(m_limelight));
-    
-    limeLightTab.add("Powercycle Limelight", new PowercycleLimelight(m_powerDistribution));
-    limeLightTab.add("Reset Limelight Pipeline", new ResetLimelightPipeline(m_limelight));
-
-    SmartDashboard.putData("Increment Offset", new InstantCommand(() -> m_shooter.incrementOffsetRPM()));
-    SmartDashboard.putData("Decrement Offset", new InstantCommand(() -> m_shooter.decrementOffsetRPM()));
+    // SmartDashboard.putData("Pivot Up", new ClimberPivotUp(m_climberSubsystem));
+    // SmartDashboard.putData("Pivot Down", new ClimberPivotDown(m_climberSubsystem));
+    // SmartDashboard.putData("Increment Offset", new InstantCommand(() -> m_shooter.incrementOffsetRPM()));
+    // SmartDashboard.putData("Decrement Offset", new InstantCommand(() -> m_shooter.decrementOffsetRPM()));
     SmartDashboard.putData("Raise Shoot Hood", new RaiseHood(m_shooter));
     SmartDashboard.putData("Lower Shoot Hood", new LowerHood(m_shooter));
     SmartDashboard.putData("0 Count", new SetBallCount(m_storage, 0));
@@ -271,8 +306,15 @@ public class RobotContainer {
 
     SmartDashboard.putData("Zero Roll", new ZeroRoll(m_drivetrain));
     telescopesTab.add("Zero Roll", new ZeroRoll(m_drivetrain));
-
-
+    telescopesTab.add("Climber Auto Home", new ParallelCommandGroup(
+      new TelescopeAutoHome(m_telescopeFront),
+      new TelescopeAutoHome(m_telescopeBack)
+    ));
+    telescopesTab.add("Climb 1", new ClimbStep1(m_telescopeFront));
+    telescopesTab.add("Climb 2", new ClimbStep2(m_telescopeFront, m_telescopeBack, m_drivetrain));
+    telescopesTab.add("Climb 3", new ClimbStep3(m_telescopeFront, m_telescopeBack, m_drivetrain));
+    telescopesTab.add("roll without offset", m_drivetrain.getRoll());
+    telescopesTab.add("roll with offset", m_drivetrain.getRollWithOffset());
 
   }
 

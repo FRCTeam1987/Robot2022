@@ -41,5 +41,6 @@ public class TelescopeAutoHome extends CommandBase {
   @Override
   public boolean isFinished() {
     return m_telescope.isBottomedOut() || m_telescope.getCurrent() > 8.5;
+    // return m_telescope.getCurrent() > 8.5;
   }
 }
