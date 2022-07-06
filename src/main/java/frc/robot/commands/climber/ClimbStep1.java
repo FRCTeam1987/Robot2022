@@ -22,7 +22,7 @@ public class ClimbStep1 extends ParallelCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_maxExtensionTicks) // 19 inches
+      new TelescopeGoToClosedLoop(m_telescopeFront, 209000, true) // short telescope reach first rung
       // new ArmGoToPosition(m_telescopeFront, m_telscopeBack, 20, 0.5)
     );
   }
@@ -32,6 +32,7 @@ public class ClimbStep1 extends ParallelCommandGroup {
       // TODO Auto-generated method stub
       super.end(interrupted);
       if (interrupted) {
+        System.out.println("Climb step 1 Interupted");
         m_telescopeFront.stopTelescope();
       }
   }

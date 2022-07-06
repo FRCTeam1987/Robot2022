@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.drivetrain.WaitUntilRoll;
 import frc.robot.subsystems.ClimberBackSubsystem;
 import frc.robot.subsystems.ClimberFrontSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -34,20 +35,32 @@ public class ClimbStep3 extends ParallelCommandGroup {
       // new TelescopeGoToClosedLoop(backTelescope, 6000)
 
       new SequentialCommandGroup(
-        new InstantCommand(() -> m_telescopeBack.setVoltageSaturation(9)),
-        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks - 1000, true), //~0 inch
-        new InstantCommand(() -> m_telescopeBack.setVoltageSaturation())
+        // new InstantCommand(() -> m_telescopeFront.setVoltageSaturation(9)),
+        new TelescopeGoToClosedLoop(m_telescopeFront, 50000, true), //~0 inch
+        // new WaitCommand(0.5),
+        new WaitCommand(0.3),
+        new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_maxExtensionTicks - 20000, true), //~0 inch
+        new WaitCommand(0.2),
+
+        new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_maxExtensionTicks),
+        new WaitCommand(0.15),
+        new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_maxExtensionTicks - 5000)
+        // new InstantCommand(() -> m_telescopeFront.setVoltageSaturation())
       ),
       new SequentialCommandGroup(
-        new WaitCommand(0.5),
-        new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_maxExtensionTicks - 25000),
-        // new WaitUntilRoll(m_drivetrain, false, -38),
-        new WaitCommand(0.5), //roll -37
-        new InstantCommand(() -> System.out.println("Climb3 1 Roll with offset: " + m_drivetrain.getRollWithOffset())),
-        // new InstantCommand(() -> m_drivetrain.getRollWithOffset()),
-        new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_maxExtensionTicks + 28000),  // 20 inches
-        new InstantCommand(() -> System.out.println("Climb3 2 Roll with offset: " + m_drivetrain.getRollWithOffset()))
+        // new WaitCommand(0.2),
+        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks + 1000)
       )
+      // new SequentialCommandGroup(
+      //   new WaitCommand(0.5),
+      //   new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_maxExtensionTicks / 2),
+      //   // new WaitUntilRoll(m_drivetrain, false, -38),
+      //   new WaitCommand(0.5), //roll -37
+      //   new InstantCommand(() -> System.out.println("Climb3 1 Roll with offset: " + m_drivetrain.getRollWithOffset())),
+      //   // new InstantCommand(() -> m_drivetrain.getRollWithOffset()),
+      //   new TelescopeGoToClosedLoop(m_telescopeFront, 227000),  // short arm max extend
+      //   new InstantCommand(() -> System.out.println("Climb3 2 Roll with offset: " + m_drivetrain.getRollWithOffset()))
+      // )
     );
   }
 

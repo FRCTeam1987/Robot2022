@@ -44,7 +44,7 @@ public class TelescopeGoToClosedLoop extends CommandBase {
   @Override
   public void execute() {
     if (m_shouldLogPosition) {
-      System.out.println(" Arm position: " + m_telescope.getPositionTicks());
+      System.out.println(" Arm position: " + m_telescope.getPositionTicks() + " Current: " + m_telescope.getCurrent());
     }
   }
 

@@ -35,18 +35,20 @@ public class ClimbStep2 extends ParallelCommandGroup {
       // new ArmGoToPosition(m_climber, ClimberArm.kFront, 3.5, 0.7)
       // new ArmGoToPosition(m_telescopeFront, m_telescopeBack, 3.5, 3.5)
       new SequentialCommandGroup(
-        new InstantCommand(() -> m_drivetrain.zeroRoll()),
-        new InstantCommand(() -> m_telescopeFront.setVoltageSaturation(5.5)),
-        new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_minExtensionTicks - 1000, true), //~0 inch
+        new InstantCommand(() -> {
+          m_drivetrain.zeroRoll();
+          m_telescopeFront.setVoltageSaturation(6.5);
+        }),
+        new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_minExtensionTicks, true), //~0 inch
         new InstantCommand(() -> m_telescopeFront.setVoltageSaturation())
       ),
       new SequentialCommandGroup(
-        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_maxExtensionTicks - 25000),
+        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_maxExtensionTicks - 20000),
         // new WaitUntilRoll(m_drivetrain, false, -38),
         new WaitCommand(0.75), //roll -37
         new InstantCommand(() -> System.out.println("Climb2 1 Roll with offset: " + m_drivetrain.getRollWithOffset())),
         // new InstantCommand(() -> m_drivetrain.getRollWithOffset()),
-        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_maxExtensionTicks + 28000),  // 20 inches
+        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_maxExtensionTicks),  // long arm max extension ticks
         new InstantCommand(() -> System.out.println("Climb2 2 Roll with offset: " + m_drivetrain.getRollWithOffset()))
       )
     );

@@ -41,9 +41,14 @@ import frc.robot.commands.climber.ClimbStep2;
 // import frc.robot.commands.climber.ClimberPullIn;
 import frc.robot.commands.climber.ClimberFrontRetract;
 import frc.robot.commands.climber.ClimbStep3;
+import frc.robot.commands.climber.ClimbStep4;
 import frc.robot.commands.climber.ClimberToHome;
 import frc.robot.commands.climber.CoastClimber;
+import frc.robot.commands.climber.DisengageFrictionBrakeClimber;
+import frc.robot.commands.climber.DisengageFrictionBrakeTelescope;
+import frc.robot.commands.climber.EngageFrictionBrakeClimber;
 import frc.robot.commands.climber.TelescopeAutoHome;
+import frc.robot.commands.climber.TelescopeGoToClosedLoop;
 import frc.robot.commands.climber.ZeroClimber;
 import frc.robot.commands.collector.StowCollector;
 import frc.robot.commands.drivetrain.DriveCommand;
@@ -87,8 +92,8 @@ public class RobotContainer {
   private final StorageSubsystem m_storage = new StorageSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final LimeLight m_limelight = new LimeLight();
-  private final TelescopeSubsystem m_telescopeFront = new TelescopeSubsystem(Constants.Climber.Front_CLIMBER_MOTOR, true, "Front");
-  private final TelescopeSubsystem m_telescopeBack = new TelescopeSubsystem(Constants.Climber.Back_CLIMBER_MOTOR, true, "Back");
+  private final TelescopeSubsystem m_telescopeFront = new TelescopeSubsystem(Constants.Climber.Front_CLIMBER_MOTOR, false, "Front", Constants.Climber.FRONT_TELESCOPE_SOLENOID);
+  private final TelescopeSubsystem m_telescopeBack = new TelescopeSubsystem(Constants.Climber.Back_CLIMBER_MOTOR, true, "Back", Constants.Climber.BACK_TELESCOPE_SOLENOID);
 
   private final XboxController controller = new XboxController(0);
   private final XboxController coController = new XboxController(1);
@@ -313,8 +318,11 @@ public class RobotContainer {
     telescopesTab.add("Climb 1", new ClimbStep1(m_telescopeFront));
     telescopesTab.add("Climb 2", new ClimbStep2(m_telescopeFront, m_telescopeBack, m_drivetrain));
     telescopesTab.add("Climb 3", new ClimbStep3(m_telescopeFront, m_telescopeBack, m_drivetrain));
+    telescopesTab.add("Climb 4", new ClimbStep4(m_telescopeFront, m_telescopeBack, m_drivetrain));
     telescopesTab.add("roll without offset", m_drivetrain.getRoll());
     telescopesTab.add("roll with offset", m_drivetrain.getRollWithOffset());
+    telescopesTab.add("Climber Engage Friction Brake", new EngageFrictionBrakeClimber(m_telescopeFront, m_telescopeBack));
+    telescopesTab.add("Climber Disengage Friction Brake", new DisengageFrictionBrakeClimber(m_telescopeFront, m_telescopeBack));
 
   }
 

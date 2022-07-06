@@ -5,6 +5,7 @@
 package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.TelescopeSubsystem;
@@ -14,17 +15,22 @@ import frc.robot.subsystems.TelescopeSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ClimbStep4 extends ParallelCommandGroup {
 
+  private final TelescopeSubsystem m_telescopeFront;
   private final TelescopeSubsystem m_telescopeBack;
+  private final DrivetrainSubsystem m_drivetrain;
 
   /** Creates a new ClimberShift. */
-  public ClimbStep4(TelescopeSubsystem telescopeBack) {
+  public ClimbStep4(TelescopeSubsystem frontTelescope, TelescopeSubsystem backTelescope, DrivetrainSubsystem drivetrain) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    m_telescopeBack = telescopeBack;
+    m_telescopeFront = frontTelescope;
+    m_telescopeBack = backTelescope;
+    m_drivetrain = drivetrain;
     addCommands(
-      
-      // new TelescopeGoToPosition(telescopeFront, 20),
-      new TelescopeGoToClosedLoop(m_telescopeBack, 6) // TODO find ticks
+      new SequentialCommandGroup(
+        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks + 3500),
+        new EngageFrictionBrakeClimber(m_telescopeFront, m_telescopeBack)
+      )
     );
   }
 

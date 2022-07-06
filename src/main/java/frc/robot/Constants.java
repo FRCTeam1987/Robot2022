@@ -42,7 +42,7 @@ public final class Constants {
     public static final int MOTOR_CAN_ID = 9;
     public static final double RUN_IN_SPEED = -1;
     public static final double RUN_OUT_SPEED = 0.5;
-    public static final int SOLENOID_FORWARD_ID = 0;
+    public static final int SOLENOID_FORWARD_ID = 5;
     public static final int SOLENOID_REVERSE_ID = 1;
   }
 
@@ -145,8 +145,8 @@ public final class Constants {
     public static final double Shooter_RPM_Tolerance = 50;
     public static final double SHOOTER_REDUCTION = 1.0; //20.0/16.0;
 
-    public static final int SOLENOID_FORWARD_ID = 5;
-    public static final int SOLENOID_REVERSE_ID = 4;
+    public static final int SOLENOID_FORWARD_ID = 3;
+    public static final int SOLENOID_REVERSE_ID = 2;
 
     public static final double HubXPosition = 8.25;
     public static final double HubYPosition = 4.15;
@@ -243,6 +243,8 @@ public final class Constants {
     public static final double CLIMBER_MAX_EXTEND_ANGLE = -6.5; /* magic number */
     public static final double initialExtendPosition = 20;
     public static final double ExceptableErrorValue = 1; //inches
+    public static final int FRONT_TELESCOPE_SOLENOID = 7;
+    public static final int BACK_TELESCOPE_SOLENOID = 8;
   }
 
   
