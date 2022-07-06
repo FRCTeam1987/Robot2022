@@ -207,6 +207,7 @@ public class TelescopeSubsystem extends SubsystemBase {
   }
 
   public void engageBrake() {
+    stopTelescope();
     m_solenoid.set(false);
   }
 
