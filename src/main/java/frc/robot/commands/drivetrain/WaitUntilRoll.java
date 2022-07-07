@@ -24,13 +24,12 @@ public class WaitUntilRoll extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_drivetrain.setRollOffset();  // TODO Don't do this
+    // m_drivetrain.setRollOffset();  // TODO Don't do this
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    new WaitUntilCommand(0.1);
   }
 
   // Called once the command ends or is interrupted.
@@ -40,7 +39,7 @@ public class WaitUntilRoll extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (m_waitUntilValueGreater == true) {
+    if (m_waitUntilValueGreater) {
       return m_drivetrain.getRollWithOffset() > m_desiredRoll;
     } else if (m_waitUntilValueGreater == false) {
       return m_drivetrain.getRollWithOffset() < m_desiredRoll;

@@ -209,8 +209,6 @@ public final class Constants {
     public static final double DEBOUNCE_DURATION_TOP_LB = 0.04;
     public static final double DEBOUNCE_DURATION_BOTTOM_C = 0.04; //TODO Magic Number
     public static final double DEBOUNCE_DURATION_TOP_C = 0.05; //TODO Magic Number
-    public static final int COLOR_SENSOR_TOP_ID = 2; //TODO Predicted IDs before sensors plugged in, verify accurate
-    public static final int COLOR_SENSOR_BOTTOM_ID = 3; //TODO Predicted IDs before sensors plugged in, verify accurate
     public static final int DIGITAL_INPUT_BOTTOM_ID = 0;
     public static final int DIGITAL_INPUT_TOP_ID = 1;
     public static final int INITIAL_BALL_COUNT = 1;
@@ -222,11 +220,6 @@ public final class Constants {
     public static final double RUN_OUT_SPEED_BOTTOM = 0.95;
     public static final int SENSOR_BOTTOM = 9;
     public static final int SENSOR_TOP = 8;
-    public static final double[] DEFAULT_COLOR = new double[]{0.0, 0.0, 0.0, 0.0};
-    public static final double[] RED = new double[]{16500.0, 10300.0, 4800.0, 325.0};
-    public static final double[] BLUE = new double[]{4900.0, 13300.0, 16300, 325.0};
-    public static final double[] COLOR_TOLERANCE = new double[]{5000.0, 5000.0, 5000.0, 500.0};
-    public static final double MAX_COLOR_SENSOR_PROXIMITY = 1750;
 
   
   }

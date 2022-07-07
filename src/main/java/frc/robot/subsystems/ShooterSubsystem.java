@@ -40,9 +40,11 @@ public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
     ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
-    tab.addNumber("RPM-Actual", () -> getRPM());
-    tab.addNumber("rpm-error", () -> getRpmSetpointError());
-    tab.addNumber("rpm-Offset", () -> getOffsetRPM());
+
+    // tab.addNumber("RPM-Actual", () -> getRPM());
+    // tab.addNumber("rpm-error", () -> getRpmSetpointError());
+    // tab.addNumber("rpm-Offset", () -> getOffsetRPM());
+
     tab.add("Increment Offset", new InstantCommand(() -> incrementOffsetRPM()));
     tab.add("Decrement Offset", new InstantCommand(() -> decrementOffsetRPM()));
     tab.add("Raise Shoot Hood", new RaiseHood(this));
@@ -75,7 +77,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // SmartDashboard.putNumber("Hood-Pos", 35);
     // SmartDashboard.putNumber("RPM-Set", 2500 * SHOOTER_REDUCTION);
-    SmartDashboard.putNumber("rpm-Offset", getOffsetRPM());
+    // SmartDashboard.putNumber("rpm-Offset", getOffsetRPM());
 
   }
 
@@ -136,7 +138,8 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // System.out.println("hood position " + getHoodPosition());
-    SmartDashboard.putNumber("RPM-Actual", getRPM());
-    SmartDashboard.putNumber("rpm-error", getRpmSetpointError());
+
+    // SmartDashboard.putNumber("RPM-Actual", getRPM());
+    // SmartDashboard.putNumber("rpm-error", getRpmSetpointError());
   }
 }

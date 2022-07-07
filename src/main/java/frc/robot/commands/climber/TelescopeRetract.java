@@ -29,7 +29,7 @@ public class TelescopeRetract extends SequentialCommandGroup {
       // new ParallelCommandGroup(
         new SequentialCommandGroup(
           new InstantCommand(() -> m_telescope.retract(percentSpeed)), // speed = 0.75
-          new WaitUntilCommand(() -> Math.abs(m_telescope.getPositionInches()) < desiredPosition),
+          new WaitUntilCommand(() -> Math.abs(m_telescope.getPositionTicks()) < desiredPosition),
           new InstantCommand(() -> m_telescope.stopTelescope())
         )
         // new SequentialCommandGroup(

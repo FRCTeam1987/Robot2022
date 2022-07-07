@@ -4,6 +4,8 @@
 
 package frc.robot.commands.climber;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -15,14 +17,17 @@ import frc.robot.subsystems.TelescopeSubsystem;
 public class ClimbStep1 extends ParallelCommandGroup {
   /** Creates a new ClimberGroundToMedium. */
   private final TelescopeSubsystem m_telescopeFront;
+  private final Compressor m_compressor;
 
-  public ClimbStep1(TelescopeSubsystem telescopeFront) {
+  public ClimbStep1(TelescopeSubsystem telescopeFront, Compressor compressor) {
     m_telescopeFront = telescopeFront;
+    m_compressor = compressor;
     // m_telscopeBack = telescopBack;
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new TelescopeGoToClosedLoop(m_telescopeFront, 209000, true) // short telescope reach first rung
+      new InstantCommand(() -> m_compressor.disable()),
+      new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_maxFrontExtensionTicks - 10000, true) // short telescope reach first rung
       // new ArmGoToPosition(m_telescopeFront, m_telscopeBack, 20, 0.5)
     );
   }

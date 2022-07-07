@@ -43,7 +43,9 @@ public class TelescopeSubsystem extends SubsystemBase {
   private static final double k_postEncoderGearing = 15.34;
   private static final StatorCurrentLimitConfiguration k_currentLimit = new StatorCurrentLimitConfiguration(true, 70, 70, 0.2);
   private static final double k_maxExtensionInches = 20.5;
-  public static final int k_maxExtensionTicks = 235000;
+  public static final int k_maxExtensionTicks = 217000;  //front 232,000 back 217000
+  public static final int k_maxFrontExtensionTicks = 230000;
+  public static final int k_maxBackExtensionTicks = 220000; 
   public static final int k_minExtensionTicks = 2500;
 
 
@@ -97,7 +99,7 @@ public class TelescopeSubsystem extends SubsystemBase {
     m_motor.configStatorCurrentLimit(k_currentLimit);
     disengageBrake();
 
-    tab.addNumber(m_name + " Arm Pos",() -> getPositionInches()).withPosition(0, 2+m_shuffleboardRowOffset);
+    // tab.addNumber(m_name + " Arm Pos",() -> getPositionInches()).withPosition(0, 2+m_shuffleboardRowOffset);
     tab.addNumber(m_name + " Arm Pos Ticks", () -> getPositionTicks()).withPosition(1, 2+m_shuffleboardRowOffset);
     // tab.addNumber(m_name + " Voltage", () -> m_motor.getBusVoltage()).withPosition(2, 2+m_shuffleboardRowOffset);
     // tab.addNumber(m_name + " Current", () -> m_motor.getStatorCurrent()).withPosition(3, 2+m_shuffleboardRowOffset);
@@ -109,8 +111,6 @@ public class TelescopeSubsystem extends SubsystemBase {
       tab.add(m_name + " Go To 10", new TelescopeGoToClosedLoop(this, 95000)).withPosition(8, 2+m_shuffleboardRowOffset);
       tab.add(m_name + " Go To 15", new TelescopeGoToClosedLoop(this, 143000)).withPosition(9, 2+m_shuffleboardRowOffset);
       tab.add(m_name + " Go To max", new TelescopeGoToClosedLoop(this, this.k_maxExtensionTicks)).withPosition(10, 2+m_shuffleboardRowOffset);
-      tab.add(m_name + " Engage Friction Brake", new EngageFrictionBrakeTelescope(this));
-      tab.add(m_name + " Disengage Friction Brake", new DisengageFrictionBrakeTelescope(this));
     // }
 
     tab.add(m_name + " Break Motor", new BrakeTelescope(this));

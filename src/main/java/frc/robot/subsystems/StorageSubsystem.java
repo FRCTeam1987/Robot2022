@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -36,8 +35,6 @@ public class StorageSubsystem extends SubsystemBase {
   private int m_ballCount = INITIAL_BALL_COUNT;
   private final Debouncer m_debouncerBottom = new Debouncer(DEBOUNCE_DURATION_BOTTOM_LB);
   private final Debouncer m_debouncerTop = new Debouncer(DEBOUNCE_DURATION_TOP_LB);
-  private final Debouncer m_debouncerColorBottom = new Debouncer(DEBOUNCE_DURATION_BOTTOM_C);
-  private final Debouncer m_debouncerColorTop = new Debouncer(DEBOUNCE_DURATION_TOP_C);
   private final DigitalInput m_digitalInputBottom = new DigitalInput(DIGITAL_INPUT_BOTTOM_ID);
   private final DigitalInput m_digitalInputTop = new DigitalInput(DIGITAL_INPUT_TOP_ID);
   private boolean m_isBallAtBottom = false;
@@ -46,11 +43,8 @@ public class StorageSubsystem extends SubsystemBase {
   private final CANSparkMax m_motorTop = new CANSparkMax(MOTOR_TOP_CAN_ID, MotorType.kBrushless);
   private boolean m_hasFirstBall = false;
   private boolean m_hasSecondBall = false;
-  private boolean m_UseColorSensorForBallCount = false;
   
   // private final NetworkTable table;
-  // private NetworkTableEntry colorTop;
-  // private NetworkTableEntry colorBottom;
   // private NetworkTableEntry prox;
 
 
@@ -69,14 +63,6 @@ public class StorageSubsystem extends SubsystemBase {
     m_motorTop.restoreFactoryDefaults();
     m_motorTop.setIdleMode(IdleMode.kBrake);
     stop();
-    // SmartDashboard.putBoolean("Should Use Color Sensor", m_UseColorSensorForBallCount);
-    
-   
-    // this.table = table;
-    // colorTop = table.getEntry("rgbir");   
-    // colorBottom = table.getEntry("rgbir");   
-    // prox = table.getEntry("proximity");
-
 
   }
 
@@ -139,95 +125,13 @@ public class StorageSubsystem extends SubsystemBase {
     m_motorTop.stopMotor();
   }
 
-  public double[] getColorTop() {
-    return NetworkTableInstance.getDefault().getEntry("/rawcolor3").getDoubleArray(DEFAULT_COLOR);
-  }
-
-  public boolean hasColorTop() {
-    return getColorTopProximity() > MAX_COLOR_SENSOR_PROXIMITY;
-  }
-
-  public double getColorTopProximity() {
-    return NetworkTableInstance.getDefault().getEntry("/proximity3").getDouble(0);
-  }
-
-  public double[] getColorBottom() {
-    return NetworkTableInstance.getDefault().getEntry("/rawcolor1").getDoubleArray(DEFAULT_COLOR);
-  }
-
-  public double getColorBottomProximity() {
-    return NetworkTableInstance.getDefault().getEntry("/proximity1").getDouble(0);
-  }
-
-  public boolean hasColorBottom() {
-    return getColorBottomProximity() > MAX_COLOR_SENSOR_PROXIMITY;
-  }
-
-  public boolean isTopRed(){
-    return isBallRed(getColorTop(), getColorTopProximity());
-  }
-
-  public boolean isTopBlue(){
-    return isBallBlue(getColorTop(), getColorTopProximity());
-  }
-
-  public boolean isBottomRed(){
-    return isBallRed(getColorBottom(), getColorBottomProximity());
-  }
-
-  public boolean isBottomBlue(){
-    return isBallBlue(getColorBottom(), getColorBottomProximity());
-  }
-
-  public boolean isBottomOurs() {
-    return this.hasColorBottom() && (
-      (DriverStation.getAlliance().compareTo(Alliance.Blue) == 0 && this.isBottomBlue())
-      || (DriverStation.getAlliance().compareTo(Alliance.Red) == 0 && this.isBottomRed())
-    );
-  }
-  public boolean isTopOurs() {
-    return this.hasColorTop() && (
-      (DriverStation.getAlliance().compareTo(Alliance.Blue) == 0 && this.isTopBlue())
-      || (DriverStation.getAlliance().compareTo(Alliance.Red) == 0 && this.isTopRed())
-    );
-  }
-
-  private boolean colorIsWithinTolerance(double[] measuredColor, double[] knownColor) {
-    return Util.isWithinTolerance(measuredColor[0], knownColor[0], COLOR_TOLERANCE[0])
-      && Util.isWithinTolerance(measuredColor[1], knownColor[1], COLOR_TOLERANCE[1]) 
-      && Util.isWithinTolerance(measuredColor[2], knownColor[2], COLOR_TOLERANCE[2])
-      && Util.isWithinTolerance(measuredColor[3], knownColor[3], COLOR_TOLERANCE[3]);
-  }
-
-  private boolean isBallRed(double[] measuredColor, double proximity) {
-    // return measuredColor[0] > 2250 && measuredColor[2] < 1500;
-    return measuredColor[0] > measuredColor[2] && proximity > 200;
-    // 5550, 3390, 1207, 85
-  }
-
-  private boolean isBallBlue(double[] measuredColor, double proximity) {
-    // return measuredColor[2] > 1500 && measuredColor[0] < 2250;
-    return measuredColor[0] < measuredColor[2] && proximity > 200;
-    // 2630, 7100, 8280, 163
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     m_isBallAtBottom = m_debouncerBottom.calculate(!m_digitalInputBottom.get());
     m_isballAtTop = m_debouncerTop.calculate(!m_digitalInputTop.get());
-    // m_hasFirstBall = m_debouncerColorTop.calculate(isTopBlue() || isTopRed());
-    // m_hasSecondBall = m_debouncerColorBottom.calculate(isBottomBlue() || isdBottomRed());
     SmartDashboard.putBoolean("ball-bottom", m_isBallAtBottom);
     SmartDashboard.putBoolean("ball-top", m_isballAtTop);
     SmartDashboard.putNumber("ball count", m_ballCount);
-    // SmartDashboard.putBoolean("Top Red", isTopRed());
-    // SmartDashboard.putBoolean("Top Blue", isTopBlue());
-    // SmartDashboard.putBoolean("Bottom Red", isBottomRed());
-    // SmartDashboard.putBoolean("Bottom Blue", isBottomBlue());
-    // SmartDashboard.putBoolean("is-top-red", isBallRed(getColorTop(), getColorTopProximity()));
-    // SmartDashboard.putBoolean("is-top-blue", isBallBlue(getColorTop(), getColorTopProximity()));
-    // SmartDashboard.putBoolean("is-bottom-red", isBallRed(getColorBottom(), getColorBottomProximity()));
-    // SmartDashboard.putBoolean("is-bottom-blue", isBallBlue(getColorBottom(), getColorBottomProximity()));
   }
 }

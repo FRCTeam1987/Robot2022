@@ -22,7 +22,6 @@ public class EngageFrictionBrakeTelescope extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_telescope.stopTelescope();
     m_telescope.engageBrake();
   }
 }
