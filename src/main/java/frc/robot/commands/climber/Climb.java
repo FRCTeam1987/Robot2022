@@ -36,10 +36,8 @@ public class Climb extends SequentialCommandGroup {
       new ClimbStep1(m_telescopeFront, m_compressor),
       new WaitUntilCommand(() -> m_xbox.getAButtonPressed()),
       new ClimbStep2(m_telescopeFront, m_telescopeBack, m_drivetrain),
-      new WaitUntilRoll(m_drivetrain, true, 45), // TODO find angle
-      new ClimbStep3(m_telescopeFront, m_telescopeBack, m_drivetrain),
-      new WaitUntilRoll(m_drivetrain, true, 45), // TODO find angle
-      new ClimbStep4(m_telescopeFront, m_telescopeBack, m_drivetrain)
+      new WaitUntilRoll(m_drivetrain, true, -45), // TODO find angle
+      new ClimbStep3(m_telescopeFront, m_telescopeBack, m_drivetrain)
 
       
     );

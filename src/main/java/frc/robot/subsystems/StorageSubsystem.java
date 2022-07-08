@@ -51,12 +51,16 @@ public class StorageSubsystem extends SubsystemBase {
   /** Creates a new StorageSubsystem. */
   public StorageSubsystem() {//NetworkTable table) {
     ShuffleboardTab shooterTab = Shuffleboard.getTab("Shooter");
-    shooterTab.addBoolean("ball-bottom",() -> m_isBallAtBottom);
-    shooterTab.addBoolean("ball-top", () -> m_isballAtTop);
-    shooterTab.addNumber("ball count", () -> m_ballCount);
+    // shooterTab.addBoolean("ball-bottom",() -> m_isBallAtBottom);
+    // shooterTab.addBoolean("ball-top", () -> m_isballAtTop);
+    // shooterTab.addNumber("ball count", () -> m_ballCount);
     shooterTab.add("0 Count", new SetBallCount(this, 0));
     shooterTab.add("1 Count", new SetBallCount(this, 1));
     shooterTab.add("2 Count", new SetBallCount(this, 2));
+    ShuffleboardTab smartDashboardTab = Shuffleboard.getTab("SmartDashboard");
+    smartDashboardTab.addBoolean("ball-bottom",() -> m_isBallAtBottom);
+    smartDashboardTab.addBoolean("ball-top",() -> m_isballAtTop);
+    smartDashboardTab.addNumber("ball count", () -> m_ballCount);
 
     m_motorBottom.restoreFactoryDefaults();
     m_motorBottom.setIdleMode(IdleMode.kBrake); 
@@ -130,8 +134,8 @@ public class StorageSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     m_isBallAtBottom = m_debouncerBottom.calculate(!m_digitalInputBottom.get());
     m_isballAtTop = m_debouncerTop.calculate(!m_digitalInputTop.get());
-    SmartDashboard.putBoolean("ball-bottom", m_isBallAtBottom);
-    SmartDashboard.putBoolean("ball-top", m_isballAtTop);
-    SmartDashboard.putNumber("ball count", m_ballCount);
+    // SmartDashboard.putBoolean("ball-bottom", m_isBallAtBottom);
+    // SmartDashboard.putBoolean("ball-top", m_isballAtTop);
+    // SmartDashboard.putNumber("ball count", m_ballCount);
   }
 }

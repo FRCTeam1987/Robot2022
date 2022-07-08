@@ -44,8 +44,8 @@ public class TelescopeSubsystem extends SubsystemBase {
   private static final StatorCurrentLimitConfiguration k_currentLimit = new StatorCurrentLimitConfiguration(true, 70, 70, 0.2);
   private static final double k_maxExtensionInches = 20.5;
   public static final int k_maxExtensionTicks = 217000;  //front 232,000 back 217000
-  public static final int k_maxFrontExtensionTicks = 230000;
-  public static final int k_maxBackExtensionTicks = 220000; 
+  public static final int k_maxFrontExtensionTicks = 240000;
+  public static final int k_maxBackExtensionTicks = 228000; 
   public static final int k_minExtensionTicks = 2500;
 
 
@@ -207,7 +207,6 @@ public class TelescopeSubsystem extends SubsystemBase {
   }
 
   public void engageBrake() {
-    stopTelescope();
     m_solenoid.set(false);
   }
 

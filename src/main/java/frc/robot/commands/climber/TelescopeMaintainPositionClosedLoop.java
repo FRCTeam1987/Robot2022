@@ -7,16 +7,17 @@ package frc.robot.commands.climber;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Util;
+import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.TelescopeSubsystem;
 
-public class TelescopeGoToClosedLoop extends CommandBase {
-
+public class TelescopeMaintainPositionClosedLoop extends CommandBase {
+  //TODO UNTESTED
   private final TelescopeSubsystem m_telescope;
-  private final int m_desiredPosition;
+  private double m_desiredPosition;
   private final boolean m_shouldLogPosition;
 
-  public TelescopeGoToClosedLoop(final TelescopeSubsystem telescope, final int desiredPosition) {
-    this(telescope, desiredPosition, false);
+  public TelescopeMaintainPositionClosedLoop(final TelescopeSubsystem telescope) {
+    this(telescope,  false);
   }
 
   /**
@@ -24,9 +25,9 @@ public class TelescopeGoToClosedLoop extends CommandBase {
    * @param telescope The telescope to control.
    * @param desiredPosition The desired position in ticks.
    */
-  public TelescopeGoToClosedLoop(final TelescopeSubsystem telescope, final int desiredPosition, final boolean shouldLogPosition) {
+  public TelescopeMaintainPositionClosedLoop(final TelescopeSubsystem telescope, final boolean shouldLogPosition) { 
     m_telescope = telescope;
-    m_desiredPosition = desiredPosition;
+    m_desiredPosition = 0;
     m_shouldLogPosition = shouldLogPosition;
     addRequirements(m_telescope);
   }
@@ -34,9 +35,11 @@ public class TelescopeGoToClosedLoop extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_desiredPosition = m_telescope.getPositionTicks();
     if (m_telescope.hasZeroed() == false) {
       return;
     }
+    m_telescope.engageBrake();
     m_telescope.setPositionTicks(m_desiredPosition);
   }
 

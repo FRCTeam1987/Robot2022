@@ -4,6 +4,7 @@
 
 package frc.robot.commands.climber;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -28,8 +29,16 @@ public class ClimbStep4 extends ParallelCommandGroup {
     m_drivetrain = drivetrain;
     addCommands(
       new SequentialCommandGroup(
-        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks + 3500),
-        new EngageFrictionBrakeClimber(m_telescopeFront, m_telescopeBack)
+        // new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_maxFrontExtensionTicks - 10000),
+        new TelescopeRetract(m_telescopeFront, TelescopeSubsystem.k_maxFrontExtensionTicks - 40000, 1.0),
+        new EngageFrictionBrakeTelescope(m_telescopeFront),
+        new InstantCommand(() -> System.out.println("Climb Step 4 1 finished: " + m_telescopeFront.getPositionTicks() + " current roll: " + m_drivetrain.getRoll()))
+      ),
+      new  SequentialCommandGroup(
+        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks + 40000, true),
+        new EngageFrictionBrakeTelescope(m_telescopeBack),
+        new InstantCommand(() -> System.out.println("Climb Step 4 2 finished: " + m_telescopeFront.getPositionTicks() + " current roll: " + m_drivetrain.getRoll()))
+
       )
     );
   }
@@ -39,7 +48,8 @@ public class ClimbStep4 extends ParallelCommandGroup {
       // TODO Auto-generated method stub
       super.end(interrupted);
       if (interrupted) {
-        m_telescopeBack.stopTelescope();
+        m_telescopeFront.engageBrake();
+        m_telescopeBack.engageBrake();
       }
   }
 }

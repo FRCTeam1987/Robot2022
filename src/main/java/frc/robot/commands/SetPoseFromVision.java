@@ -19,8 +19,8 @@ public class SetPoseFromVision extends InstantCommand {
 
   private static final Translation2d k_goalPosition = new Translation2d(8.23, 4.11);
   private static final double k_limelightMountAngleDegrees = 39.0;
-  private static final double k_goalHeightMeters = 0.0; // TODO
-  private static final double k_limelightMountHeightMeters = 0.0;
+  private static final double k_goalHeightMeters = Units.inchesToMeters(104);
+  private static final double k_limelightMountHeightMeters = Units.inchesToMeters(28);
 
   private final DrivetrainSubsystem m_drive;
   private final LimeLight m_limeLight;

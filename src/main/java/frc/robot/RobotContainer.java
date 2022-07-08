@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -85,19 +86,19 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Compressor m_compressor = new Compressor(PneumaticsModuleType.REVPH);
-  private final PowerDistribution m_powerDistribution = new PowerDistribution();
-  private final DrivetrainSubsystem m_drivetrain = new DrivetrainSubsystem();
-  private final CollectorSubsystem m_collector = new CollectorSubsystem();
-  private final StorageSubsystem m_storage = new StorageSubsystem();
-  private final ShooterSubsystem m_shooter = new ShooterSubsystem();
-  private final LimeLight m_limelight = new LimeLight();
-  private final TelescopeSubsystem m_telescopeFront = new TelescopeSubsystem(Constants.Climber.Front_CLIMBER_MOTOR, false, "Front", Constants.Climber.FRONT_TELESCOPE_SOLENOID);
-  private final TelescopeSubsystem m_telescopeBack = new TelescopeSubsystem(Constants.Climber.Back_CLIMBER_MOTOR, true, "Back", Constants.Climber.BACK_TELESCOPE_SOLENOID);
+  private Compressor m_compressor = new Compressor(PneumaticsModuleType.REVPH);
+  private PowerDistribution m_powerDistribution = new PowerDistribution();
+  private DrivetrainSubsystem m_drivetrain = new DrivetrainSubsystem();
+  private CollectorSubsystem m_collector = new CollectorSubsystem();
+  private StorageSubsystem m_storage = new StorageSubsystem();
+  private ShooterSubsystem m_shooter = new ShooterSubsystem();
+  private LimeLight m_limelight = new LimeLight();
+  private TelescopeSubsystem m_telescopeFront = new TelescopeSubsystem(Constants.Climber.Front_CLIMBER_MOTOR, false, "Front", Constants.Climber.FRONT_TELESCOPE_SOLENOID);
+  private TelescopeSubsystem m_telescopeBack = new TelescopeSubsystem(Constants.Climber.Back_CLIMBER_MOTOR, true, "Back", Constants.Climber.BACK_TELESCOPE_SOLENOID);
 
-  private final XboxController controller = new XboxController(0);
-  private final XboxController coController = new XboxController(1);
-  private final SendableChooser<Command> m_autoChooser = new SendableChooser<Command>();
+  private XboxController controller = new XboxController(0);
+  private XboxController coController = new XboxController(1);
+  private SendableChooser<Command> m_autoChooser = new SendableChooser<Command>();
 
   private boolean m_ShouldEjectOpponentBall = false;
 
@@ -123,6 +124,7 @@ public class RobotContainer {
     m_compressor.enableAnalog(100, 120);
 
     m_powerDistribution.setSwitchableChannel(true);
+    // LiveWindow.disableAllTelemetry();
   }
 
   public void rememberStartingPosition() {

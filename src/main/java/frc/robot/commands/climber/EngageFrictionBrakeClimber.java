@@ -24,6 +24,8 @@ public class EngageFrictionBrakeClimber extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_frontTelescope.stopTelescope();
+    m_backTelescope.stopTelescope();
     m_frontTelescope.engageBrake();
     m_backTelescope.engageBrake();
   }
