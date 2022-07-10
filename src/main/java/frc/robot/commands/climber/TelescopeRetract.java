@@ -26,12 +26,14 @@ public class TelescopeRetract extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_telescope = telescope;
-    double m_telescopePositionTicks = m_telescope.getPositionTicks();
     addCommands(
       // new ParallelCommandGroup(
         new SequentialCommandGroup(
           new InstantCommand(() -> m_telescope.retract(percentSpeed)), // speed = 0.75
-          new WaitUntilCommand(() -> m_telescopePositionTicks < desiredPosition || m_telescopePositionTicks <=  0),
+          new WaitUntilCommand(() -> {
+            double currentPosition = m_telescope.getPositionTicks();
+            return currentPosition < desiredPosition || currentPosition <=  0;
+          }),
           new InstantCommand(() -> m_telescope.stopTelescope())
         )
         // new SequentialCommandGroup(

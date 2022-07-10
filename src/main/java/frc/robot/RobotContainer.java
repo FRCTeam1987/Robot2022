@@ -23,8 +23,10 @@ import frc.robot.commands.ResetLimelightPipeline;
 import frc.robot.commands.auto.BlueFiveBallAuto;
 import frc.robot.commands.auto.BlueThreeBallAuto;
 import frc.robot.commands.auto.FiveBallAuto;
+import frc.robot.commands.auto.LeftQuickSteal;
 import frc.robot.commands.auto.OneBallAndD;
 import frc.robot.commands.auto.OneBallAndSteal;
+import frc.robot.commands.auto.RightQuickSteal;
 import frc.robot.commands.auto.TaxiAuto;
 import frc.robot.commands.auto.ThreeBallAuto;
 import frc.robot.commands.auto.ThreeBallSteal;
@@ -73,8 +75,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 
@@ -101,6 +105,7 @@ public class RobotContainer {
   private SendableChooser<Command> m_autoChooser = new SendableChooser<Command>();
 
   private boolean m_ShouldEjectOpponentBall = false;
+  private boolean m_shouldAutoClimb = false;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -224,6 +229,31 @@ public class RobotContainer {
 
     new Button(coController::getStartButton)
     .whenPressed(new InstantCommand(() -> m_shooter.incrementOffsetRPM()));
+
+    new Button(controller::getAButton)
+      .whenPressed(new ConditionalCommand(
+        new Climb(m_telescopeFront, m_telescopeBack, m_drivetrain, controller, m_compressor),
+        new SequentialCommandGroup(
+          new ClimbStep1(m_telescopeFront, m_compressor),
+          new InstantCommand(() -> m_shouldAutoClimb = true)
+        ),
+        () -> m_shouldAutoClimb
+      ));
+      // .whenPressed(
+      //   new SequentialCommandGroup(
+      //     new PrintCommand("Climb Test A"),
+      //     new ConditionalCommand(
+      //       new PrintCommand("Climb Test B"), 
+      //       new InstantCommand(() -> {}), 
+      //       () -> controller.getAButtonPressed())
+      //   )
+      // );   
+    // );÷\
+    // .whenReleased(
+    //   new SequentialCommandGroup(
+    //     new PrintCommand("Climb Test A"),
+    //     new WaitUntilCommand(() -> controller.getAButtonPressed()),
+    //     new PrintCommand("Climb Test B")
   };
 
   private void configureShuffleboard() {
@@ -232,20 +262,22 @@ public class RobotContainer {
     ShuffleboardTab telescopesTab = Shuffleboard.getTab("Telescopes");
     ShuffleboardTab limeLightTab = Shuffleboard.getTab("LimeLight");
 
-    // m_autoChooser.addOption("5 Ball Auto", new FiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    // m_autoChooser.addOption("Blue 5 Ball", new BlueFiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    // m_autoChooser.addOption("Taxi Auto", new TaxiAuto(controller, m_drivetrain, this));
-    // m_autoChooser.addOption("2 Ball & D Auto", new TwoBallAndDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    // m_autoChooser.addOption("2 Ball & Hub D Auto", new TwoBallAndDHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    // m_autoChooser.addOption("2 Ball & 1 D Auto", new TwoBallAndOneDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    // m_autoChooser.addOption("2 Ball & 1 Hub Auto", new TwoBallAndOneHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    // m_autoChooser.addOption("1 Ball & D Steal", new OneBallAndD(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    // m_autoChooser.addOption("2 Ball & D Steal", new TwoBallSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    // m_autoChooser.addOption("1 Ball & Steal", new OneBallAndSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    // m_autoChooser.addOption("3 Ball & Steal", new ThreeBallSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("5 Ball Auto", new FiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("Blue 5 Ball", new BlueFiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("Taxi Auto", new TaxiAuto(controller, m_drivetrain, this));
+    m_autoChooser.addOption("2 Ball & D Auto", new TwoBallAndDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("2 Ball & Hub D Auto", new TwoBallAndDHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("2 Ball & 1 D Auto", new TwoBallAndOneDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("2 Ball & 1 Hub Auto", new TwoBallAndOneHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("1 Ball & D Steal", new OneBallAndD(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("2 Ball & D Steal", new TwoBallSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("1 Ball & Steal", new OneBallAndSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("3 Ball & Steal", new ThreeBallSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("Left Quick Steal", new LeftQuickSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("Right Quick Steal", new RightQuickSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
 
-    // m_autoChooser.addOption("3 Ball Auto", new ThreeBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    // m_autoChooser.addOption("Blue 3 Ball", new BlueThreeBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("3 Ball Auto", new ThreeBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("Blue 3 Ball", new BlueThreeBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     
     // m_autoChooser.addOption("Test",  m_drivetrain.followPathCommand(false, "Test"));
     // m_autoChooser.addOption("Swerve Char - Forwards", new SwerveCharacterizationFF(m_drivetrain, true, false));
@@ -327,7 +359,6 @@ public class RobotContainer {
     telescopesTab.add("roll with offset", m_drivetrain.getRollWithOffset());
     telescopesTab.add("Climber Engage Friction Brake", new EngageFrictionBrakeClimber(m_telescopeFront, m_telescopeBack));
     telescopesTab.add("Climber Disengage Friction Brake", new DisengageFrictionBrakeClimber(m_telescopeFront, m_telescopeBack));
-
   }
 
   private static double deadband(double value, double deadband) {

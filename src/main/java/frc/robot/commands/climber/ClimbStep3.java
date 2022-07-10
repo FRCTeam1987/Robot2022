@@ -37,9 +37,12 @@ public class ClimbStep3 extends ParallelCommandGroup {
         // new InstantCommand(() -> m_telescopeFront.setVoltageSaturation(9)),
         // new TelescopeGoToClosedLoop(m_telescopeFront, 50000, true), //~0 inch
         // new WaitCommand(0.5),
-        new WaitCommand(0.25),
+        new DisengageFrictionBrakeTelescope(m_telescopeFront),
+        new WaitCommand(0.1),
+        new InstantCommand(() -> System.out.println("Step 3 Start Roll: " + m_drivetrain.getRollWithOffset())),
+        // new WaitCommand(0.25),
         new InstantCommand(() -> System.out.println("Climb3 1 Roll with offset: " + m_drivetrain.getRollWithOffset())),
-        new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_maxFrontExtensionTicks - 50000, true), //~0 inch
+        new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_maxFrontExtensionTicks - 25000, true), //~0 inch
         // new WaitCommand(0.3),
         new WaitUntilRoll(m_drivetrain, true, -45),
         new InstantCommand(() -> System.out.println("front going to max Climb Step 3: " + m_telescopeFront.getPositionTicks() + " current roll: " + m_drivetrain.getRoll())),
@@ -53,8 +56,8 @@ public class ClimbStep3 extends ParallelCommandGroup {
         // new WaitCommand(0.2),
         // new InstantCommand(() -> m_telescopeFront.setVoltageSaturation(9)),
         new TelescopeRetract(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks + 5000, 1.0),
-        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks - 2250)
-        
+        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks - 2000),
+        new EngageFrictionBrakeTelescope(m_telescopeBack)
         // new InstantCommand(() -> m_telescopeFront.setVoltageSaturation())
       )
     );

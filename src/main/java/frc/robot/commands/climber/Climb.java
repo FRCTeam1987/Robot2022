@@ -5,6 +5,7 @@
 package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -23,6 +24,7 @@ public class Climb extends SequentialCommandGroup {
   private final DrivetrainSubsystem m_drivetrain;
   private final Compressor m_compressor;
   private final XboxController m_xbox;
+  private double m_time = 0.0;
   /** Creates a new Climb. */
   public Climb(TelescopeSubsystem telescopeFront, TelescopeSubsystem telescopeBack, DrivetrainSubsystem drivetrain, final XboxController xbox, Compressor compressor) {
 
@@ -33,13 +35,16 @@ public class Climb extends SequentialCommandGroup {
     m_compressor = compressor;
 
     addCommands(
-      new ClimbStep1(m_telescopeFront, m_compressor),
-      new WaitUntilCommand(() -> m_xbox.getAButtonPressed()),
+      // new ClimbStep1(m_telescopeFront, m_compressor),
+      // new WaitUntilCommand(() -> m_xbox.getAButtonPressed()),
+      new InstantCommand(() -> m_time = Timer.getFPGATimestamp()),
       new ClimbStep2(m_telescopeFront, m_telescopeBack, m_drivetrain),
-      new WaitUntilRoll(m_drivetrain, true, -45), // TODO find angle
-      new ClimbStep3(m_telescopeFront, m_telescopeBack, m_drivetrain)
-
-      
+      new WaitUntilRoll(m_drivetrain, true, -40),
+      new ClimbStep3(m_telescopeFront, m_telescopeBack, m_drivetrain),
+      new WaitUntilRoll(m_drivetrain, false, -61),  // TODO find angle, last climb attempt logged 55.6 degrees
+      new ClimbStep4(m_telescopeFront, m_telescopeBack, m_drivetrain),
+      new InstantCommand(() -> System.out.println("Climb Time: " + (Timer.getFPGATimestamp() - m_time)))
+      // new
     );
   }
 }

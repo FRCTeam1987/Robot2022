@@ -57,7 +57,7 @@ public class StorageSubsystem extends SubsystemBase {
     shooterTab.add("0 Count", new SetBallCount(this, 0));
     shooterTab.add("1 Count", new SetBallCount(this, 1));
     shooterTab.add("2 Count", new SetBallCount(this, 2));
-    ShuffleboardTab smartDashboardTab = Shuffleboard.getTab("SmartDashboard");
+    ShuffleboardTab smartDashboardTab = Shuffleboard.getTab("Storage");
     smartDashboardTab.addBoolean("ball-bottom",() -> m_isBallAtBottom);
     smartDashboardTab.addBoolean("ball-top",() -> m_isballAtTop);
     smartDashboardTab.addNumber("ball count", () -> m_ballCount);

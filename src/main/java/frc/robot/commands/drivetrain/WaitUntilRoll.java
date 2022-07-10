@@ -5,6 +5,7 @@
 package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
@@ -24,7 +25,6 @@ public class WaitUntilRoll extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // m_drivetrain.setRollOffset();  // TODO Don't do this
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,10 +39,12 @@ public class WaitUntilRoll extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    final double roll = m_drivetrain.getRollWithOffset();
+    System.out.println("Wait Until:" + roll);
     if (m_waitUntilValueGreater) {
-      return m_drivetrain.getRollWithOffset() > m_desiredRoll;
+      return roll > m_desiredRoll;
     } else if (m_waitUntilValueGreater == false) {
-      return m_drivetrain.getRollWithOffset() < m_desiredRoll;
+      return roll < m_desiredRoll;
     } else {
       return false;
     }

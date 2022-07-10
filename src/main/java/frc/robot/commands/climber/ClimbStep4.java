@@ -29,13 +29,17 @@ public class ClimbStep4 extends ParallelCommandGroup {
     m_drivetrain = drivetrain;
     addCommands(
       new SequentialCommandGroup(
+        new InstantCommand(() -> System.out.println("Step 4 Start Roll: " + m_drivetrain.getRollWithOffset())),
         // new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_maxFrontExtensionTicks - 10000),
-        new TelescopeRetract(m_telescopeFront, TelescopeSubsystem.k_maxFrontExtensionTicks - 40000, 1.0),
+        new TelescopeRetract(m_telescopeFront, TelescopeSubsystem.k_maxFrontExtensionTicks - 25000, 1.0),
         new EngageFrictionBrakeTelescope(m_telescopeFront),
         new InstantCommand(() -> System.out.println("Climb Step 4 1 finished: " + m_telescopeFront.getPositionTicks() + " current roll: " + m_drivetrain.getRoll()))
       ),
       new  SequentialCommandGroup(
-        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks + 40000, true),
+        // new WaitCommand(.2)
+        new DisengageFrictionBrakeTelescope(m_telescopeBack),
+        new WaitCommand(0.1),
+        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks + 25000, true),
         new EngageFrictionBrakeTelescope(m_telescopeBack),
         new InstantCommand(() -> System.out.println("Climb Step 4 2 finished: " + m_telescopeFront.getPositionTicks() + " current roll: " + m_drivetrain.getRoll()))
 
