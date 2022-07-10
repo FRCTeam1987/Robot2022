@@ -6,22 +6,24 @@ package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.drivetrain.WaitUntilRoll;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.TelescopeSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ClimbStep4 extends ParallelCommandGroup {
+public class ClimbStep3HighBar extends ParallelCommandGroup {
 
   private final TelescopeSubsystem m_telescopeFront;
   private final TelescopeSubsystem m_telescopeBack;
   private final DrivetrainSubsystem m_drivetrain;
 
   /** Creates a new ClimberShift. */
-  public ClimbStep4(TelescopeSubsystem frontTelescope, TelescopeSubsystem backTelescope, DrivetrainSubsystem drivetrain) {
+  public ClimbStep3HighBar(TelescopeSubsystem frontTelescope, TelescopeSubsystem backTelescope, DrivetrainSubsystem drivetrain) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_telescopeFront = frontTelescope;
@@ -29,20 +31,17 @@ public class ClimbStep4 extends ParallelCommandGroup {
     m_drivetrain = drivetrain;
     addCommands(
       new SequentialCommandGroup(
-        new InstantCommand(() -> System.out.println("Step 4 Start Roll: " + m_drivetrain.getRollWithOffset())),
-        // new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_maxFrontExtensionTicks - 10000),
-        new TelescopeRetract(m_telescopeFront, TelescopeSubsystem.k_maxFrontExtensionTicks - 80000, 1.0),
+        new InstantCommand(() -> System.out.println("Step 3 Start Roll: " + m_drivetrain.getRollWithOffset())),
+        new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_minExtensionTicks + 80000),
         new EngageFrictionBrakeTelescope(m_telescopeFront),
-        new InstantCommand(() -> System.out.println("Climb Step 4 1 finished: " + m_telescopeFront.getPositionTicks() + " current roll: " + m_drivetrain.getRoll()))
+        new InstantCommand(() -> System.out.println("Climb Step 3 1 finished: " + m_telescopeFront.getPositionTicks() + " current roll: " + m_drivetrain.getRoll()))
       ),
       new  SequentialCommandGroup(
-        // new WaitCommand(.2)
         new DisengageFrictionBrakeTelescope(m_telescopeBack),
         new WaitCommand(0.1),
-        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks + 40000, true),
+        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_maxBackExtensionTicks - 80000, true),
         new EngageFrictionBrakeTelescope(m_telescopeBack),
-        new InstantCommand(() -> System.out.println("Climb Step 4 2 finished: " + m_telescopeFront.getPositionTicks() + " current roll: " + m_drivetrain.getRoll()))
-
+        new InstantCommand(() -> System.out.println("Climb Step 3 2 finished: " + m_telescopeFront.getPositionTicks() + " current roll: " + m_drivetrain.getRoll()))
       )
     );
   }
@@ -52,8 +51,8 @@ public class ClimbStep4 extends ParallelCommandGroup {
       // TODO Auto-generated method stub
       super.end(interrupted);
       if (interrupted) {
-        m_telescopeFront.engageBrake();
-        m_telescopeBack.engageBrake();
+        m_telescopeFront.stopTelescope();
+        m_telescopeBack.stopTelescope();
       }
   }
 }

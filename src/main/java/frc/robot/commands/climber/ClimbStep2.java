@@ -37,10 +37,10 @@ public class ClimbStep2 extends ParallelCommandGroup {
       new SequentialCommandGroup(
         new InstantCommand(() -> {
           m_drivetrain.zeroRoll();
-          m_telescopeFront.setVoltageSaturation(7.5);
+          m_telescopeFront.setVoltageSaturation(7.0);
           System.out.println("Step 2 Start Roll: " + m_drivetrain.getRollWithOffset());
         }),
-        new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_minExtensionTicks - 2500, true), //~0 inch
+        new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_minExtensionTicks - 3000, true), //~0 inch
         new InstantCommand(() -> m_telescopeFront.setVoltageSaturation()),
         new EngageFrictionBrakeTelescope(m_telescopeFront)
       ),

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -37,7 +38,8 @@ import frc.robot.commands.auto.TwoBallAndOneHubAuto;
 import frc.robot.commands.auto.TwoBallSteal;
 import frc.robot.commands.climber.BrakeClimber;
 import frc.robot.commands.climber.BrakeTelescope;
-import frc.robot.commands.climber.Climb;
+import frc.robot.commands.climber.ClimbHigh;
+import frc.robot.commands.climber.ClimbTraversal;
 import frc.robot.commands.climber.ClimbStep1;
 import frc.robot.commands.climber.ClimbStep2;
 // import frc.robot.commands.climber.ClimberPivotDown;
@@ -135,7 +137,33 @@ public class RobotContainer {
   public void rememberStartingPosition() {
     m_drivetrain.rememberStartingPosition();
   }
+  
+  public void stopClimberMotors() {
+    m_telescopeFront.stopTelescope();
+    m_telescopeBack.stopTelescope();
+  }
+  
+  public void engageFrictionBrakes() {
+    m_telescopeFront.engageBrake();
+    m_telescopeBack.engageBrake();
+  }
 
+  public void disengageFrictionBrakes() {
+    m_telescopeFront.disengageBrake();
+    m_telescopeBack.disengageBrake();
+  }
+
+  public void setShouldAutoClimb(final boolean shouldAutoClimb) {
+    m_shouldAutoClimb = shouldAutoClimb;
+  }
+  public void disablePowerDistributionTelemetry(final boolean disableAllTelemetry) {
+    if (disableAllTelemetry) {
+      LiveWindow.disableTelemetry(m_powerDistribution);
+    } else {
+      LiveWindow.enableTelemetry(m_powerDistribution);
+    }
+  }
+  
   public void reZeroFromStartingPositon() {
     m_drivetrain.reZeroFromStartingPositon();
   }
@@ -232,12 +260,22 @@ public class RobotContainer {
 
     new Button(controller::getAButton)
       .whenPressed(new ConditionalCommand(
-        new Climb(m_telescopeFront, m_telescopeBack, m_drivetrain, controller, m_compressor),
+        new ClimbTraversal(m_telescopeFront, m_telescopeBack, m_drivetrain, controller, m_compressor),
         new SequentialCommandGroup(
           new ClimbStep1(m_telescopeFront, m_compressor),
           new InstantCommand(() -> m_shouldAutoClimb = true)
         ),
-        () -> m_shouldAutoClimb
+        () -> m_shouldAutoClimb && Timer.getMatchTime() < 31
+      ));
+
+    new Button(coController::getAButton)
+      .whenPressed(new ConditionalCommand(
+        new ClimbHigh(m_telescopeFront, m_telescopeBack, m_drivetrain, controller, m_compressor),
+        new SequentialCommandGroup(
+          new ClimbStep1(m_telescopeFront, m_compressor),
+          new InstantCommand(() -> m_shouldAutoClimb = true)
+        ),
+        () -> m_shouldAutoClimb && Timer.getMatchTime() < 31
       ));
       // .whenPressed(
       //   new SequentialCommandGroup(
@@ -261,6 +299,7 @@ public class RobotContainer {
     ShuffleboardTab drivetrainTab = Shuffleboard.getTab("Drivetrain");
     ShuffleboardTab telescopesTab = Shuffleboard.getTab("Telescopes");
     ShuffleboardTab limeLightTab = Shuffleboard.getTab("LimeLight");
+    ShuffleboardTab driverTab = Shuffleboard.getTab("Driving");
 
     m_autoChooser.addOption("5 Ball Auto", new FiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("Blue 5 Ball", new BlueFiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
@@ -277,7 +316,7 @@ public class RobotContainer {
     m_autoChooser.addOption("Right Quick Steal", new RightQuickSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
 
     m_autoChooser.addOption("3 Ball Auto", new ThreeBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    m_autoChooser.addOption("Blue 3 Ball", new BlueThreeBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    // m_autoChooser.addOption("Blue 3 Ball", new BlueThreeBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     
     // m_autoChooser.addOption("Test",  m_drivetrain.followPathCommand(false, "Test"));
     // m_autoChooser.addOption("Swerve Char - Forwards", new SwerveCharacterizationFF(m_drivetrain, true, false));
@@ -317,12 +356,43 @@ public class RobotContainer {
     SmartDashboard.putData("Coast Climber", new CoastClimber(m_telescopeFront, m_telescopeBack));
     SmartDashboard.putData("Brake Climber", new BrakeClimber(m_telescopeFront, m_telescopeBack));
     SmartDashboard.putData("Zero Climber", new ZeroClimber(m_telescopeFront, m_telescopeBack));
+    SmartDashboard.putData("Disable Power Distribution Telemetry", new InstantCommand(() -> disablePowerDistributionTelemetry(true)));
+    SmartDashboard.putData("Enable Power Distribution Telemetry", new InstantCommand(() -> disablePowerDistributionTelemetry(false)));
     
     // telescopesTab.add("Climber to Home", new ClimberToHome(m_telescopeFront, m_telescopeBack));
     telescopesTab.add("Coast Climber", new CoastClimber(m_telescopeFront, m_telescopeBack));
     telescopesTab.add("Brake Climber", new BrakeClimber(m_telescopeFront, m_telescopeBack));
     telescopesTab.add("Zero Climber", new ZeroClimber(m_telescopeFront, m_telescopeBack));
-    
+    telescopesTab.add("Climb Traversal", new ClimbTraversal(m_telescopeFront, m_telescopeBack, m_drivetrain, controller, m_compressor));
+    telescopesTab.add("Climb High", new ClimbHigh(m_telescopeFront, m_telescopeBack, m_drivetrain, controller, m_compressor));
+    telescopesTab.add("Reset Climber", new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        new TelescopeGoToClosedLoop(m_telescopeFront, 5000),
+        new TelescopeGoToClosedLoop(m_telescopeBack, 5000)
+      ),
+      new InstantCommand(() -> setShouldAutoClimb(false))
+    ));
+    driverTab.add("Reset Climber", new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        new TelescopeGoToClosedLoop(m_telescopeFront, 5000),
+        new TelescopeGoToClosedLoop(m_telescopeBack, 5000)
+      ),
+      new InstantCommand(() -> setShouldAutoClimb(false))
+    )).withPosition(9, 3);
+    driverTab.add("Brake Climber", new BrakeClimber(m_telescopeFront, m_telescopeBack)).withPosition(8, 2);
+    // driverTab.add("Powercycle Limelight", new PowercycleLimelight(m_powerDistribution));
+    // driverTab.add("Reset Limelight Pipeline", new ResetLimelightPipeline(m_limelight));
+    driverTab.add("Reset Limelight", new SequentialCommandGroup(
+      new PowercycleLimelight(m_powerDistribution),
+      new WaitCommand(2.0),
+      new ResetLimelightPipeline(m_limelight))
+    ).withPosition(8, 3);
+    driverTab.addNumber("AIR PRESSURE", () -> m_compressor.getPressure()).withPosition(9, 3);
+    driverTab.add("Lower Shooter Hood", new LowerHood(m_shooter)).withPosition(8, 0);
+    driverTab.add("Raise Shooter Hood", new RaiseHood(m_shooter)).withPosition(9, 0);
+    driverTab.add("Increment Offset", new InstantCommand(() -> m_shooter.incrementOffsetRPM())).withPosition(8, 1);
+    driverTab.add("Decrement Offset", new InstantCommand(() -> m_shooter.incrementOffsetRPM())).withPosition(9, 1);
+    driverTab.add(m_autoChooser).withPosition(5, 0);
     // SmartDashboard.putData("Extend Climber", new ClimberArmExtend(m_climberFrontSubsystem, m_climberBackSubsystem, m_drivetrain, 24));
     
     SmartDashboard.putData("Powercycle Limelight", new PowercycleLimelight(m_powerDistribution));

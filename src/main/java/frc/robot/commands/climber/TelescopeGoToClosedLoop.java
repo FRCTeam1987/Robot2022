@@ -61,7 +61,7 @@ public class TelescopeGoToClosedLoop extends CommandBase {
       DriverStation.reportWarning("Telescope - Go To Position - Not zeroed!", false);
       return true;
     } else if (m_telescope.getPositionTicks() <= 0) {
-      DriverStation.reportWarning("Telescope - arm has gone below 0 ticks! arm: " + m_telescope, false);
+      DriverStation.reportWarning("Telescope - arm has gone below 0 ticks!", false);
       return true;
     }
     // if (m_telescope.getCurrent() > 50) {

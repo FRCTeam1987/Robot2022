@@ -65,6 +65,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   private SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getAdjustedHeading());
 
+  private static final PIDController m_xController = new PIDController(DRIVETRAIN_PX_CONTROLLER, 0, 0);
+  private static final PIDController m_yController = new PIDController(DRIVETRAIN_PY_CONTROLLER, 0, 0);
+  private static final ProfiledPIDController m_thetaController = new ProfiledPIDController(DRIVETRAIN_PTHETA_CONTROLLER, 0, 0, new TrapezoidProfile.Constraints(
+    MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+    MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND_SQUARED
+  ));
+
   public DrivetrainSubsystem() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
     m_startYaw = new Rotation2d();
@@ -120,6 +127,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             BACK_RIGHT_MODULE_STEER_OFFSET
     );
     zeroGyroscope();
+    m_thetaController.enableContinuousInput(-Math.PI, Math.PI);
     /* TODO uncomment to get code and such
     tab.addNumber("Adjusted Angle", () -> getAdjustedHeading().getDegrees()).withPosition(9, 2);
     // tab.addNumber("Heading", () -> m_navx.getCompassHeading()).withPosition(9, 3);
@@ -139,6 +147,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     });
     zeroRollCommand.runsWhenDisabled();
     tab.add("Zero Roll", zeroRollCommand);
+    this.addChild("xController PID", m_xController);
+    this.addChild("yController PID", m_yController);
+    this.addChild("thetaController PID", m_thetaController);
+
     
   }
 
@@ -260,13 +272,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   // Pick back up here with path following constant placeholders
   public SequentialCommandGroup followPathCommand(final boolean shouldResetOdometry, String trajectoryFileName) {
-    final PIDController xController = new PIDController(DRIVETRAIN_PX_CONTROLLER, 0, 0);
-    final PIDController yController = new PIDController(DRIVETRAIN_PY_CONTROLLER, 0, 0);
-    ProfiledPIDController thetaController = new ProfiledPIDController(DRIVETRAIN_PTHETA_CONTROLLER, 0, 0, new TrapezoidProfile.Constraints(
-      MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-      MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND_SQUARED
-    ));
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    
     // final Trajectory trajectory = generateTrajectory(waypoints);
     final PathPlannerTrajectory trajectory = PathPlanner.loadPath(trajectoryFileName, 3.5, 3   );
     // double Seconds = 0.0;
@@ -289,13 +295,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Pose2d initialPose = new Pose2d(initialSample.poseMeters.getTranslation(), initialSample.holonomicRotation);
         m_odometry.resetPosition(initialPose, getAdjustedHeading());
       }
+      m_xController.reset();
+      m_yController.reset();
     }).andThen(new PPSwerveControllerCommand(
       trajectory,
       () -> getPose(),
       m_kinematics,
-      xController,
-      yController,
-      thetaController,
+      m_xController,
+      m_yController,
+      m_thetaController,
       (SwerveModuleState[] moduleStates) -> {
         drive(m_kinematics.toChassisSpeeds(moduleStates));
       },

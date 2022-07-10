@@ -15,6 +15,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -51,6 +52,7 @@ public class StorageSubsystem extends SubsystemBase {
   /** Creates a new StorageSubsystem. */
   public StorageSubsystem() {//NetworkTable table) {
     ShuffleboardTab shooterTab = Shuffleboard.getTab("Shooter");
+    ShuffleboardTab driverTab = Shuffleboard.getTab("Driving");
     // shooterTab.addBoolean("ball-bottom",() -> m_isBallAtBottom);
     // shooterTab.addBoolean("ball-top", () -> m_isballAtTop);
     // shooterTab.addNumber("ball count", () -> m_ballCount);
@@ -60,7 +62,8 @@ public class StorageSubsystem extends SubsystemBase {
     ShuffleboardTab smartDashboardTab = Shuffleboard.getTab("Storage");
     smartDashboardTab.addBoolean("ball-bottom",() -> m_isBallAtBottom);
     smartDashboardTab.addBoolean("ball-top",() -> m_isballAtTop);
-    smartDashboardTab.addNumber("ball count", () -> m_ballCount);
+    // smartDashboardTab.addNumber("ball count", () -> m_ballCount);
+    driverTab.addNumber("ball count", () -> m_ballCount).withPosition(4, 1).withSize(3, 2).withWidget(BuiltInWidgets.kNumberBar);
 
     m_motorBottom.restoreFactoryDefaults();
     m_motorBottom.setIdleMode(IdleMode.kBrake); 

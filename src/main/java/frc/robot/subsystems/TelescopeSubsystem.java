@@ -42,9 +42,9 @@ public class TelescopeSubsystem extends SubsystemBase {
   private static final double k_spoolCircumference = 1.0625 * Math.PI;
   private static final double k_postEncoderGearing = 15.34;
   private static final StatorCurrentLimitConfiguration k_currentLimit = new StatorCurrentLimitConfiguration(true, 70, 70, 0.2);
-  private static final double k_maxExtensionInches = 20.5;
+  // private static final double k_maxExtensionInches = 20.5;
   public static final int k_maxExtensionTicks = 217000;  //front 232,000 back 217000
-  public static final int k_maxFrontExtensionTicks = 230000;
+  public static final int k_maxFrontExtensionTicks = 247000;
   public static final int k_maxBackExtensionTicks = 228000; 
   public static final int k_minExtensionTicks = 2500;
 
@@ -88,7 +88,7 @@ public class TelescopeSubsystem extends SubsystemBase {
     m_motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 10);
     m_motor.configMotionAcceleration(40000, 10);
     m_motor.configMotionCruiseVelocity(20000, 10);
-    m_motor.configAllowableClosedloopError(0, 2000, 10);
+    m_motor.configAllowableClosedloopError(0, 500, 10);
     m_motor.config_kP(0, 0.6);
     m_motor.config_kI(0, 0);
     m_motor.config_kD(0, 0);

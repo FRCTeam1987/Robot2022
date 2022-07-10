@@ -27,7 +27,7 @@ public class ClimbStep1 extends ParallelCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new InstantCommand(() -> m_compressor.disable()),
-      new TelescopeGoToClosedLoop(m_telescopeFront, 209000, true) // short telescope reach first rung
+      new TelescopeGoToClosedLoop(m_telescopeFront, 220000, true) // short telescope reach first rung
       // new ArmGoToPosition(m_telescopeFront, m_telscopeBack, 20, 0.5)
     );
   }

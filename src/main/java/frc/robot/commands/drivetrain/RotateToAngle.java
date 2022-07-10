@@ -19,10 +19,13 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class RotateToAngle extends PIDCommand {
   /** Creates a new RotateToAngle. */
+  private static final PIDController m_PIDController = new PIDController(4.0, 0.5, 0);
+
   public RotateToAngle(final DrivetrainSubsystem drivetrainSubsystem, final DoubleSupplier angleSupplier) {
     super(
         // The controller that the command will use
-        new PIDController(4.0, 0.5, 0),
+        m_PIDController,
+        // new PIDController(4.0, 0.5, 0),
         // This should return the measurement
         () -> drivetrainSubsystem.getAdjustedHeading().getRadians(),
         // This should return the setpoint (can also be a constant)
@@ -37,6 +40,7 @@ public class RotateToAngle extends PIDCommand {
     // Configure additional PID options by calling `getController` here.
     getController().setTolerance(Rotation2d.fromDegrees(2).getRadians(), 0.25);
     getController().enableContinuousInput(-Math.PI, Math.PI);
+    drivetrainSubsystem.addChild("RotateToAngle PID", m_PIDController);
   }
 
   // Returns true when the command should end.

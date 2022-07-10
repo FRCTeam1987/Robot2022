@@ -40,11 +40,12 @@ public class RightQuickSteal extends SequentialCommandGroup {
       drivetrainSubsystem.followPathCommand(true, "RightQuickStealPart1"),
       new SequentialCommandGroup(
         new EjectOneBallBottom(storageSubsystem, collectorSubsystem),
-        new WaitCommand(.4)),
+        new WaitCommand(.2)),
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(false, "RightQuickStealPart2"),
-        new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(3)),
-      new RotateToPose(drivetrainSubsystem, () -> Rotation2d.fromDegrees(-75).getRadians()),
+        new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(2)),
+      new RotateToPose(drivetrainSubsystem, () -> Rotation2d.fromDegrees(105).getRadians()),
+      new InstantCommand(() -> storageSubsystem.setBallCount(2)),
       robotContainer.shootCommandHelper(),
       new InstantCommand(() -> storageSubsystem.setBallCount(0))  
       // need to spit the ball to destage

@@ -46,8 +46,6 @@ public class LeftQuickSteal extends SequentialCommandGroup {
         new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(1.7)),
       new InstantCommand(() -> storageSubsystem.setBallCount(2)), 
       robotContainer.shootCommandHelper(),
-      new InstantCommand(() -> storageSubsystem.setBallCount(1)), 
-      robotContainer.shootCommandHelper(),
       new InstantCommand(() -> storageSubsystem.setBallCount(0))  
       // edit path to drive farther down wall, turn to hit op. ball into hangar,  remove/edit timeout on collection
       

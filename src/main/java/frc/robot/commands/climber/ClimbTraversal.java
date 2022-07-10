@@ -18,7 +18,7 @@ import frc.robot.subsystems.TelescopeSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class Climb extends SequentialCommandGroup {
+public class ClimbTraversal extends SequentialCommandGroup {
   private final TelescopeSubsystem m_telescopeFront;
   private final TelescopeSubsystem m_telescopeBack;
   private final DrivetrainSubsystem m_drivetrain;
@@ -26,7 +26,7 @@ public class Climb extends SequentialCommandGroup {
   private final XboxController m_xbox;
   private double m_time = 0.0;
   /** Creates a new Climb. */
-  public Climb(TelescopeSubsystem telescopeFront, TelescopeSubsystem telescopeBack, DrivetrainSubsystem drivetrain, final XboxController xbox, Compressor compressor) {
+  public ClimbTraversal(TelescopeSubsystem telescopeFront, TelescopeSubsystem telescopeBack, DrivetrainSubsystem drivetrain, final XboxController xbox, Compressor compressor) {
 
     m_telescopeFront = telescopeFront;
     m_telescopeBack = telescopeBack;
@@ -39,9 +39,9 @@ public class Climb extends SequentialCommandGroup {
       // new WaitUntilCommand(() -> m_xbox.getAButtonPressed()),
       new InstantCommand(() -> m_time = Timer.getFPGATimestamp()),
       new ClimbStep2(m_telescopeFront, m_telescopeBack, m_drivetrain),
-      new WaitUntilRoll(m_drivetrain, true, -40),
+      new WaitUntilRoll(m_drivetrain, true, -37),
       new ClimbStep3(m_telescopeFront, m_telescopeBack, m_drivetrain),
-      new WaitUntilRoll(m_drivetrain, false, -61),  // TODO find angle, last climb attempt logged 55.6 degrees
+      new WaitUntilRoll(m_drivetrain, false, -56),  // TODO find angle, last climb attempt logged 55.6 degrees
       new ClimbStep4(m_telescopeFront, m_telescopeBack, m_drivetrain),
       new InstantCommand(() -> System.out.println("Climb Time: " + (Timer.getFPGATimestamp() - m_time)))
       // new
