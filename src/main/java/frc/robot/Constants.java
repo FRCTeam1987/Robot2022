@@ -158,19 +158,14 @@ public final class Constants {
   }
 
     public static final class Targeting {
+      public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kTyToDistance = new InterpolatingTreeMap<>();
+      static {
+  
+        kTyToDistance.put(new InterpolatingDouble(16.06), new InterpolatingDouble(1800.0));  
+        kTyToDistance.put(new InterpolatingDouble(14.0), new InterpolatingDouble(1800.0)); 
+        kTyToDistance.put(new InterpolatingDouble(12.10), new InterpolatingDouble(1850.0)); 
 
-      public static class TreeMapValues{
-        public static class Close {
-            public final static double ty1 = 14.39; //TODO insert correect ty values.
-            public final static double ty2 = -15.65; //TODO insert correect ty values.
-
-            public final static double rpm1 = 2500; //TODO insert correect rpm values.
-            public final static double rpm2 = 3075; //TODO insert correect rpm values.
-
-            public final static double hood1 = 35; //TODO insert correect hood Heights mm values.
-            public final static double hood2 = 70; //TODO insert correect hood Heights mm values.
-        }
-    }
+      }
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kDistanceToShooter = new InterpolatingTreeMap<>();
     static {
 
@@ -199,7 +194,6 @@ public final class Constants {
       kDistanceToShooter.put(new InterpolatingDouble(-14.0), new InterpolatingDouble(2750.0));  
       kDistanceToShooter.put(new InterpolatingDouble(-15.0), new InterpolatingDouble(2920.0));  
       kDistanceToShooter.put(new InterpolatingDouble(-15.5), new InterpolatingDouble(3075.0));  
-
   }
     
     }

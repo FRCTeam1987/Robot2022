@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -19,19 +18,13 @@ import frc.robot.Constants;
 import frc.robot.Util;
 import frc.robot.commands.climber.BrakeTelescope;
 import frc.robot.commands.climber.CoastTelescope;
-import frc.robot.commands.climber.DisengageFrictionBrakeTelescope;
-import frc.robot.commands.climber.EngageFrictionBrakeClimber;
-import frc.robot.commands.climber.EngageFrictionBrakeTelescope;
 import frc.robot.commands.climber.TelescopeAutoHome;
 import frc.robot.commands.climber.TelescopeGoToClosedLoop;
 import frc.robot.commands.climber.ZeroTelescope;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.Climber.*;
@@ -110,7 +103,7 @@ public class TelescopeSubsystem extends SubsystemBase {
       tab.add(m_name + " Go To 5", new TelescopeGoToClosedLoop(this, 46000)).withPosition(7, 2+m_shuffleboardRowOffset);
       tab.add(m_name + " Go To 10", new TelescopeGoToClosedLoop(this, 95000)).withPosition(8, 2+m_shuffleboardRowOffset);
       tab.add(m_name + " Go To 15", new TelescopeGoToClosedLoop(this, 143000)).withPosition(9, 2+m_shuffleboardRowOffset);
-      tab.add(m_name + " Go To max", new TelescopeGoToClosedLoop(this, this.k_maxExtensionTicks)).withPosition(10, 2+m_shuffleboardRowOffset);
+      tab.add(m_name + " Go To max", new TelescopeGoToClosedLoop(this, TelescopeSubsystem.k_maxExtensionTicks)).withPosition(10, 2+m_shuffleboardRowOffset);
     // }
 
     tab.add(m_name + " Break Motor", new BrakeTelescope(this));

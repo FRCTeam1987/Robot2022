@@ -4,7 +4,6 @@
 
 package frc.robot.commands.climber;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -21,7 +20,7 @@ public class ArmsGoToPositionWithSpeed extends ParallelCommandGroup {
   private final TelescopeSubsystem m_telescopeBack;
   private final double m_percentSpeedFront;
   private final double m_percentSpeedBack;
-  private double m_percentSpeed;
+  // private double m_percentSpeed;
   /** Creates a new ArmsGoToPosition. */
   public ArmsGoToPositionWithSpeed(TelescopeSubsystem telescopeFront, TelescopeSubsystem telescopeBack, double desiredFrontPosition, double desiredBackPosition, double percentSpeedFront, double percentSpeedBack) {
     m_desiredFrontPosition = desiredFrontPosition;

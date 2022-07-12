@@ -25,9 +25,7 @@ import static frc.robot.Constants.Shooter.*;
 import frc.robot.Constants;
 import frc.robot.commands.shooter.LowerHood;
 import frc.robot.commands.shooter.RaiseHood;
-import frc.robot.commands.shooter.Shoot;
 import frc.robot.lib.InterpolatingDouble;
-import frc.robot.lib.LinearServo;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -106,13 +104,8 @@ public class ShooterSubsystem extends SubsystemBase {
   
   public double getRPMFromLimelight() {
     final double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
-    return Constants.Targeting.kDistanceToShooter.getInterpolated(new InterpolatingDouble(ty)).value; //TODO Copied Code, replace with interpreted value of correct RPM speed 
+    return Constants.Targeting.kDistanceToShooter.getInterpolated(new InterpolatingDouble(ty)).value; 
     // return 1000; //Delete me when fixed
-  }
-  public double getHoodHeightFromLimelight() {
-    final double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
-    return Constants.Targeting.kDistanceToShooter.getInterpolated(new InterpolatingDouble(ty)).value; //TODO Copied Code, replace with interpreted value of correct Hood height 
-    // return 10; //Delete me when fixed
   }
 
   public void incrementOffsetRPM() {

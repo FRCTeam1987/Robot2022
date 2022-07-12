@@ -7,7 +7,6 @@ package frc.robot.commands.climber;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Util;
-import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.TelescopeSubsystem;
 
 public class TelescopeMaintainPositionClosedLoop extends CommandBase {

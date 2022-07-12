@@ -4,15 +4,11 @@
 
 package frc.robot.commands.climber;
 
-import java.time.Instant;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants.Drivetrain;
-import frc.robot.commands.drivetrain.WaitUntilRoll;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.TelescopeSubsystem;
 
@@ -45,7 +41,7 @@ public class ClimbStep2 extends ParallelCommandGroup {
         new EngageFrictionBrakeTelescope(m_telescopeFront)
       ),
       new SequentialCommandGroup(
-        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_maxBackExtensionTicks - 20000),
+        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_maxBackExtensionTicks - 18000),
         // new WaitUntilRoll(m_drivetrain, false, -38),
         new WaitCommand(0.75), //roll -37
         new InstantCommand(() -> System.out.println("Climb2 1 Roll with offset: " + m_drivetrain.getRollWithOffset())),

@@ -23,31 +23,22 @@ import frc.robot.commands.CollectBalls;
 import frc.robot.commands.PowercycleLimelight;
 import frc.robot.commands.ResetLimelightPipeline;
 import frc.robot.commands.SetPoseFromVision;
-import frc.robot.commands.auto.BlueFiveBallAuto;
 import frc.robot.commands.auto.FiveBallAuto;
 import frc.robot.commands.auto.LeftQuickSteal;
-import frc.robot.commands.auto.OneBallAndD;
 import frc.robot.commands.auto.OneBallAndSteal;
 import frc.robot.commands.auto.RightQuickSteal;
-import frc.robot.commands.auto.ThreeBallAuto;
 import frc.robot.commands.auto.ThreeBallSteal;
 import frc.robot.commands.auto.TwoBallAndDAuto;
 import frc.robot.commands.auto.TwoBallAndDHubAuto;
-import frc.robot.commands.auto.TwoBallAndOneDAuto;
-import frc.robot.commands.auto.TwoBallAndOneHubAuto;
-import frc.robot.commands.auto.TwoBallSteal;
 import frc.robot.commands.climber.BrakeClimber;
-import frc.robot.commands.climber.BrakeTelescope;
 import frc.robot.commands.climber.ClimbHigh;
 import frc.robot.commands.climber.ClimbTraversal;
 import frc.robot.commands.climber.ClimbStep1;
 import frc.robot.commands.climber.ClimbStep2;
 import frc.robot.commands.climber.ClimbStep3;
 import frc.robot.commands.climber.ClimbStep4;
-import frc.robot.commands.climber.ClimberToHome;
 import frc.robot.commands.climber.CoastClimber;
 import frc.robot.commands.climber.DisengageFrictionBrakeClimber;
-import frc.robot.commands.climber.DisengageFrictionBrakeTelescope;
 import frc.robot.commands.climber.EngageFrictionBrakeClimber;
 import frc.robot.commands.climber.TelescopeAutoHome;
 import frc.robot.commands.climber.TelescopeGoToClosedLoop;
@@ -55,9 +46,7 @@ import frc.robot.commands.climber.ZeroClimber;
 import frc.robot.commands.collector.DeployCollector;
 import frc.robot.commands.collector.StowCollector;
 import frc.robot.commands.drivetrain.DriveCommand;
-import frc.robot.commands.drivetrain.RotationToHub;
 import frc.robot.commands.drivetrain.ZeroRoll;
-import frc.robot.commands.oi.RumbleWhile;
 import frc.robot.commands.shooter.EjectOneBallBottom;
 import frc.robot.commands.shooter.EjectOneBallTop;
 import frc.robot.commands.shooter.LowerHood;
@@ -75,10 +64,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 
@@ -104,7 +91,7 @@ public class RobotContainer {
   private XboxController coController = new XboxController(1);
   private SendableChooser<Command> m_autoChooser = new SendableChooser<Command>();
 
-  private boolean m_ShouldEjectOpponentBall = false;
+  // private boolean m_ShouldEjectOpponentBall = false;
   private boolean m_shouldAutoClimb = false;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -223,7 +210,7 @@ public class RobotContainer {
 
     new Button(controller::getAButton)
       .whenPressed(new ConditionalCommand(
-        new ClimbTraversal(m_telescopeFront, m_telescopeBack, m_drivetrain, controller, m_compressor),
+        new ClimbTraversal(m_telescopeFront, m_telescopeBack, m_drivetrain, m_compressor),
         new ConditionalCommand(
           new SequentialCommandGroup(
             new ClimbStep1(m_telescopeFront, m_compressor),
@@ -342,7 +329,7 @@ public class RobotContainer {
     telescopesTab.add("Coast Climber", new CoastClimber(m_telescopeFront, m_telescopeBack));
     telescopesTab.add("Brake Climber", new BrakeClimber(m_telescopeFront, m_telescopeBack));
     telescopesTab.add("Zero Climber", new ZeroClimber(m_telescopeFront, m_telescopeBack));
-    telescopesTab.add("Climb Traversal", new ClimbTraversal(m_telescopeFront, m_telescopeBack, m_drivetrain, controller, m_compressor));
+    telescopesTab.add("Climb Traversal", new ClimbTraversal(m_telescopeFront, m_telescopeBack, m_drivetrain, m_compressor));
     telescopesTab.add("Climb High", new ClimbHigh(m_telescopeFront, m_telescopeBack, m_drivetrain, controller, m_compressor));
     telescopesTab.add("Reset Climber", new SequentialCommandGroup(
       new ParallelCommandGroup(
@@ -392,7 +379,7 @@ public class RobotContainer {
     SmartDashboard.putData("1 Count", new SetBallCount(m_storage, 1));
     SmartDashboard.putData("2 Count", new SetBallCount(m_storage, 2));
     SmartDashboard.putData("Zero Gyro", new InstantCommand(() -> { m_drivetrain.zeroGyroscope(); }));
-    SmartDashboard.putData("Traversal Climb", new ClimbTraversal(m_telescopeFront, m_telescopeBack, m_drivetrain, controller, m_compressor));
+    SmartDashboard.putData("Traversal Climb", new ClimbTraversal(m_telescopeFront, m_telescopeBack, m_drivetrain, m_compressor));
     // SmartDashboard.putNumber("Pose X", m_odometry.getPoseMeters().getX());
     // SmartDashboard.putNumber("Pose Y", m_odometry.getPoseMeters().getY());
     // SmartDashboard.putData("Rotate to Hub", new SequentialCommandGroup(
