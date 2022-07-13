@@ -25,11 +25,15 @@ import frc.robot.commands.ResetLimelightPipeline;
 import frc.robot.commands.SetPoseFromVision;
 import frc.robot.commands.auto.FiveBallAuto;
 import frc.robot.commands.auto.LeftQuickSteal;
+import frc.robot.commands.auto.LeftTrickTaxi;
 import frc.robot.commands.auto.OneBallAndSteal;
 import frc.robot.commands.auto.RightQuickSteal;
+import frc.robot.commands.auto.RightTrickTaxi;
+import frc.robot.commands.auto.TaxiAuto;
 import frc.robot.commands.auto.ThreeBallSteal;
 import frc.robot.commands.auto.TwoBallAndDAuto;
 import frc.robot.commands.auto.TwoBallAndDHubAuto;
+import frc.robot.commands.auto.TwoBallSteal;
 import frc.robot.commands.climber.BrakeClimber;
 import frc.robot.commands.climber.ClimbHigh;
 import frc.robot.commands.climber.ClimbTraversal;
@@ -274,7 +278,7 @@ public class RobotContainer {
     ShuffleboardTab driverTab = Shuffleboard.getTab("Match");
 
     m_autoChooser.addOption("5 Ball Auto", new FiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    // m_autoChooser.addOption("Taxi Auto", new TaxiAuto(controller, m_drivetrain, this));
+    m_autoChooser.addOption("Taxi Auto", new TaxiAuto(controller, m_drivetrain, this));
     m_autoChooser.addOption("2 Ball & D Auto", new TwoBallAndDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("2 Ball & Hub D Auto", new TwoBallAndDHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     // m_autoChooser.addOption("2 Ball & 1 D Auto", new TwoBallAndOneDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
@@ -285,6 +289,8 @@ public class RobotContainer {
     m_autoChooser.addOption("3 Ball & Steal", new ThreeBallSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("Left Quick Steal", new LeftQuickSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("Right Quick Steal", new RightQuickSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("Right Trick Taxi", new RightTrickTaxi(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("Left Trick Taxi", new LeftTrickTaxi(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
 
     // m_autoChooser.addOption("3 Ball Auto", new ThreeBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     
@@ -324,6 +330,8 @@ public class RobotContainer {
     SmartDashboard.putData("Disable Power Distribution Telemetry", new InstantCommand(() -> disablePowerDistributionTelemetry(true)));
     SmartDashboard.putData("Enable Power Distribution Telemetry", new InstantCommand(() -> disablePowerDistributionTelemetry(false)));
     SmartDashboard.putData("Set Pose to 9, 6.45", new InstantCommand(() -> m_drivetrain.setPose(new Pose2d(9.0, 6.45, Rotation2d.fromDegrees(92)))));
+    SmartDashboard.putData("Reset Drive train", new InstantCommand(() -> m_drivetrain.setPose(new Pose2d(9.0, 6.45, Rotation2d.fromDegrees(92)))));
+    // SmartDashboard.putData("Reset drive train", new swerve);
     
     // telescopesTab.add("Climber to Home", new ClimberToHome(m_telescopeFront, m_telescopeBack));
     telescopesTab.add("Coast Climber", new CoastClimber(m_telescopeFront, m_telescopeBack));

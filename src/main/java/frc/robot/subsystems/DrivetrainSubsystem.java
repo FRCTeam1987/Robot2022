@@ -23,10 +23,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -34,8 +32,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.*;
 import static frc.robot.Constants.Drivetrain.*;
-
-import java.util.Set;
 
 public class DrivetrainSubsystem extends SubsystemBase {
 
@@ -128,7 +124,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     );
     zeroGyroscope();
     m_thetaController.enableContinuousInput(-Math.PI, Math.PI);
-    /* TODO uncomment to get code and such
+    // /* TODO uncomment to get code and such
     tab.addNumber("Adjusted Angle", () -> getAdjustedHeading().getDegrees()).withPosition(9, 2);
     // tab.addNumber("Heading", () -> m_navx.getCompassHeading()).withPosition(9, 3);
     tab.addNumber("Yaw", () -> m_navx.getYaw()).withPosition(9, 1);
@@ -137,7 +133,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     tab.addNumber("Pose Y", () -> m_odometry.getPoseMeters().getY()).withPosition(8, 1);
     tab.addNumber("Pose Angle", () -> m_odometry.getPoseMeters().getRotation().getDegrees()).withPosition(8, 2);
     tab.addNumber("Pitch", () -> getPitch()).withPosition(8, 3);
-    */
+    // */
 
     // final ShuffleboardTab telescopeTab = Shuffleboard.getTab("Telescopes");
     // tab.addNumber("roll without offset", () -> getRoll()).withPosition(8, 3);
@@ -180,9 +176,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // System.out.println("Set heading adjust: " + m_headingAdjust.getDegrees());
   }
 
-  private Rotation2d getUnadjustedHeading() {
-    return Rotation2d.fromDegrees(m_navx.getCompassHeading());
-  }
+  // private Rotation2d getUnadjustedHeading() {
+  //   return Rotation2d.fromDegrees(m_navx.getCompassHeading());
+  // }
 
   public Rotation2d getAdjustedHeading() {
     // TODO compass heading only returns 180 now... why?

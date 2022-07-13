@@ -41,7 +41,7 @@ public class ClimbStep2 extends ParallelCommandGroup {
         new EngageFrictionBrakeTelescope(m_telescopeFront)
       ),
       new SequentialCommandGroup(
-        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_maxBackExtensionTicks - 18000),
+        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_maxBackExtensionTicks - 16000),
         // new WaitUntilRoll(m_drivetrain, false, -38),
         new WaitCommand(0.75), //roll -37
         new InstantCommand(() -> System.out.println("Climb2 1 Roll with offset: " + m_drivetrain.getRollWithOffset())),
