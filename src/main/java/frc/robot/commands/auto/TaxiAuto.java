@@ -15,11 +15,20 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TaxiAuto extends SequentialCommandGroup {
   /** Creates a new FiveBallAuto. */
+  private double m_timeToWait = 2;
+
   public TaxiAuto(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final RobotContainer robotContainer) {
-    // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new WaitCommand(2),
+      new TaxiAuto(controller, drivetrainSubsystem, robotContainer, m_timeToWait)
+    );
+  }
+
+  public TaxiAuto(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final RobotContainer robotContainer, double timeToWait) {
+    m_timeToWait = timeToWait;
+    // addCommands(new FooCommand(), new BarCommand());
+    addCommands(
+      new WaitCommand(m_timeToWait),
       drivetrainSubsystem.followPathCommand(true, "Taxi"),
       robotContainer.shootCommandHelper()
     );

@@ -31,7 +31,7 @@ public class TwoBallSteal extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     //2BallAndDPart1
     addCommands(
-      new OneBallAndSteal(controller, drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, limelight, robotContainer),
+      new OneBallAndD(controller, drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, limelight, robotContainer),
       new RotateToPose(drivetrainSubsystem, () -> Rotation2d.fromDegrees(-162.5).getRadians()),
       new ParallelCommandGroup(
         new SequentialCommandGroup(

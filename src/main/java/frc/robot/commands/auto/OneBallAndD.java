@@ -5,12 +5,14 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
-import frc.robot.commands.storage.SetBallCount;
+import frc.robot.commands.CollectBalls;
+import frc.robot.commands.shooter.EjectOneBallBottom;
+import frc.robot.commands.storage.RunStorageIn;
+import frc.robot.commands.storage.StopStorage;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimeLight;
@@ -22,30 +24,37 @@ import frc.robot.subsystems.StorageSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class OneBallAndD extends SequentialCommandGroup {
   /** Creates a new TwoBallAndDAuto. */
-  public OneBallAndD(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight limelight, final RobotContainer robotContainer) {
+  private double m_timeToWait = 2;
+
+  public OneBallAndD(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight m_limelight, final RobotContainer robotContainer) {
+    // addCommands(new FooCommand(), new BarCommand());
+    addCommands(
+      new OneBallAndD(controller, drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, m_limelight, robotContainer, m_timeToWait)
+    );
+  }
+
+  public OneBallAndD(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight m_limelight, final RobotContainer robotContainer, double timeToWait) {
+    m_timeToWait = timeToWait;
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     //2BallAndDPart1
     addCommands(
-      new OneBallAndSteal(controller, drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, limelight, robotContainer),
+      new WaitCommand(m_timeToWait),
+      drivetrainSubsystem.followPathCommand(true, "1BallAndDPart1"),
+      robotContainer.shootCommandHelper(),
+      new ParallelCommandGroup(
+        drivetrainSubsystem.followPathCommand(false, "1BallAndDPart2"),
+        new SequentialCommandGroup(
+          new WaitCommand(0.25), 
+          new CollectBalls(controller, collectorSubsystem, storageSubsystem, 1)
+        )
+      ),
+      new RunStorageIn(storageSubsystem),
+      new WaitCommand(.5),
+      new StopStorage(storageSubsystem),
       drivetrainSubsystem.followPathCommand(false, "1BallAndDPart3"),
-      new InstantCommand(() -> {
-        collectorSubsystem.deploy();
-        collectorSubsystem.runRollerOut();
-        storageSubsystem.runForOutput();
-      }, collectorSubsystem, storageSubsystem),
-      new WaitCommand(1.5),
-      new InstantCommand(() -> {
-        storageSubsystem.stop();
-        collectorSubsystem.stop();
-        collectorSubsystem.stow();
-        controller.setRumble(RumbleType.kLeftRumble, 0);
-        controller.setRumble(RumbleType.kRightRumble, 0);
-      }, collectorSubsystem, storageSubsystem),
-      new SetBallCount(storageSubsystem, 0),
+      new EjectOneBallBottom(storageSubsystem, collectorSubsystem),
       drivetrainSubsystem.followPathCommand(false, "1BallAndDPart4")
-      // need to spit the ball to destage
-      
     );
   }
 }
