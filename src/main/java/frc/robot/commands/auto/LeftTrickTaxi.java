@@ -15,6 +15,7 @@ import frc.robot.commands.drivetrain.RotateToAngle;
 import frc.robot.commands.shooter.EjectOneBallBottom;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.StorageSubsystem;
 
@@ -23,11 +24,21 @@ import frc.robot.subsystems.StorageSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class LeftTrickTaxi extends SequentialCommandGroup {
   /** Creates a new LeftTrickTaxi. */
-  public LeftTrickTaxi(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final frc.robot.subsystems.LimeLight m_limelight, final RobotContainer robotContainer) {
+  private double m_timeToWait = 2;
+
+  public LeftTrickTaxi(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight m_limelight, final RobotContainer robotContainer) {
+    // addCommands(new FooCommand(), new BarCommand());
+    addCommands(
+      new LeftTrickTaxi(controller, drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, m_limelight, robotContainer, m_timeToWait)
+    );
+  }
+
+  public LeftTrickTaxi(final XboxController controller, final DrivetrainSubsystem drivetrainSubsystem, final CollectorSubsystem collectorSubsystem, final StorageSubsystem storageSubsystem, final ShooterSubsystem shooterSubsystem, final LimeLight m_limelight, final RobotContainer robotContainer, double timeToWait) {
+    m_timeToWait = timeToWait;
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new WaitCommand(2),
+      new WaitCommand(m_timeToWait),
       robotContainer.shootCommandHelper(),
       new InstantCommand(() -> storageSubsystem.setBallCount(0)),
       new ParallelCommandGroup(

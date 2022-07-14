@@ -26,7 +26,7 @@ import frc.robot.commands.SetPoseFromVision;
 import frc.robot.commands.auto.FiveBallAuto;
 import frc.robot.commands.auto.LeftQuickSteal;
 import frc.robot.commands.auto.LeftTrickTaxi;
-import frc.robot.commands.auto.OneBallAndSteal;
+import frc.robot.commands.auto.OneBallAndD;
 import frc.robot.commands.auto.RightQuickSteal;
 import frc.robot.commands.auto.RightTrickTaxi;
 import frc.robot.commands.auto.TaxiAuto;
@@ -285,12 +285,12 @@ public class RobotContainer {
     // m_autoChooser.addOption("2 Ball & 1 Hub Auto", new TwoBallAndOneHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     // m_autoChooser.addOption("1 Ball & D Steal", new OneBallAndD(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     // m_autoChooser.addOption("2 Ball & D Steal", new TwoBallSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    m_autoChooser.addOption("1 Ball & Steal", new OneBallAndSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("1 Ball & D", new OneBallAndD(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this, 2));
     m_autoChooser.addOption("3 Ball & Steal", new ThreeBallSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("Left Quick Steal", new LeftQuickSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("Right Quick Steal", new RightQuickSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    m_autoChooser.addOption("Right Trick Taxi", new RightTrickTaxi(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    m_autoChooser.addOption("Left Trick Taxi", new LeftTrickTaxi(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("Right Trick Taxi", new RightTrickTaxi(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this, 2));
+    m_autoChooser.addOption("Left Trick Taxi", new LeftTrickTaxi(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this, 2));
 
     // m_autoChooser.addOption("3 Ball Auto", new ThreeBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     
