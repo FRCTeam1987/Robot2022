@@ -19,7 +19,7 @@ public class TaxiAuto extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new WaitCommand(2),
+      new WaitCommand(4),
       drivetrainSubsystem.followPathCommand(true, "Taxi"),
       robotContainer.shootCommandHelper()
     );

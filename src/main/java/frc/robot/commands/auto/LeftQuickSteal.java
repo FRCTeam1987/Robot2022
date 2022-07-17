@@ -34,7 +34,7 @@ public class LeftQuickSteal extends SequentialCommandGroup {
         new WaitCommand(.2)),
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(false, "LeftQuickStealPart2"),
-        new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(1.7)),
+        new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(2.2)),
       new InstantCommand(() -> storageSubsystem.setBallCount(2)), 
       robotContainer.shootCommandHelper(),
       new InstantCommand(() -> storageSubsystem.setBallCount(0))  

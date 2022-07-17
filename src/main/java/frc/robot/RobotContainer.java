@@ -26,6 +26,7 @@ import frc.robot.commands.SetPoseFromVision;
 import frc.robot.commands.auto.FiveBallAuto;
 import frc.robot.commands.auto.LeftQuickSteal;
 import frc.robot.commands.auto.LeftTrickTaxi;
+import frc.robot.commands.auto.OneBallAndD;
 import frc.robot.commands.auto.OneBallAndSteal;
 import frc.robot.commands.auto.RightQuickSteal;
 import frc.robot.commands.auto.RightTrickTaxi;
@@ -33,6 +34,7 @@ import frc.robot.commands.auto.TaxiAuto;
 import frc.robot.commands.auto.ThreeBallSteal;
 import frc.robot.commands.auto.TwoBallAndDAuto;
 import frc.robot.commands.auto.TwoBallAndDHubAuto;
+import frc.robot.commands.auto.TwoBallAndOneDAuto;
 import frc.robot.commands.auto.TwoBallSteal;
 import frc.robot.commands.climber.BrakeClimber;
 import frc.robot.commands.climber.ClimbHigh;
@@ -217,6 +219,10 @@ public class RobotContainer {
         new ClimbTraversal(m_telescopeFront, m_telescopeBack, m_drivetrain, m_compressor),
         new ConditionalCommand(
           new SequentialCommandGroup(
+            new ParallelCommandGroup(
+              new TelescopeAutoHome(m_telescopeFront),
+              new TelescopeAutoHome(m_telescopeBack)
+            ),
             new ClimbStep1(m_telescopeFront, m_compressor),
             new InstantCommand(() -> m_shouldAutoClimb = true)
           ),  
@@ -241,6 +247,10 @@ public class RobotContainer {
         new ClimbHigh(m_telescopeFront, m_telescopeBack, m_drivetrain, controller, m_compressor),
         new ConditionalCommand(
           new SequentialCommandGroup(
+            new ParallelCommandGroup(
+              new TelescopeAutoHome(m_telescopeFront),
+              new TelescopeAutoHome(m_telescopeBack)
+            ),
             new ClimbStep1(m_telescopeFront, m_compressor),
             new InstantCommand(() -> m_shouldAutoClimb = true)
           ),  
@@ -261,13 +271,14 @@ public class RobotContainer {
       ));
     
     new Button(coController::getYButton)
-    .whenPressed(new SequentialCommandGroup(
-      new ParallelCommandGroup(
-      new TelescopeAutoHome(m_telescopeFront),
-      new TelescopeAutoHome(m_telescopeBack)),
+    .whenPressed(
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          new TelescopeAutoHome(m_telescopeFront),
+          new TelescopeAutoHome(m_telescopeBack
+        )
+      ),
       new InstantCommand(() -> m_shouldAutoClimb = false)));
-      
-    
   };
 
   private void configureShuffleboard() {
@@ -277,13 +288,13 @@ public class RobotContainer {
     ShuffleboardTab limeLightTab = Shuffleboard.getTab("LimeLight");
     ShuffleboardTab driverTab = Shuffleboard.getTab("Match");
 
-    m_autoChooser.addOption("5 Ball Auto", new FiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    m_autoChooser.addOption("Taxi Auto", new TaxiAuto(controller, m_drivetrain, this));
-    m_autoChooser.addOption("2 Ball & D Auto", new TwoBallAndDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    m_autoChooser.addOption("2 Ball & Hub D Auto", new TwoBallAndDHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    // m_autoChooser.addOption("2 Ball & 1 D Auto", new TwoBallAndOneDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("5 Ball", new FiveBallAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("Taxi", new TaxiAuto(controller, m_drivetrain, this));
+    m_autoChooser.addOption("2 Ball & D", new TwoBallAndDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("2 Ball & Hub D", new TwoBallAndDHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("2 Ball & 1 D", new TwoBallAndOneDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     // m_autoChooser.addOption("2 Ball & 1 Hub Auto", new TwoBallAndOneHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
-    // m_autoChooser.addOption("1 Ball & D Steal", new OneBallAndD(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("1 Ball & D", new OneBallAndD(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     // m_autoChooser.addOption("2 Ball & D Steal", new TwoBallSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("1 Ball & Steal", new OneBallAndSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("3 Ball & Steal", new ThreeBallSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
@@ -341,8 +352,8 @@ public class RobotContainer {
     telescopesTab.add("Climb High", new ClimbHigh(m_telescopeFront, m_telescopeBack, m_drivetrain, controller, m_compressor));
     telescopesTab.add("Reset Climber", new SequentialCommandGroup(
       new ParallelCommandGroup(
-        new TelescopeGoToClosedLoop(m_telescopeFront, 5000),
-        new TelescopeGoToClosedLoop(m_telescopeBack, 5000)
+        new TelescopeGoToClosedLoop(m_telescopeFront, 2500),
+        new TelescopeGoToClosedLoop(m_telescopeBack, 2500)
       ),
       new InstantCommand(() -> setShouldAutoClimb(false))
     ));
@@ -371,7 +382,10 @@ public class RobotContainer {
     driverTab.add("Climber Auto Home", new ParallelCommandGroup(
       new TelescopeAutoHome(m_telescopeFront),
       new TelescopeAutoHome(m_telescopeBack)
-    ));
+    )).withPosition(1, 3);
+    driverTab.addNumber("Game Clock", Timer::getMatchTime).withPosition(6, 0);
+    driverTab.add("Should Climb", new InstantCommand(() -> m_shouldAutoClimb = true)).withPosition(2, 3);
+    driverTab.add("Should NOT Climb", new InstantCommand(() -> m_shouldAutoClimb = false)).withPosition(3, 3);
 
     // SmartDashboard.putData("Extend Climber", new ClimberArmExtend(m_climberFrontSubsystem, m_climberBackSubsystem, m_drivetrain, 24));
     

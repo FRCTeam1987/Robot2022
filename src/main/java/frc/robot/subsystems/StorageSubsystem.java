@@ -50,7 +50,7 @@ public class StorageSubsystem extends SubsystemBase {
     smartDashboardTab.addBoolean("ball-bottom",() -> m_isBallAtBottom);
     smartDashboardTab.addBoolean("ball-top",() -> m_isballAtTop);
     // smartDashboardTab.addNumber("ball count", () -> m_ballCount);
-    driverTab.addNumber("ball count", () -> m_ballCount).withPosition(4, 1).withSize(3, 2).withWidget(BuiltInWidgets.kNumberBar);
+    driverTab.addNumber("ball count", () -> m_ballCount).withPosition(5, 1).withSize(3, 2).withWidget(BuiltInWidgets.kDial);
 
     m_motorBottom.restoreFactoryDefaults();
     m_motorBottom.setIdleMode(IdleMode.kBrake); 

@@ -31,6 +31,7 @@ public class ClimbStep3HighBar extends ParallelCommandGroup {
       new SequentialCommandGroup(
         new InstantCommand(() -> System.out.println("Step 3 Start Roll: " + m_drivetrain.getRollWithOffset())),
         new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_minExtensionTicks + 80000),
+        new InstantCommand(() -> m_telescopeFront.stopTelescope()), 
         new EngageFrictionBrakeTelescope(m_telescopeFront),
         new InstantCommand(() -> System.out.println("Climb Step 3 1 finished: " + m_telescopeFront.getPositionTicks() + " current roll: " + m_drivetrain.getRoll()))
       ),
@@ -38,8 +39,8 @@ public class ClimbStep3HighBar extends ParallelCommandGroup {
         new DisengageFrictionBrakeTelescope(m_telescopeBack),
         new WaitCommand(0.1),
         new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_maxBackExtensionTicks - 80000, true),
-        new EngageFrictionBrakeTelescope(m_telescopeBack),
-        new InstantCommand(() -> System.out.println("Climb Step 3 2 finished: " + m_telescopeFront.getPositionTicks() + " current roll: " + m_drivetrain.getRoll()))
+        new InstantCommand(() -> m_telescopeBack.stopTelescope()), 
+        new EngageFrictionBrakeTelescope(m_telescopeBack)
       )
     );
   }
