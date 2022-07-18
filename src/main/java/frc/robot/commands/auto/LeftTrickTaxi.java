@@ -28,14 +28,11 @@ public class LeftTrickTaxi extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new WaitCommand(2),
+      drivetrainSubsystem.followPathCommand(true, "LeftTrickTaxiPart1"),
       robotContainer.shootCommandHelper(),
-      new InstantCommand(() -> storageSubsystem.setBallCount(0)),
       new ParallelCommandGroup(
-        drivetrainSubsystem.followPathCommand(true, "LeftTrickTaxiPart1"),
-        new SequentialCommandGroup(
-          new WaitCommand(0.125),
-          new CollectBalls(controller, collectorSubsystem, storageSubsystem, 1)
-        )
+        drivetrainSubsystem.followPathCommand(false, "LeftTrickTaxiPart2"),
+        new CollectBalls(controller, collectorSubsystem, storageSubsystem, 1) 
       ),
       new RotateToAngle(drivetrainSubsystem, () -> 45),
       new EjectOneBallBottom(storageSubsystem, collectorSubsystem),

@@ -44,7 +44,9 @@ public class ThreeBallAuto extends SequentialCommandGroup {
       ),
       new InstantCommand(() -> DriverStation.reportWarning("Three Ball - C", false)),
       // new InstantCommand(() -> storageSubsystem.runForIntake(), storageSubsystem),
-      robotContainer.shootCommandHelper(),
+      new InstantCommand(() -> storageSubsystem.setBallCount(1)),
+      robotContainer.shootCommandHelper().withTimeout(2),
+      new InstantCommand(() -> storageSubsystem.setBallCount(0)),
       new InstantCommand(() -> DriverStation.reportWarning("Three Ball - D", false))
     );
   }

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.commands.CollectBalls;
+import frc.robot.commands.shooter.EjectBallBottomAuto;
 import frc.robot.commands.shooter.EjectOneBallBottom;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -28,9 +29,10 @@ public class LeftQuickSteal extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     //2BallAndDPart1
     addCommands(
+      new WaitCommand(4),
       drivetrainSubsystem.followPathCommand(true, "LeftQuickStealPart1"),
       new SequentialCommandGroup(
-        new EjectOneBallBottom(storageSubsystem, collectorSubsystem),
+        new EjectBallBottomAuto (storageSubsystem, collectorSubsystem),
         new WaitCommand(.2)),
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(false, "LeftQuickStealPart2"),

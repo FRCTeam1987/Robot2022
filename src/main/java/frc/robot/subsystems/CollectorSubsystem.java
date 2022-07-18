@@ -49,6 +49,10 @@ public class CollectorSubsystem extends SubsystemBase {
   public void runRollerOut() {
     m_motor.set(ControlMode.PercentOutput, RUN_OUT_SPEED);
 
+    
+  }public void runAutoOut() {
+    m_motor.set(ControlMode.PercentOutput, .25);
+
   }
 
   public void runRollerOutSlow() {

@@ -46,6 +46,7 @@ import frc.robot.commands.climber.ClimbStep4;
 import frc.robot.commands.climber.CoastClimber;
 import frc.robot.commands.climber.DisengageFrictionBrakeClimber;
 import frc.robot.commands.climber.EngageFrictionBrakeClimber;
+import frc.robot.commands.climber.EngageFrictionBrakeTelescope;
 import frc.robot.commands.climber.TelescopeAutoHome;
 import frc.robot.commands.climber.TelescopeGoToClosedLoop;
 import frc.robot.commands.climber.ZeroClimber;
@@ -219,6 +220,7 @@ public class RobotContainer {
         new ClimbTraversal(m_telescopeFront, m_telescopeBack, m_drivetrain, m_compressor),
         new ConditionalCommand(
           new SequentialCommandGroup(
+            new DisengageFrictionBrakeClimber(m_telescopeFront, m_telescopeBack),
             new ParallelCommandGroup(
               new TelescopeAutoHome(m_telescopeFront),
               new TelescopeAutoHome(m_telescopeBack)
@@ -247,6 +249,7 @@ public class RobotContainer {
         new ClimbHigh(m_telescopeFront, m_telescopeBack, m_drivetrain, controller, m_compressor),
         new ConditionalCommand(
           new SequentialCommandGroup(
+            new DisengageFrictionBrakeClimber(m_telescopeFront, m_telescopeBack),
             new ParallelCommandGroup(
               new TelescopeAutoHome(m_telescopeFront),
               new TelescopeAutoHome(m_telescopeBack)
@@ -278,7 +281,8 @@ public class RobotContainer {
           new TelescopeAutoHome(m_telescopeBack
         )
       ),
-      new InstantCommand(() -> m_shouldAutoClimb = false)));
+      new InstantCommand(() -> m_shouldAutoClimb = false))
+    );
   };
 
   private void configureShuffleboard() {
@@ -386,7 +390,12 @@ public class RobotContainer {
     driverTab.addNumber("Game Clock", Timer::getMatchTime).withPosition(6, 0);
     driverTab.add("Should Climb", new InstantCommand(() -> m_shouldAutoClimb = true)).withPosition(2, 3);
     driverTab.add("Should NOT Climb", new InstantCommand(() -> m_shouldAutoClimb = false)).withPosition(3, 3);
-
+    driverTab.add("Emergency Climb Save", new SequentialCommandGroup(
+        new TelescopeGoToClosedLoop(m_telescopeFront, TelescopeSubsystem.k_minExtensionTicks, true), //~0 inch
+        new InstantCommand(() -> m_telescopeFront.setVoltageSaturation()),
+        new EngageFrictionBrakeTelescope(m_telescopeFront),
+        new InstantCommand(() -> m_shouldAutoClimb = false))
+      ).withPosition(9, 2);
     // SmartDashboard.putData("Extend Climber", new ClimberArmExtend(m_climberFrontSubsystem, m_climberBackSubsystem, m_drivetrain, 24));
     
     SmartDashboard.putData("Powercycle Limelight", new PowercycleLimelight(m_powerDistribution));
