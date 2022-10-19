@@ -38,7 +38,7 @@ public class ClimbStep3HighBar extends ParallelCommandGroup {
       new  SequentialCommandGroup(
         new DisengageFrictionBrakeTelescope(m_telescopeBack),
         new WaitCommand(0.1),
-        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_maxBackExtensionTicks - 80000, true).withTimeout(2),
+        new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_maxBackExtensionTicks - 80000, true).withTimeout(.5),
         new InstantCommand(() -> m_telescopeBack.stopTelescope()), 
         new EngageFrictionBrakeTelescope(m_telescopeBack)
       )

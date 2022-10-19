@@ -74,8 +74,8 @@ public class ShooterSubsystem extends SubsystemBase {
     m_motorLeft.config_kD(0, 0.0); //d =  dampening for the oscillation
 
     // SmartDashboard.putNumber("Hood-Pos", 35);
-    // SmartDashboard.putNumber("RPM-Set", 2500 * SHOOTER_REDUCTION);
-    // SmartDashboard.putNumber("rpm-Offset", getOffsetRPM());
+    SmartDashboard.putNumber("RPM-Set", 2500 * SHOOTER_REDUCTION);
+    SmartDashboard.putNumber("rpm-Offset", getOffsetRPM());
 
   }
 
@@ -132,7 +132,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     // System.out.println("hood position " + getHoodPosition());
 
-    // SmartDashboard.putNumber("RPM-Actual", getRPM());
+    SmartDashboard.putNumber("RPM-Actual", getRPM());
     // SmartDashboard.putNumber("rpm-error", getRpmSetpointError());
   }
 }

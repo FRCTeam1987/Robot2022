@@ -58,7 +58,9 @@ import frc.robot.commands.shooter.EjectOneBallBottom;
 import frc.robot.commands.shooter.EjectOneBallTop;
 import frc.robot.commands.shooter.LowerHood;
 import frc.robot.commands.shooter.RaiseHood;
+import frc.robot.commands.shooter.SetShooterRpm;
 import frc.robot.commands.shooter.Shoot;
+import frc.robot.commands.storage.FeedShooter;
 import frc.robot.commands.storage.SetBallCount;
 import frc.robot.commands.storage.StopStorage;
 import frc.robot.subsystems.CollectorSubsystem;
@@ -179,18 +181,21 @@ public class RobotContainer {
       .whenReleased(new StowCollector(m_collector)
         .andThen(new StopStorage(m_storage)));
     new Button(controller::getLeftBumper)
-      .whileHeld(  
-        new ConditionalCommand(
-          shootCommandHelper(),
-        // new SetRumble(controller, RumbleValue.On).withTimeout(0.5).andThen(new SetRumble(controller, RumbleValue.Off)),
-        new ParallelCommandGroup(
-          new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 1)), 
-          new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 1))),
-        () -> m_limelight.canSeeTarget())
+      .whileHeld(
+          new ConditionalCommand(
+            new SequentialCommandGroup(         
+            new InstantCommand(()-> m_compressor.disable()),
+            shootCommandHelper()),
+          // new SetRumble(controller, RumbleValue.On).withTimeout(0.5).andThen(new SetRumble(controller, RumbleValue.Off)),
+          new ParallelCommandGroup(
+            new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 1)), 
+            new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 1))),
+          () -> m_limelight.canSeeTarget())
       ).whenReleased(
         new ParallelCommandGroup(
           new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 0)), 
-          new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 0))
+          new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 0)),
+          new InstantCommand(()-> m_compressor.enableAnalog(100, 120))
         ));
 
 
@@ -326,16 +331,16 @@ public class RobotContainer {
     SmartDashboard.putData("Collector-Deploy", new DeployCollector(m_collector));
     SmartDashboard.putData("Collector-Stow", new StowCollector(m_collector));
     SmartDashboard.putData("set pose from vision", new SetPoseFromVision(m_drivetrain, m_limelight));
-    // SmartDashboard.putData("Feed Shooter", new FeedShooter(m_storage));
-    // SmartDashboard.putData("Shooter-Spin", new SetShooterRpm(m_shooter, () -> SmartDashboard.getNumber("RPM-Set", 0.0) ));
-    // SmartDashboard.putData("Shooter-Stop", new SetShooterRpm(m_shooter, () -> 0.0));
+    SmartDashboard.putData("Feed Shooter", new FeedShooter(m_storage));
+    SmartDashboard.putData("Shooter-Spin", new SetShooterRpm(m_shooter, () -> SmartDashboard.getNumber("RPM-Set", 0.0) ));
+    SmartDashboard.putData("Shooter-Stop", new SetShooterRpm(m_shooter, () -> 0.0));
     // SmartDashboard.putData("Store-In", new RunStorageIn(m_storage));
     // SmartDashboard.putData("Store-Out", new RunStorageOut(m_storage));
-    // SmartDashboard.putData("Store-Stop", new StopStorage(m_storage));
+    SmartDashboard.putData("Store-Stop", new StopStorage(m_storage));
     // SmartDashboard.putData("LL-Standard", new ChangeLimeLightStream(StreamType.standard));
     // SmartDashboard.putData("LL-PipMain", new ChangeLimeLightStream(StreamType.pipMain));
     // SmartDashboard.putData("LL-PipSecondary", new ChangeLimeLightStream(StreamType.pipSecondary));
-    // SmartDashboard.putData("shoot", new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight));
+    SmartDashboard.putData("shoot", new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight));
     // SmartDashboard.putData("Reset Ball Count", new ZeroBallCount(m_storage));
     // SmartDashboard.putData("Rotate-45", new RotateToAngle(m_drivetrain, () -> Rotation2d.fromDegrees(45).getRadians()));
     // SmartDashboard.putData("Rotate-LL", new RotateToLimelightAngle(m_drivetrain, m_limelight));
@@ -397,7 +402,8 @@ public class RobotContainer {
         new InstantCommand(() -> m_shouldAutoClimb = false))
       ).withPosition(9, 2);
     // SmartDashboard.putData("Extend Climber", new ClimberArmExtend(m_climberFrontSubsystem, m_climberBackSubsystem, m_drivetrain, 24));
-    
+    SmartDashboard.putBoolean("Ball At Bottom", m_storage.isBallAtEntrance());
+    SmartDashboard.putBoolean("Ball At top", m_storage.isBallAtExit());
     SmartDashboard.putData("Powercycle Limelight", new PowercycleLimelight(m_powerDistribution));
     SmartDashboard.putData("Reset Limelight Pipeline", new ResetLimelightPipeline(m_limelight));
     // SmartDashboard.putData("Pivot Up", new ClimberPivotUp(m_climberSubsystem));
@@ -468,7 +474,7 @@ public class RobotContainer {
         m_drivetrain,
         m_limelight,
         () -> m_shooter.getRPMFromLimelight() * Constants.Shooter.SHOOTER_REDUCTION,//m_limelight.getYAxis() < -5 ? 3075 : 2500,
-        () -> m_limelight.getYAxis() < 11
+        () -> m_limelight.getYAxis() < 7
       ),
       new ConditionalCommand(
         new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 1))
