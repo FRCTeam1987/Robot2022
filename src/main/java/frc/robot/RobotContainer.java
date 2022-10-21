@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -63,6 +64,7 @@ import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.storage.FeedShooter;
 import frc.robot.commands.storage.SetBallCount;
 import frc.robot.commands.storage.StopStorage;
+import frc.robot.lib.Limelight;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimeLight;
@@ -331,16 +333,16 @@ public class RobotContainer {
     SmartDashboard.putData("Collector-Deploy", new DeployCollector(m_collector));
     SmartDashboard.putData("Collector-Stow", new StowCollector(m_collector));
     SmartDashboard.putData("set pose from vision", new SetPoseFromVision(m_drivetrain, m_limelight));
-    SmartDashboard.putData("Feed Shooter", new FeedShooter(m_storage));
-    SmartDashboard.putData("Shooter-Spin", new SetShooterRpm(m_shooter, () -> SmartDashboard.getNumber("RPM-Set", 0.0) ));
-    SmartDashboard.putData("Shooter-Stop", new SetShooterRpm(m_shooter, () -> 0.0));
+    // SmartDashboard.putData("Feed Shooter", new FeedShooter(m_storage));
+    // SmartDashboard.putData("Shooter-Spin", new SetShooterRpm(m_shooter, () -> SmartDashboard.getNumber("RPM-Set", 0.0) ));
+    // SmartDashboard.putData("Shooter-Stop", new SetShooterRpm(m_shooter, () -> 0.0));
     // SmartDashboard.putData("Store-In", new RunStorageIn(m_storage));
     // SmartDashboard.putData("Store-Out", new RunStorageOut(m_storage));
-    SmartDashboard.putData("Store-Stop", new StopStorage(m_storage));
+    // SmartDashboard.putData("Store-Stop", new StopStorage(m_storage));
     // SmartDashboard.putData("LL-Standard", new ChangeLimeLightStream(StreamType.standard));
     // SmartDashboard.putData("LL-PipMain", new ChangeLimeLightStream(StreamType.pipMain));
     // SmartDashboard.putData("LL-PipSecondary", new ChangeLimeLightStream(StreamType.pipSecondary));
-    SmartDashboard.putData("shoot", new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight));
+    // SmartDashboard.putData("shoot", new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight));
     // SmartDashboard.putData("Reset Ball Count", new ZeroBallCount(m_storage));
     // SmartDashboard.putData("Rotate-45", new RotateToAngle(m_drivetrain, () -> Rotation2d.fromDegrees(45).getRadians()));
     // SmartDashboard.putData("Rotate-LL", new RotateToLimelightAngle(m_drivetrain, m_limelight));
@@ -417,6 +419,7 @@ public class RobotContainer {
     SmartDashboard.putData("2 Count", new SetBallCount(m_storage, 2));
     SmartDashboard.putData("Zero Gyro", new InstantCommand(() -> { m_drivetrain.zeroGyroscope(); }));
     SmartDashboard.putData("Traversal Climb", new ClimbTraversal(m_telescopeFront, m_telescopeBack, m_drivetrain, m_compressor));
+    
     // SmartDashboard.putNumber("Pose X", m_odometry.getPoseMeters().getX());
     // SmartDashboard.putNumber("Pose Y", m_odometry.getPoseMeters().getY());
     // SmartDashboard.putData("Rotate to Hub", new SequentialCommandGroup(

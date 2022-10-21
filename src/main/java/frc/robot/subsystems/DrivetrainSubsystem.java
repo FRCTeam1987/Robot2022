@@ -23,9 +23,13 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -337,5 +341,21 @@ public class DrivetrainSubsystem extends SubsystemBase {
     if (!m_navx.isConnected()) {
       DriverStation.reportError("navx not connected", false);
     }
+
+    NetworkTableInstance.getDefault().getTable("batteryMonitor").getEntry("voltage").setDouble(
+      RobotController.getBatteryVoltage()
+    );
+    NetworkTableInstance.getDefault().getTable("batteryMonitor").getEntry("matchTime").setDouble(
+      DriverStation.getMatchTime()
+    );
+    NetworkTableInstance.getDefault().getTable("batteryMonitor").getEntry("isAutonomous").setBoolean(
+      DriverStation.isAutonomous() && DriverStation.isEnabled()
+    );
+    NetworkTableInstance.getDefault().getTable("batteryMonitor").getEntry("isTeleop").setBoolean(
+      DriverStation.isTeleop() && DriverStation.isEnabled()
+    );
+    NetworkTableInstance.getDefault().getTable("batteryMonitor").getEntry("batteryName").setString(
+      SmartDashboard.getString("BatteryName", "Test Battery")
+    );
   }
 }

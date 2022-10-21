@@ -27,7 +27,7 @@ public class OneBallAndD extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     //2BallAndDPart1
     addCommands(
-      new WaitCommand(4),
+      // new WaitCommand(4),
       new OneBallAndSteal(controller, drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, limelight, robotContainer),
       drivetrainSubsystem.followPathCommand(false, "1BallAndDPart3"),
       new InstantCommand(() -> {

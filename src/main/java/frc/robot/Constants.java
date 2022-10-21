@@ -139,8 +139,8 @@ public final class Constants {
     public static final int MOTOR_FOLLOWER_PDH_ID = 14;
     public static final int MOTOR_FOLLOWER_CAN_ID = 10;
 
-    public static final double PRE_SHOOT_RPM = 2500;
-    public static final double Offset_RPM_Increment_Amount = 70;
+    public static final double PRE_SHOOT_RPM = 2500; //2500
+    public static final double Offset_RPM_Increment_Amount = 50;
     public static final double Offset_RPM_Initial_Amount = -30; // 50 at heartland //80 at champs
     public static final double Shooter_RPM_Tolerance = 50;
     public static final double SHOOTER_REDUCTION = 1.0; //20.0/16.0;
@@ -194,9 +194,9 @@ public final class Constants {
       kDistanceToShooter.put(new InterpolatingDouble(-12.0), new InterpolatingDouble(2400.0));
       kDistanceToShooter.put(new InterpolatingDouble(-13.0), new InterpolatingDouble(2450.0));
       kDistanceToShooter.put(new InterpolatingDouble(-14.0), new InterpolatingDouble(2535.0));  
-      kDistanceToShooter.put(new InterpolatingDouble(-14.6), new InterpolatingDouble(2650.0));  
-      kDistanceToShooter.put(new InterpolatingDouble(-15.0), new InterpolatingDouble(2700.0)); //Talk to Cooper and Greyson about the one  
-      kDistanceToShooter.put(new InterpolatingDouble(-15.5), new InterpolatingDouble(2750.0)); 
+      kDistanceToShooter.put(new InterpolatingDouble(-14.6), new InterpolatingDouble(2635.0));  
+      kDistanceToShooter.put(new InterpolatingDouble(-15.0), new InterpolatingDouble(2660.0)); 
+      kDistanceToShooter.put(new InterpolatingDouble(-15.5), new InterpolatingDouble(2725.0)); 
 
         //Pre-Grip Tape Flywheel:
       // kDistanceToShooter.put(new InterpolatingDouble(16.06), new InterpolatingDouble(1800.0));  
