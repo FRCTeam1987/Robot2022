@@ -54,8 +54,12 @@ public class StorageSubsystem extends SubsystemBase {
 
     m_motorBottom.restoreFactoryDefaults();
     m_motorBottom.setIdleMode(IdleMode.kBrake); 
+    m_motorBottom.setOpenLoopRampRate(0.1);
+    m_motorBottom.setSecondaryCurrentLimit(20);
     m_motorTop.restoreFactoryDefaults();
     m_motorTop.setIdleMode(IdleMode.kBrake);
+    m_motorTop.setOpenLoopRampRate(0.1);
+    m_motorTop.setSecondaryCurrentLimit(20);
     stop();
 
   }

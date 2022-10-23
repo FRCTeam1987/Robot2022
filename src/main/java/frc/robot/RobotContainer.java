@@ -185,9 +185,7 @@ public class RobotContainer {
     new Button(controller::getLeftBumper)
       .whileHeld(
           new ConditionalCommand(
-            new SequentialCommandGroup(         
-            new InstantCommand(()-> m_compressor.disable()),
-            shootCommandHelper()),
+            shootCommandHelper(),
           // new SetRumble(controller, RumbleValue.On).withTimeout(0.5).andThen(new SetRumble(controller, RumbleValue.Off)),
           new ParallelCommandGroup(
             new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 1)), 
@@ -196,8 +194,7 @@ public class RobotContainer {
       ).whenReleased(
         new ParallelCommandGroup(
           new InstantCommand(() -> controller.setRumble(RumbleType.kLeftRumble, 0)), 
-          new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 0)),
-          new InstantCommand(()-> m_compressor.enableAnalog(100, 120))
+          new InstantCommand(() -> controller.setRumble(RumbleType.kRightRumble, 0))
         ));
 
 
@@ -214,7 +211,7 @@ public class RobotContainer {
 
 
     new Button(controller::getBButton)
-    .whileHeld(new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight));
+    .whileHeld(new Shoot(m_shooter, m_storage, m_drivetrain, m_limelight, m_compressor));
   
     new Button(coController::getBackButton)
     .whenPressed(new InstantCommand(() -> m_shooter.decrementOffsetRPM()));
@@ -476,6 +473,7 @@ public class RobotContainer {
         m_storage,
         m_drivetrain,
         m_limelight,
+        m_compressor,
         () -> m_shooter.getRPMFromLimelight() * Constants.Shooter.SHOOTER_REDUCTION,//m_limelight.getYAxis() < -5 ? 3075 : 2500,
         () -> m_limelight.getYAxis() < 7
       ),
