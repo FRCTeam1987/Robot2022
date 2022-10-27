@@ -25,6 +25,8 @@ public class ZeroClimber extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_telescopeFront.disengageBrake();
+    m_telescopeBack.disengageBrake();
     m_telescopeFront.zeroTelescope();
     m_telescopeBack.zeroTelescope();
   }

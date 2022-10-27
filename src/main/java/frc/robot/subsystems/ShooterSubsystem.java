@@ -55,7 +55,7 @@ public class ShooterSubsystem extends SubsystemBase {
     m_motorRight.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
     // m_motorRight.configClosedloopRamp(0.5);
     m_motorRight.config_kF(0, 0.05); //get started umf (increases the actual base rpm exponentially or something) was.052 old BAT, new bat .0498, then was .055 for 3550 rpm, then .052
-    m_motorRight.config_kP(0, 0.1); //p = push and oscillating once it gets there
+    m_motorRight.config_kP(0, 0.15); //p = push and oscillating once it gets there
     m_motorRight.config_kI(0, 0.0);
     m_motorRight.config_kD(0, 0.0);
     m_motorRight.configVoltageCompSaturation(12.0);

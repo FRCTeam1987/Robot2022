@@ -38,11 +38,10 @@ public class ClimbStep4 extends ParallelCommandGroup {
       new  SequentialCommandGroup(
         // new WaitCommand(.2)
         new DisengageFrictionBrakeTelescope(m_telescopeBack),
-        new WaitCommand(0.1),
+        // new WaitCommand(0.1),
         new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks + 40000, true),
         new EngageFrictionBrakeTelescope(m_telescopeBack),
         new InstantCommand(() -> System.out.println("Climb Step 4 2 finished: " + m_telescopeFront.getPositionTicks() + " current roll: " + m_drivetrain.getRoll()))
-
       )
     );
   }
