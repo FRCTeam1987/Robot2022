@@ -36,6 +36,7 @@ import frc.robot.commands.auto.ThreeBallSteal;
 import frc.robot.commands.auto.TwoBallAndDAuto;
 import frc.robot.commands.auto.TwoBallAndDHubAuto;
 import frc.robot.commands.auto.TwoBallAndOneDAuto;
+import frc.robot.commands.auto.TwoBallAndOneDHubAuto;
 import frc.robot.commands.auto.TwoBallSteal;
 import frc.robot.commands.climber.BrakeClimber;
 import frc.robot.commands.climber.ClimbHigh;
@@ -301,6 +302,7 @@ public class RobotContainer {
     m_autoChooser.addOption("2 Ball & D", new TwoBallAndDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("2 Ball & Hub D", new TwoBallAndDHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("2 Ball & 1 D", new TwoBallAndOneDAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
+    m_autoChooser.addOption("2 Ball & 1 D Hub", new TwoBallAndOneDHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     // m_autoChooser.addOption("2 Ball & 1 Hub Auto", new TwoBallAndOneHubAuto(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     m_autoChooser.addOption("1 Ball & D", new OneBallAndD(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
     // m_autoChooser.addOption("2 Ball & D Steal", new TwoBallSteal(controller, m_drivetrain, m_collector, m_storage, m_shooter, m_limelight, this));
