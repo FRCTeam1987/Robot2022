@@ -193,7 +193,7 @@ public final class Constants {
       kDistanceToShooter.put(new InterpolatingDouble(-11.0), new InterpolatingDouble(2375.0));
       kDistanceToShooter.put(new InterpolatingDouble(-12.0), new InterpolatingDouble(2400.0));
       kDistanceToShooter.put(new InterpolatingDouble(-13.0), new InterpolatingDouble(2450.0));
-      kDistanceToShooter.put(new InterpolatingDouble(-14.0), new InterpolatingDouble(2535.0));  
+      kDistanceToShooter.put(new InterpolatingDouble(-14.0), new InterpolatingDouble(2510.0));  
       kDistanceToShooter.put(new InterpolatingDouble(-14.6), new InterpolatingDouble(2635.0));  
       kDistanceToShooter.put(new InterpolatingDouble(-15.0), new InterpolatingDouble(2660.0)); 
       kDistanceToShooter.put(new InterpolatingDouble(-15.5), new InterpolatingDouble(2725.0)); 
