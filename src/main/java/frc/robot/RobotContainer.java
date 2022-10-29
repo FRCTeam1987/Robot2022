@@ -288,6 +288,9 @@ public class RobotContainer {
       ),
       new InstantCommand(() -> m_shouldAutoClimb = false))
     );
+
+    new Button(coController::getBButton)
+    .whenPressed( new InstantCommand(() -> m_compressor.enableAnalog(100, 120)));
   };
 
   private void configureShuffleboard() {

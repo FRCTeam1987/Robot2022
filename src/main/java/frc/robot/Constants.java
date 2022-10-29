@@ -141,7 +141,7 @@ public final class Constants {
 
     public static final double PRE_SHOOT_RPM = 2500; //2500
     public static final double Offset_RPM_Increment_Amount = 50;
-    public static final double Offset_RPM_Initial_Amount = -30; // 50 at heartland //80 at champs
+    public static final double Offset_RPM_Initial_Amount = 70; // 50 at heartland //80 at champs
     public static final double Shooter_RPM_Tolerance = 50;
     public static final double SHOOTER_REDUCTION = 1.0; //20.0/16.0;
 

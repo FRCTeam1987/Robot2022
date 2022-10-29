@@ -54,7 +54,7 @@ public class ClimbStep3 extends ParallelCommandGroup {
       new SequentialCommandGroup(
         // new WaitCommand(0.2),
         // new InstantCommand(() -> m_telescopeFront.setVoltageSaturation(9)),
-        new TelescopeRetract(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks + 5000, 1.0),
+        new TelescopeRetract(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks, 1.0),
         new TelescopeGoToClosedLoop(m_telescopeBack, TelescopeSubsystem.k_minExtensionTicks - 4000),
         new EngageFrictionBrakeTelescope(m_telescopeBack)
         // new InstantCommand(() -> m_telescopeFront.setVoltageSaturation())
