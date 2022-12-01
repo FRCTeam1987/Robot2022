@@ -18,7 +18,6 @@ public class WaitUntilBallsStored extends CommandBase {
   private boolean m_hadBallAtExit;
   private boolean m_hasFirstBall;
   private boolean m_hasSecondBall;
-  private double m_colorTop;
 
   /** Creates a new WaitUntilMaxBallsStored. */
   public WaitUntilBallsStored(final StorageSubsystem storage) {

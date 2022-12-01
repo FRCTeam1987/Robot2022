@@ -12,10 +12,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.commands.CollectBalls;
-import frc.robot.commands.collector.DeployCollector;
-import frc.robot.commands.collector.StowCollector;
-import frc.robot.commands.shooter.Shoot;
-import frc.robot.commands.storage.SetBallCount;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimeLight;
@@ -34,11 +30,14 @@ public class ThreeBallAuto extends SequentialCommandGroup {
     addCommands(
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(true, "3BallAutoPart1"),
-        new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2)
+        new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(3)
       ),
       new InstantCommand(() -> DriverStation.reportWarning("Three Ball - A", false)),
-      robotContainer.shootCommandHelper(),
-      new InstantCommand(() -> DriverStation.reportWarning("Three Ball - B", false)),
+      new SequentialCommandGroup(
+        robotContainer.shootCommandHelper().withTimeout(4),
+        new InstantCommand(() -> storageSubsystem.setBallCount(0))
+      ),
+              new InstantCommand(() -> DriverStation.reportWarning("Three Ball - B", false)),
       new ParallelCommandGroup(
         drivetrainSubsystem.followPathCommand(false, "3BallAutoPart2"),
         new SequentialCommandGroup(
@@ -48,7 +47,9 @@ public class ThreeBallAuto extends SequentialCommandGroup {
       ),
       new InstantCommand(() -> DriverStation.reportWarning("Three Ball - C", false)),
       // new InstantCommand(() -> storageSubsystem.runForIntake(), storageSubsystem),
-      robotContainer.shootCommandHelper(),
+      new InstantCommand(() -> storageSubsystem.setBallCount(1)),
+      robotContainer.shootCommandHelper().withTimeout(2),
+      new InstantCommand(() -> storageSubsystem.setBallCount(0)),
       new InstantCommand(() -> DriverStation.reportWarning("Three Ball - D", false))
     );
   }

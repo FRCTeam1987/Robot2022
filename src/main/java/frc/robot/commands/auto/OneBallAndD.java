@@ -7,13 +7,9 @@ package frc.robot.commands.auto;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
-import frc.robot.commands.CollectBalls;
-import frc.robot.commands.shooter.EjectOneBallTop;
-import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.storage.SetBallCount;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -31,6 +27,7 @@ public class OneBallAndD extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     //2BallAndDPart1
     addCommands(
+      // new WaitCommand(4),
       new OneBallAndSteal(controller, drivetrainSubsystem, collectorSubsystem, storageSubsystem, shooterSubsystem, limelight, robotContainer),
       drivetrainSubsystem.followPathCommand(false, "1BallAndDPart3"),
       new InstantCommand(() -> {

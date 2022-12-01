@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.commands.CollectBalls;
-import frc.robot.commands.shooter.Shoot;
-import frc.robot.commands.storage.SetBallCount;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimeLight;
@@ -35,7 +33,7 @@ public class FiveBallAuto extends SequentialCommandGroup {
         drivetrainSubsystem.followPathCommand(false, "5BallAutoPart3"),
         new SequentialCommandGroup(
           new WaitCommand(0.75), 
-          new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(3)
+          new CollectBalls(controller, collectorSubsystem, storageSubsystem, 2).withTimeout(3.5)
         )
       ),
       new InstantCommand(() -> DriverStation.reportWarning("Five Ball - B", false)),

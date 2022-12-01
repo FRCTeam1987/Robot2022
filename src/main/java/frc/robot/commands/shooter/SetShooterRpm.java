@@ -23,6 +23,7 @@ public class SetShooterRpm extends CommandBase {
   /** Creates a new SetShooterRpm. */
   public SetShooterRpm(final ShooterSubsystem shooter, final DoubleSupplier rpmSupplier) {
     // Use addRequirements() here to declare subsystem dependencies.
+
     m_shooter = shooter;
     m_rpmSupplier = rpmSupplier;
     m_rpmDebouncer = new Debouncer(0.04);

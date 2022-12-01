@@ -23,11 +23,13 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -56,11 +58,19 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private final SwerveModule m_frontRightModule;
   private final SwerveModule m_backLeftModule;
   private final SwerveModule m_backRightModule;
+  private double m_rollOffset;
   private Rotation2d m_startYaw;
 
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
   private SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getAdjustedHeading());
+
+  private static final PIDController m_xController = new PIDController(DRIVETRAIN_PX_CONTROLLER, 0, 0);
+  private static final PIDController m_yController = new PIDController(DRIVETRAIN_PY_CONTROLLER, 0, 0);
+  private static final ProfiledPIDController m_thetaController = new ProfiledPIDController(DRIVETRAIN_PTHETA_CONTROLLER, 0, 0, new TrapezoidProfile.Constraints(
+    MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+    MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND_SQUARED
+  ));
 
   public DrivetrainSubsystem() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
@@ -68,9 +78,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     m_frontLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
             // This parameter is optional, but will allow you to see the current state of the module on the dashboard.
-            tab.getLayout("Front Left Module", BuiltInLayouts.kList)
-                    .withSize(2, 4)
-                    .withPosition(0, 0),
+            // tab.getLayout("Front Left Module", BuiltInLayouts.kList)
+            //         .withSize(2, 4)
+            //         .withPosition(0, 0),
             // This can either be STANDARD or FAST depending on your gear configuration
             Mk4iSwerveModuleHelper.GearRatio.L2,
             // This is the ID of the drive motor
@@ -85,9 +95,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // We will do the same for the other modules
     m_frontRightModule = Mk4iSwerveModuleHelper.createFalcon500(
-            tab.getLayout("Front Right Module", BuiltInLayouts.kList)
-                    .withSize(2, 4)
-                    .withPosition(2, 0),
+            // tab.getLayout("Front Right Module", BuiltInLayouts.kList)
+            //         .withSize(2, 4)
+            //         .withPosition(2, 0),
             Mk4iSwerveModuleHelper.GearRatio.L2,
             FRONT_RIGHT_MODULE_DRIVE_MOTOR,
             FRONT_RIGHT_MODULE_STEER_MOTOR,
@@ -96,9 +106,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     );
 
     m_backLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
-            tab.getLayout("Back Left Module", BuiltInLayouts.kList)
-                    .withSize(2, 4)
-                    .withPosition(4, 0),
+            // tab.getLayout("Back Left Module", BuiltInLayouts.kList)
+            //         .withSize(2, 4)
+            //         .withPosition(4, 0),
             Mk4iSwerveModuleHelper.GearRatio.L2,
             BACK_LEFT_MODULE_DRIVE_MOTOR,
             BACK_LEFT_MODULE_STEER_MOTOR,
@@ -107,9 +117,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     );
 
     m_backRightModule = Mk4iSwerveModuleHelper.createFalcon500(
-            tab.getLayout("Back Right Module", BuiltInLayouts.kList)
-                    .withSize(2, 4)
-                    .withPosition(6, 0),
+            // tab.getLayout("Back Right Module", BuiltInLayouts.kList)
+            //         .withSize(2, 4)
+            //         .withPosition(6, 0),
             Mk4iSwerveModuleHelper.GearRatio.L2,
             BACK_RIGHT_MODULE_DRIVE_MOTOR,
             BACK_RIGHT_MODULE_STEER_MOTOR,
@@ -117,14 +127,31 @@ public class DrivetrainSubsystem extends SubsystemBase {
             BACK_RIGHT_MODULE_STEER_OFFSET
     );
     zeroGyroscope();
+    m_thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    // /* TODO uncomment to get code and such
     tab.addNumber("Adjusted Angle", () -> getAdjustedHeading().getDegrees()).withPosition(9, 2);
-    tab.addNumber("Heading", () -> m_navx.getCompassHeading()).withPosition(9, 3);
+    // tab.addNumber("Heading", () -> m_navx.getCompassHeading()).withPosition(9, 3);
     tab.addNumber("Yaw", () -> m_navx.getYaw()).withPosition(9, 1);
     // tab.addNumber("Heading Adjust", () -> getHeadingAdjust().getDegrees()).withPosition(8, 2);
     tab.addNumber("Pose X", () -> m_odometry.getPoseMeters().getX()).withPosition(8, 0);
     tab.addNumber("Pose Y", () -> m_odometry.getPoseMeters().getY()).withPosition(8, 1);
     tab.addNumber("Pose Angle", () -> m_odometry.getPoseMeters().getRotation().getDegrees()).withPosition(8, 2);
     tab.addNumber("Pitch", () -> getPitch()).withPosition(8, 3);
+    // */
+
+    // final ShuffleboardTab telescopeTab = Shuffleboard.getTab("Telescopes");
+    // tab.addNumber("roll without offset", () -> getRoll()).withPosition(8, 3);
+    // tab.addNumber("roll with offset", () -> getRollWithOffset()).withPosition(9, 3);
+    final InstantCommand zeroRollCommand = new InstantCommand(() -> {
+      zeroRoll();
+    });
+    zeroRollCommand.runsWhenDisabled();
+    tab.add("Zero Roll", zeroRollCommand);
+    this.addChild("xController PID", m_xController);
+    this.addChild("yController PID", m_yController);
+    this.addChild("thetaController PID", m_thetaController);
+
+    
   }
 
   /**
@@ -134,7 +161,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void zeroGyroscope() {
     m_navx.reset();
     // setHeadingAdjust(Rotation2d.fromDegrees(m_navx.getCompassHeading()));
-    System.out.println("Zeroing gyro: " + m_navx.getCompassHeading());
+    // System.out.println("Zeroing gyro: " + m_navx.getCompassHeading());
   }
   public void rememberStartingPosition() {
     m_startYaw = Rotation2d.fromDegrees(m_navx.getYaw());
@@ -150,12 +177,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   private void setHeadingAdjust(final Rotation2d headingAdjust) {
     m_headingAdjust = headingAdjust;
-    System.out.println("Set heading adjust: " + m_headingAdjust.getDegrees());
+    // System.out.println("Set heading adjust: " + m_headingAdjust.getDegrees());
   }
 
-  private Rotation2d getUnadjustedHeading() {
-    return Rotation2d.fromDegrees(m_navx.getCompassHeading());
-  }
+  // private Rotation2d getUnadjustedHeading() {
+  //   return Rotation2d.fromDegrees(m_navx.getCompassHeading());
+  // }
 
   public Rotation2d getAdjustedHeading() {
     // TODO compass heading only returns 180 now... why?
@@ -175,6 +202,30 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public double getPitch() {
     return m_navx.getPitch();
+  }
+
+  public double getRoll() {
+    return m_navx.getRoll();  // Positive rolling towards climber / climber side lower.
+  }
+
+  public void setRollOffset() {
+    setRollOffset(getRoll());
+  }
+
+  public void setRollOffset(double rollOffset) {
+    m_rollOffset = rollOffset;
+  }
+
+  public double getRollOffset() {
+    return m_rollOffset;
+  }
+
+  public double getRollWithOffset() {
+    return getRoll() + getRollOffset();
+  }
+
+  public void zeroRoll() {
+    setRollOffset(-getRoll());
   }
 
   public void drive(ChassisSpeeds chassisSpeeds) {
@@ -215,15 +266,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return m_odometry.getPoseMeters();
   }
 
+  public void setPose(final Pose2d pose) {
+    m_odometry.resetPosition(pose, getAdjustedHeading());
+  }
+
   // Pick back up here with path following constant placeholders
   public SequentialCommandGroup followPathCommand(final boolean shouldResetOdometry, String trajectoryFileName) {
-    final PIDController xController = new PIDController(DRIVETRAIN_PX_CONTROLLER, 0, 0);
-    final PIDController yController = new PIDController(DRIVETRAIN_PY_CONTROLLER, 0, 0);
-    ProfiledPIDController thetaController = new ProfiledPIDController(DRIVETRAIN_PTHETA_CONTROLLER, 0, 0, new TrapezoidProfile.Constraints(
-      MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-      MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND_SQUARED
-    ));
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    
     // final Trajectory trajectory = generateTrajectory(waypoints);
     final PathPlannerTrajectory trajectory = PathPlanner.loadPath(trajectoryFileName, 3.5, 3   );
     // double Seconds = 0.0;
@@ -246,13 +295,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Pose2d initialPose = new Pose2d(initialSample.poseMeters.getTranslation(), initialSample.holonomicRotation);
         m_odometry.resetPosition(initialPose, getAdjustedHeading());
       }
+      m_xController.reset();
+      m_yController.reset();
     }).andThen(new PPSwerveControllerCommand(
       trajectory,
       () -> getPose(),
       m_kinematics,
-      xController,
-      yController,
-      thetaController,
+      m_xController,
+      m_yController,
+      m_thetaController,
       (SwerveModuleState[] moduleStates) -> {
         drive(m_kinematics.toChassisSpeeds(moduleStates));
       },
@@ -285,8 +336,26 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_frontRightModule.set(velocityToVolts(states[1].speedMetersPerSecond), states[1].angle.getRadians());
     m_backLeftModule.set(velocityToVolts(states[2].speedMetersPerSecond), states[2].angle.getRadians());
     m_backRightModule.set(velocityToVolts(states[3].speedMetersPerSecond), states[3].angle.getRadians());
+    // SmartDashboard.putNumber("roll without offset", getRoll());
+    // SmartDashboard.putNumber("roll with offset", getRollWithOffset());
     if (!m_navx.isConnected()) {
       DriverStation.reportError("navx not connected", false);
     }
+
+    NetworkTableInstance.getDefault().getTable("batteryMonitor").getEntry("voltage").setDouble(
+      RobotController.getBatteryVoltage()
+    );
+    NetworkTableInstance.getDefault().getTable("batteryMonitor").getEntry("matchTime").setDouble(
+      DriverStation.getMatchTime()
+    );
+    NetworkTableInstance.getDefault().getTable("batteryMonitor").getEntry("isAutonomous").setBoolean(
+      DriverStation.isAutonomous() && DriverStation.isEnabled()
+    );
+    NetworkTableInstance.getDefault().getTable("batteryMonitor").getEntry("isTeleop").setBoolean(
+      DriverStation.isTeleop() && DriverStation.isEnabled()
+    );
+    NetworkTableInstance.getDefault().getTable("batteryMonitor").getEntry("batteryName").setString(
+      SmartDashboard.getString("BatteryName", "Test Battery")
+    );
   }
 }

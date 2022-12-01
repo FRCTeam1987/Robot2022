@@ -8,11 +8,11 @@ import frc.robot.Constants;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class RotationToHub extends RotateToAngle {
-  public RotationToHub(final DrivetrainSubsystem drivetrain) {
+  public RotationToHub(DrivetrainSubsystem drivetrain) {
         super(drivetrain, () -> drivetrain.getPose().getX() > 8.25 ?
             (90 + Math.atan((drivetrain.getPose().getY() - Constants.Shooter.HubYPosition)/
             (drivetrain.getPose().getX() - Constants.Shooter.HubXPosition)))
-            : (Math.atan((drivetrain.getPose().getY() - Constants.Shooter.HubYPosition)/
+            : (180 + Math.atan((drivetrain.getPose().getY() - Constants.Shooter.HubYPosition)/
             (drivetrain.getPose().getX() - Constants.Shooter.HubXPosition)))
         );
     }

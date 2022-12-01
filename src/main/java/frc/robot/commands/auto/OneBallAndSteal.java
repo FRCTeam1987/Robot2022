@@ -5,17 +5,13 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.commands.CollectBalls;
-import frc.robot.commands.shooter.EjectOneBallTop;
-import frc.robot.commands.shooter.Shoot;
+import frc.robot.commands.shooter.EjectOneBallBottom;
 import frc.robot.commands.storage.RunStorageIn;
-import frc.robot.commands.storage.SetBallCount;
 import frc.robot.commands.storage.StopStorage;
 import frc.robot.subsystems.CollectorSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -33,6 +29,7 @@ public class OneBallAndSteal extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     //2BallAndDPart1
     addCommands(
+      new WaitCommand(2),
       drivetrainSubsystem.followPathCommand(true, "1BallAndStealPart1"),
       robotContainer.shootCommandHelper(),
       new ParallelCommandGroup(
@@ -44,8 +41,10 @@ public class OneBallAndSteal extends SequentialCommandGroup {
       ),
       new RunStorageIn(storageSubsystem),
       new WaitCommand(.5),
-      new StopStorage(storageSubsystem)
-      
+      new StopStorage(storageSubsystem),
+      drivetrainSubsystem.followPathCommand(false, "1BallAndStealPart3"),
+      new EjectOneBallBottom(storageSubsystem, collectorSubsystem),
+      drivetrainSubsystem.followPathCommand(false, "1BallAndStealPart4")
     );
   }
 }

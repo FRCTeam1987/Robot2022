@@ -7,6 +7,7 @@ package frc.robot.commands.shooter;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -31,14 +32,15 @@ public class Shoot extends SequentialCommandGroup {
   private final StorageSubsystem m_storage;
   private final DrivetrainSubsystem m_drivetrain;
   private final LimeLight m_limelight;
-
+  private final Compressor m_compressor;
 
   /** Creates a new ShooterCommandGroup. */
-  public Shoot(final ShooterSubsystem shooter, final StorageSubsystem storage, final DrivetrainSubsystem drivetrain, final LimeLight limelight, final DoubleSupplier rpmSupplier, final BooleanSupplier isHoodRaised) {
+  public Shoot(final ShooterSubsystem shooter, final StorageSubsystem storage, final DrivetrainSubsystem drivetrain, final LimeLight limelight, final Compressor compressor, final DoubleSupplier rpmSupplier, final BooleanSupplier isHoodRaised) {
     m_shooter = shooter;
     m_storage = storage;
     m_drivetrain = drivetrain;
     m_limelight = limelight;
+    m_compressor = compressor;
     
     addCommands(
       new ParallelCommandGroup(
@@ -55,6 +57,7 @@ public class Shoot extends SequentialCommandGroup {
         new LowerHood(m_shooter),
         isHoodRaised
       ),
+      new InstantCommand(() -> m_compressor.disable()),
       new SetShooterRpm(m_shooter, rpmSupplier),
       // new SetHoodPosition(m_shooter, hoodPos),
       
@@ -75,12 +78,13 @@ public class Shoot extends SequentialCommandGroup {
     );
   }
 
-  public Shoot(final ShooterSubsystem shooter, final StorageSubsystem storage, final DrivetrainSubsystem drivetrain, final LimeLight limelight) {
+  public Shoot(final ShooterSubsystem shooter, final StorageSubsystem storage, final DrivetrainSubsystem drivetrain, final LimeLight limelight, final Compressor compressor) {
     this(
       shooter,
       storage,
       drivetrain,
       limelight,
+      compressor,
       () -> 2225,
       () -> true 
     );
@@ -94,5 +98,6 @@ public class Shoot extends SequentialCommandGroup {
       m_shooter.stop();
       m_storage.stop();
     }
+    m_compressor.enableAnalog(100, 120);
   }
 }

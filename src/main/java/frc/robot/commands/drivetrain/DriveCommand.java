@@ -8,7 +8,6 @@ import frc.robot.Constants;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import java.util.function.BooleanSupplier;
@@ -36,9 +35,9 @@ public class DriveCommand extends CommandBase {
         this.translationYSupplier = translationYSupplier;
         this.rotationSupplier = rotationSupplier;
         this.isFieldRelativeSupplier = isFieldRelativeSupplier;
-        m_translationXLimiter = new SlewRateLimiter(6);
-        m_translationYLimiter = new SlewRateLimiter(6);
-        m_rotationLimiter = new SlewRateLimiter(6);
+        m_translationXLimiter = new SlewRateLimiter(4);
+        m_translationYLimiter = new SlewRateLimiter(4);
+        m_rotationLimiter = new SlewRateLimiter(4);
         addRequirements(drivetrain);
     }
 

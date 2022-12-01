@@ -15,13 +15,17 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.Shooter.*;
 import frc.robot.Constants;
+import frc.robot.commands.shooter.LowerHood;
+import frc.robot.commands.shooter.RaiseHood;
 import frc.robot.lib.InterpolatingDouble;
-import frc.robot.lib.LinearServo;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -33,13 +37,25 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
+    ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
+
+    // tab.addNumber("RPM-Actual", () -> getRPM());
+    // tab.addNumber("rpm-error", () -> getRpmSetpointError());
+    // tab.addNumber("rpm-Offset", () -> getOffsetRPM());
+
+    tab.add("Increment Offset", new InstantCommand(() -> incrementOffsetRPM()));
+    tab.add("Decrement Offset", new InstantCommand(() -> decrementOffsetRPM()));
+    tab.add("Raise Shoot Hood", new RaiseHood(this));
+    tab.add("Lower Shoot Hood", new LowerHood(this));
+    
+
     m_motorRight.configFactoryDefault();
     // m_motorRight.configOpenloopRamp(1.5);
     m_motorRight.setNeutralMode(NeutralMode.Coast);
     m_motorRight.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
     // m_motorRight.configClosedloopRamp(0.5);
     m_motorRight.config_kF(0, 0.05); //get started umf (increases the actual base rpm exponentially or something) was.052 old BAT, new bat .0498, then was .055 for 3550 rpm, then .052
-    m_motorRight.config_kP(0, 0.1); //p = push and oscillating once it gets there
+    m_motorRight.config_kP(0, 0.15); //p = push and oscillating once it gets there
     m_motorRight.config_kI(0, 0.0);
     m_motorRight.config_kD(0, 0.0);
     m_motorRight.configVoltageCompSaturation(12.0);
@@ -59,7 +75,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // SmartDashboard.putNumber("Hood-Pos", 35);
     // SmartDashboard.putNumber("RPM-Set", 2500 * SHOOTER_REDUCTION);
-    SmartDashboard.putNumber("rpm-Offset", getOffsetRPM());
+    // SmartDashboard.putNumber("rpm-Offset", getOffsetRPM());
 
   }
 
@@ -88,13 +104,8 @@ public class ShooterSubsystem extends SubsystemBase {
   
   public double getRPMFromLimelight() {
     final double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
-    return Constants.Targeting.kDistanceToShooter.getInterpolated(new InterpolatingDouble(ty)).value; //TODO Copied Code, replace with interpreted value of correct RPM speed 
+    return Constants.Targeting.kDistanceToShooter.getInterpolated(new InterpolatingDouble(ty)).value; 
     // return 1000; //Delete me when fixed
-  }
-  public double getHoodHeightFromLimelight() {
-    final double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
-    return Constants.Targeting.kDistanceToShooter.getInterpolated(new InterpolatingDouble(ty)).value; //TODO Copied Code, replace with interpreted value of correct Hood height 
-    // return 10; //Delete me when fixed
   }
 
   public void incrementOffsetRPM() {
@@ -120,7 +131,8 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // System.out.println("hood position " + getHoodPosition());
+
     SmartDashboard.putNumber("RPM-Actual", getRPM());
-    SmartDashboard.putNumber("rpm-error", getRpmSetpointError());
+    // SmartDashboard.putNumber("rpm-error", getRpmSetpointError());
   }
 }

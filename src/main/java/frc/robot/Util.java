@@ -34,4 +34,17 @@ public class Util {
     public static double ticksToDistance(final double ticks, final double ticksPerRevolution, final double circumference, final double postEncoderGearing) {
         return ticks / (ticksPerRevolution * postEncoderGearing) * circumference;
     }
+
+    public static int distanceToTicks(final double distance, final double ticksPerRevolution, final double circumference, final double postEncoderGearing) {
+        // return ticks / (ticksPerRevolution * postEncoderGearing) * circumference;
+        return rotationsToTicks(distanceToRotations(distance, ticksPerRevolution, circumference, postEncoderGearing));
+    }
+
+    public static double distanceToRotations(final double distance, final double ticksPerRevolution, final double circumference, final double postEncoderGearing) {
+        return (distance / circumference) / (ticksPerRevolution * postEncoderGearing);
+    }
+
+    public static int rotationsToTicks(final double rotations) {
+        return (int)(rotations * Constants.FALCON_ENCODER_RESOLUTION);
+    }
 }
